@@ -31,6 +31,10 @@ function tempFor(m){return [0,0,0,1,1,2,2,2,1,1,0,0][m]}
 var S={tab:"finden",view:null,bl:store.get("bl","brandenburg"),own:store.get("own",[]),
  wiz:{step:0,wt:null,fish:null,water:null,month:now.getMonth(),tz:tzNow(),wetter:"wolken",wasser:"mittel",temp:tempFor(now.getMonth()),sued:false,art:"alle",region:"alle"},
  q:{fische:"",koeder:"",gew:"",regeln:""},fg:"alle",kt:"alle",gl:"alle",form:null,more:false};
+var IMG=window.IMG||{};
+function photo(key,alt,big){var m=IMG[key];if(!m)return"";
+  if(!big)return '<img class="thumb" src="img/'+key+'.jpg" alt="" loading="lazy" width="56" height="56">';
+  return '<figure class="photo"><img src="img/'+key+'.jpg" alt="'+esc(alt)+'" loading="lazy"><figcaption>'+(m.ki?"KI-Illustration (ChatGPT), Beispielbild":"Beispielfoto: "+esc(m.a||"unbekannt")+(m.l?" · "+esc(m.l):"")+" · Wikimedia Commons")+"</figcaption></figure>"}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function allWaters(){return S.own.map(function(w,i){var c={};for(var k in w)c[k]=w[k];c.own=i;return c}).concat(WATERS)}
 function fishAct(f,m,sued){var i=sued?(m+6)%12:m;return +f.m.charAt(i)}
@@ -132,7 +136,7 @@ function vFinden(){
     list=list.slice().sort(function(a,b){return fishAct(b,w.month,w.sued)-fishAct(a,w.month,w.sued)});
     if(!list.length)h+='<p class="card">Für diese Auswahl ist kein Fisch hinterlegt. Wähle eine andere Region.</p>';
     h+='<div class="list">';
-    list.forEach(function(f){var a=fishAct(f,w.month,w.sued);h+='<button class="item" data-a="fish" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(ACTL[a])+" · "+esc(f.g)+"</span></span>"+dots(a)+"</button>"});
+    list.forEach(function(f){var a=fishAct(f,w.month,w.sued);h+='<button class="item" data-a="fish" data-v="'+f.id+'">'+photo("f_"+f.id)+'<span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(ACTL[a])+" · "+esc(f.g)+"</span></span>"+dots(a)+"</button>"});
     return h+"</div>";
   }
   if(w.step===2){
@@ -151,7 +155,7 @@ function vFinden(){
   }
   // Ergebnis
   var fi=F[w.fish],a=fishAct(fi,w.month,w.sued),rec=recommend(w),tzm=fi.tz.indexOf(tzCode(w.tz))>=0;
-  h+=head(fi.n,"wizback");
+  h+=head(fi.n,"wizback")+photo("f_"+fi.id,fi.n,true);
   h+='<div class="card sunk"><div class="row"><span class="pill '+(a>=2?"ok":a===1?"warn":"stop")+'">'+ACTL[a]+" im "+MONL[w.month]+'</span><span class="pill '+(tzm?"ok":"warn")+'">'+(tzm?TZL[w.tz]+" passt":"Besser: "+tzText(fi))+"</span></div>"+months(fi,w.sued,w.month)+'<p class="small">'+esc(fi.tipp)+"</p></div>";
   if(!w.sued)h+=ruleBox(fi.id,S.bl);
   h+='<h2>Deine Köder</h2>';
@@ -159,7 +163,7 @@ function vFinden(){
   var n=S.more?rec.length:Math.min(5,rec.length);
   for(var i=0;i<n;i++){var r=rec[i],b=r.b,tt=tempoTip(w,b);
     h+='<div class="card"><div class="row"><h3 class="grow">'+(i+1)+". "+esc(b.n)+'</h3><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+"</span>"+dots(r.e[1])+"</div>"+
-      '<p><b>'+esc(r.e[2])+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
+      photo("b_"+b.id,b.n,true)+'<p><b>'+esc(r.e[2])+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
       '<dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>"+(b.t==="K"?"Farbe":"Anbieten")+"</dt><dd>"+esc(colorTip(w,b))+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+(tt?" "+esc(tt):"")+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd></dl></div>"}
   if(rec.length>n)h+='<button class="btn" data-a="more">Weitere '+(rec.length-n)+" Köder zeigen</button>";
   h+='<div class="row"><button class="btn grow" data-a="wizstep" data-v="2">Bedingungen ändern</button><button class="btn grow" data-a="wizreset">Neu starten</button></div>';
@@ -170,20 +174,20 @@ function search(key,ph){return '<div class="field"><input id="q_'+key+'" type="s
 function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
 
 function vFische(){
-  if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>";
+  if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>"+photo("f_"+f.id,f.n,true);
     h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+esc(f.tipp)+"</p></div>";
     h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
-    f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'"><span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
+    f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
     return h+"</div>"}
   var groups=["alle","Raubfisch","Friedfisch","Salmonide","Meer"],h2=head("Fische",null,FISH.length+" Arten weltweit, mit Beißzeiten und Ködern.")+search("fische","Fisch suchen")+'<div class="chips">';
   groups.forEach(function(g){h2+='<button class="chip'+(S.fg===g?" on":"")+'" data-a="fg" data-v="'+g+'">'+(g==="alle"?"Alle":g)+"</button>"});
   h2+='</div><div class="list" id="res">'+fishList()+"</div>";return h2;
 }
 function fishList(){var m=now.getMonth(),h="";FISH.filter(function(f){return(S.fg==="alle"||f.g===S.fg)&&match(S.q.fische,f.n+" "+f.lat)}).sort(function(a,b){return a.n.localeCompare(b.n,"de")}).forEach(function(f){
-  h+='<button class="item" data-a="fishview" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="lat">'+esc(f.lat)+"</span></span>"+dots(fishAct(f,m,false))+"</button>"});return h||'<p class="card">Nichts gefunden.</p>'}
+  h+='<button class="item" data-a="fishview" data-v="'+f.id+'">'+photo("f_"+f.id)+'<span class="grow"><b>'+esc(f.n)+'</b><span class="lat">'+esc(f.lat)+"</span></span>"+dots(fishAct(f,m,false))+"</button>"});return h||'<p class="card">Nichts gefunden.</p>'}
 
 function vKoeder(){
-  if(S.view&&S.view.t==="bait"){var b=B[S.view.id],h=head(b.n,"closeview")+'<div class="row"><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+'</span><span class="muted small">'+esc(b.kat)+"</span></div>";
+  if(S.view&&S.view.t==="bait"){var b=B[S.view.id],h=head(b.n,"closeview")+'<div class="row"><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+'</span><span class="muted small">'+esc(b.kat)+"</span></div>"+photo("b_"+b.id,b.n,true);
     h+='<div class="card"><p>'+esc(b.info)+'</p><dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd><dt>Tiefe</dt><dd>"+({o:"Oberfläche / flach",m:"Mittelwasser",g:"Grund"}[b.tiefe])+"</dd></dl></div><h2>Fängt diese Fische</h2><div class=\"list\">";
     FISH.forEach(function(f){f.b.forEach(function(e){if(e[0]===b.id)h+='<button class="item" data-a="fishview" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"})});
     return h+"</div>"}
@@ -192,7 +196,7 @@ function vKoeder(){
   return h2+'</div><div class="list" id="res">'+baitList()+"</div>";
 }
 function baitList(){var h="";BAITS.filter(function(b){return(S.kt==="alle"||b.t===S.kt)&&match(S.q.koeder,b.n+" "+b.kat)}).forEach(function(b){
-  h+='<button class="item" data-a="bait" data-v="'+b.id+'"><span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+" · "+esc(b.groesse)+'</span></span><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunst":"Natur")+"</span></button>"});return h||'<p class="card">Nichts gefunden.</p>'}
+  h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+" · "+esc(b.groesse)+'</span></span><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunst":"Natur")+"</span></button>"});return h||'<p class="card">Nichts gefunden.</p>'}
 
 function vGew(){
   var all=allWaters(),h;
@@ -234,6 +238,8 @@ function vRegeln(){
   if(BLNOTE[S.bl])h+='<p class="notice"><b>Bekannte Änderungen:</b> '+esc(BLNOTE[S.bl])+"</p>";
   h+=search("regeln","Fischart suchen")+'<div id="res">'+ruleTable()+"</div>";
   var keys=Object.keys(reg.notes);if(keys.length){h+='<div class="card"><span class="label">Fußnoten</span>';keys.forEach(function(k){h+='<p class="small">('+k+") "+esc(reg.notes[k])+"</p>"});h+="</div>"}
+  var ks=Object.keys(IMG);if(ks.length){h+='<details class="card"><summary><b>Bildnachweise ('+ks.length+' Fotos)</b></summary><p class="small muted">Fotos von Wikimedia Commons unter der jeweils genannten freien Lizenz, verkleinert. KI-Illustrationen sind als solche gekennzeichnet.</p>';
+    ks.forEach(function(k){var m=IMG[k],o=k.charAt(0)==="f"?F[k.slice(2)]:B[k.slice(2)];h+='<p class="small">'+esc(o?o.n:k)+": "+(m.ki?"KI-Illustration (ChatGPT)":esc(m.a||"unbekannt"))+(m.l?", "+esc(m.l):"")+(m.p?' · <a href="'+esc(m.p)+'" target="_blank" rel="noopener">Quelle</a>':"")+"</p>"});h+="</details>"}
   return h;
 }
 function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead><tr><th>Fischart</th><th>Schonzeit</th><th>Maß</th><th>Heute</th></tr></thead><tbody>',n=0;

@@ -94,3 +94,10 @@ nav.tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1
 @media (prefers-reduced-motion:no-preference){.tile,.item,.chip,.btn{transition:transform .08s}.tile:active,.item:active,.chip:active,.btn:active{transform:scale(.98)}}
 .rule{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .pill{white-space:normal}
+.thumb{width:56px;height:56px;flex:none;border-radius:10px;object-fit:cover;background:var(--sunk)}
+.photo{margin:0;display:flex;flex-direction:column;gap:4px}
+.photo img{width:100%;max-width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r);background:var(--sunk);display:block}
+.photo figcaption{font-size:.72rem;color:var(--muted);overflow-wrap:anywhere}
+.card .photo img{aspect-ratio:16/9}
+a{color:var(--water)}
+details summary{cursor:pointer;min-height:32px}
