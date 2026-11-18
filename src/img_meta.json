@@ -5,7 +5,13 @@
 "b_dropshot": {
 "ki": 1
 },
+"b_glidebait": {
+"ki": 1
+},
 "b_gummifisch": {
+"ki": 1
+},
+"b_jerkbait": {
 "ki": 1
 },
 "b_jerkbait_gummi": {
@@ -14,13 +20,34 @@
 "b_krautkoeder": {
 "ki": 1
 },
+"b_lipless": {
+"ki": 1
+},
 "b_pintail": {
+"ki": 1
+},
+"b_propbait": {
+"ki": 1
+},
+"b_suspender": {
 "ki": 1
 },
 "b_swimbait": {
 "ki": 1
 },
+"b_topwater_popper": {
+"ki": 1
+},
+"b_topwater_stick": {
+"ki": 1
+},
 "b_twister": {
+"ki": 1
+},
+"b_wobbler_flach": {
+"ki": 1
+},
+"b_wobbler_tief": {
 "ki": 1
 },
 "b_wurm_gummi": {

@@ -285,11 +285,52 @@ function knotItem(k){return '<button class="item" data-a="knot" data-v="'+k.id+'
 function rigItem(r){return '<button class="item" data-a="rig" data-v="'+r.id+'"><span class="grow"><b>'+esc(r.n)+'</b><span class="small muted">'+esc(r.fuer)+'</span></span><span class="chev" aria-hidden="true">›</span></button>'}
 function rigsForBait(id){return RIGS.filter(function(r){return r.b.indexOf(id)>=0})}
 function knotPics(k){var h="";if(IMG["k_"+k.id])h+=photo("k_"+k.id,k.n,true).replace('class="photo"','class="photo fit"');return h}
-function videoBtn(o,q){return '<a class="btn water" href="'+esc(o.yt||("https://www.youtube.com/results?search_query="+encodeURIComponent(q)))+'" target="_blank" rel="noopener">▶ Video-Anleitung ansehen</a><p class="small muted">Öffnet YouTube, braucht Internet.</p>'}
+// ---------- Erklärfilm je Rig: Aufbau + Unterwasser-Szene ----------
+var MOVE={jigkopf:"hop",cheburashka:"hop",angsthaken:"hop",tube:"hop",shaky:"hop",jika:"hop",punch:"hop",
+ texas:"drag",carolina:"drag",free:"drag",tokyo:"drag",splitshot:"drag",ned:"drag",buttloeffel:"drag",tiroler:"drag",
+ dropshot:"hover",neko:"hover",wacky:"sink",damiki:"vert",
+ spinn:"swim",chatter:"swim",alabama:"swim",shallow:"swim",sbirolino:"swim",tremarella:"swim",trolling:"swim",fliege:"swim",springer:"swim",duo:"swim",weightless:"swim",freeline:"swim",
+ laufpose:"float",feststellpose:"float",hechtpose:"float",floatfly:"float",teichschlepp:"float",boje:"float",abspann:"float",
+ hering:"vert",pilk:"vert",klopf:"vert",assist:"vert"};
+var WEIGHTS=["bullet","lauf","birne","korb","jig","sbiro","schrot"],ENDS=["gummi","koeder","fisch","boilie","kunst","fliege","auftrieb","jig"];
+function pick(r,list){for(var i=r.teile.length-1;i>=0;i--)if(list.indexOf(r.teile[i][0])>=0)return r.teile[i];return null}
+function animSteps(r){var st=[{k:"intro",c:r.info}];r.teile.forEach(function(t,i){st.push({k:"part",p:i,c:t[1]+(t[2]?": "+t[2]:"")})});
+  var f=r.fuehrung.match(/[^.!?]+[.!?]+/g)||[r.fuehrung],a=[],cur="";f.forEach(function(x){if((cur+x).length>110&&cur){a.push(cur.trim());cur=x}else cur+=x});if(cur.trim())a.push(cur.trim());
+  a.slice(0,3).forEach(function(x){st.push({k:"water",c:x})});st.push({k:"bite",c:"Biss! "+(r.tipp||"Jetzt Kontakt halten und den Fisch sicher landen.")});return st}
+function icon(t,x,y,s,flip){return '<g transform="translate('+x+" "+y+") scale("+(flip?-s:s)+" "+s+') translate(-24 -24)">'+(PART[t]||"")+"</g>"}
+function waterSvg(r){var mv=MOVE[r.id]||"bottom",w=pick(r,WEIGHTS),e=pick(r,ENDS)||["koeder"],wt=w&&w[0]!==e[0]?w[0]:null,g="";
+  var bait=icon(e[0]==="jig"?"gummi":e[0],0,0,1.1,true);
+  if(mv==="float"){g='<g class="mv float"><path class="ln" d="M0 -150L420 -420"/><path class="ln d" d="M0 -150V0"/>'+icon("pose",0,-152,1.2)+(wt?icon("schrot",0,-60,.7):"")+bait+"</g>"}
+  else if(mv==="bottom"){g='<g class="mv bottom"><path class="ln" d="M70 0L470 -420"/><path class="ln d" d="M0 -4H70"/>'+icon(wt||"lauf",70,-6,.9)+bait+"</g>"}
+  else if(mv==="hover"){g='<g class="mv"><path class="ln" d="M0 -300V52"/><path class="ln" d="M0 -300L300 -520"/>'+icon(wt||"birne",-6,44,.8)+'<g class="jit">'+bait+"</g></g>"}
+  else if(mv==="vert"){g='<g class="mv vert"><path class="ln" d="M0 -520V0"/>'+bait+"</g>"}
+  else{g='<g class="mv '+mv+'"><path class="ln" d="M14 -8L440 -430"/>'+(wt&&wt!=="jig"?icon(wt,26,-20,.7):"")+bait+(e[0]==="jig"||wt==="jig"?'<circle class="fm" cx="18" cy="-2" r="7"/>':"")+"</g>"}
+  var by={float:250,bottom:372,hover:320,vert:300,swim:210,sink:230}[mv]||368,bx={float:170,bottom:150,hover:190,vert:180}[mv]||200;
+  var h='<svg class="scene part" viewBox="0 0 360 450" role="img" aria-label="Unterwasser-Szene: '+esc(r.n)+'"><defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="w0"/><stop offset="1" class="w1"/></linearGradient></defs><rect width="360" height="450" fill="url(#wg)"/>';
+  h+='<path class="ray" d="M40 0l60 0-90 450h-60zM170 0h40l-70 450h-50zM290 0h50l-60 450h-60z"/><path class="surf" d="M0 26c30-8 60 8 90 0s60-8 90 0 60 8 90 0 60-8 90 0V0H0z"/>';
+  h+='<path class="sand" d="M0 396c60-10 120 6 180-2s120-8 180 2v54H0z"/><g class="weed"><path d="M30 400c-8-40 8-60 0-100M44 400c6-30-6-50 2-80M18 400c4-24-6-40 0-60"/><path d="M318 400c-6-30 8-50 0-84M334 400c6-24-4-40 2-60"/></g>';
+  var MT={hop:"anheben · absinken",drag:"schleifen · Pause",hover:"auf der Stelle zittern",swim:"gleichmäßig einholen",sink:"absinken lassen",float:"Pose beobachten",bottom:"liegen lassen",vert:"heben · senken"}[mv];
+  h+='<g class="mtag"><rect x="12" y="40" width="'+(MT.length*7.4+24)+'" height="28" rx="14"/><text x="24" y="59">'+MT+"</text></g>";
+  h+='<g class="pred" style="--px:'+(bx-150)+'px"><g transform="translate(0 '+(by-22)+')"><path class="pb" d="M0 20L16 4v10c26-10 66-10 92-2l14 8-14 8c-26 8-66 8-92-2v10z"/><path class="pf" d="M40 8l12-9 8 8zM46 32l8 9 8-9z"/><path class="pl" d="M16 22c26 8 66 8 92 2"/><circle class="pe" cx="104" cy="16" r="3"/><circle cx="104.5" cy="16" r="1.3"/><path class="pm" d="M110 22h10"/></g></g>';
+  return h+'<g transform="translate('+bx+" "+by+')">'+g+"</g></svg>"}
+function buildSvg(r){var n=r.teile.length,sp=Math.min(46,400/n),y0=(450-sp*n)/2+sp/2,h='<svg class="build part" viewBox="0 0 360 450" role="img" aria-label="Aufbau: '+esc(r.n)+'"><path class="ln guide" d="M70 0v450"/>';
+  r.teile.forEach(function(t,i){var y=y0+i*sp;h+='<g class="bp" data-p="'+i+'"><g transform="translate(70 '+y+") scale("+(sp/48)+') translate(-24 -24)">'+(PART[t[0]]||LN)+'</g><g transform="translate(104 '+y+')"><rect class="tag" x="0" y="-13" width="'+Math.min(240,t[1].length*7.2+22)+'" height="26" rx="13"/><text x="11" y="4.5">'+esc(t[1].length>31?t[1].slice(0,30)+"…":t[1])+"</text></g></g>"});
+  return h+"</svg>"}
+var AN={r:null,i:0,st:[],t:null};
+function animBox(r){AN.r=r;AN.i=0;AN.st=animSteps(r);return '<div class="anim" id="anim" data-k="intro"><div class="stage">'+buildSvg(r)+waterSvg(r)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(r.info)+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div></div>'}
+function animShow(){var el=document.getElementById("anim");if(!el)return animStop();var s=AN.st[AN.i];el.setAttribute("data-k",s.k==="bite"?"water":s.k==="part"?"intro":s.k);el.classList.toggle("bite",s.k==="bite");el.classList.toggle("started",AN.i>0||!!AN.t);
+  var shown=s.k==="intro"?-1:s.k==="part"?s.p:99;[].forEach.call(el.querySelectorAll(".bp"),function(g){var p=+g.getAttribute("data-p");g.classList.toggle("on",p<=shown);g.classList.toggle("cur",p===shown)});
+  document.getElementById("acap").textContent=s.c;var mt=el.querySelector(".mtag text");if(mt){if(!mt.getAttribute("data-t"))mt.setAttribute("data-t",mt.textContent);mt.textContent=s.k==="bite"?"Biss!":mt.getAttribute("data-t")}document.getElementById("abar").style.width=(100*(AN.i+1)/AN.st.length)+"%";
+  document.getElementById("aplay").textContent=AN.t?"❚❚ Pause":AN.i>=AN.st.length-1?"↺ Nochmal":"▶ Weiter abspielen"}
+function animStop(){if(AN.t){clearInterval(AN.t);AN.t=null}}
+function animPlay(){if(AN.t){animStop();return animShow()}if(AN.i>=AN.st.length-1)AN.i=0;else if(AN.i===0)AN.i=1;AN.t=setInterval(function(){if(!document.getElementById("anim"))return animStop();if(AN.i>=AN.st.length-1){animStop();return animShow()}AN.i++;animShow()},3400);animShow()}
+function animGo(d){animStop();AN.i=Math.max(0,Math.min(AN.st.length-1,AN.i+d));animShow()}
+
+function videoBtn(o,q){return '<a class="btn" href="'+esc(o.yt||("https://www.youtube.com/results?search_query="+encodeURIComponent(q)))+'" target="_blank" rel="noopener">Videos auf YouTube suchen</a><p class="small muted">Öffnet YouTube, braucht Internet.</p>'}
 function vRigs(){
   var v=S.view,h;
   if(v&&v.t==="rig"){var r=R[v.id];h=head(r.n,"closeview")+'<div class="row"><span class="pill k">'+esc(r.kat)+'</span><span class="muted small">'+esc(r.fuer)+"</span></div>"+photo("r_"+r.id,r.n,true).replace('class="photo"','class="photo fit"');
-    h+='<div class="card"><p>'+esc(r.info)+"</p></div><h2>Aufbau</h2>"+'<div class="card">'+chain(r)+"</div><h2>So bindest du es</h2>"+'<div class="card">'+stepList(r.bau)+"</div>";
+    h+='<h2>Erklärfilm</h2>'+animBox(r)+"<h2>Aufbau</h2>"+'<div class="card">'+chain(r)+"</div><h2>So bindest du es</h2>"+'<div class="card">'+stepList(r.bau)+"</div>";
     h+='<div class="card"><span class="label">Führung</span><p>'+esc(r.fuehrung)+"</p>"+(r.tipp?'<span class="label">Tipp</span><p>'+esc(r.tipp)+"</p>":"")+"</div>";
     h+=videoBtn(r,r.n+" binden Anleitung");
     if(r.k.length){h+='<h2>Knoten dafür</h2><div class="list">';r.k.forEach(function(id){h+=knotItem(KN[id])});h+="</div>"}
@@ -312,7 +353,7 @@ function rigList(){var h="";RIGS.filter(function(r){return(S.rk==="alle"||r.kat=
 
 
 var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["gewaesser","Gewässer"],["regeln","Regeln"]];
-function render(keepScroll){
+function render(keepScroll){animStop();
   var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,gewaesser:vGew,regeln:vRegeln}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(S.tab===t[0]?"on":"")+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
@@ -341,6 +382,9 @@ document.addEventListener("click",function(ev){
     case"bait":S.tab="koeder";S.view={t:"bait",id:v};render();break;
     case"rig":S.tab="rigs";S.view={t:"rig",id:v};try{location.hash="rigs"}catch(e){}render();break;
     case"knot":S.tab="rigs";S.view={t:"knot",id:v};render();break;
+    case"aplay":animPlay();break;
+    case"aprev":animGo(-1);break;
+    case"anext":animGo(1);break;
     case"rm":S.rm=v;render();break;
     case"rk":S.rk=v;render(true);break;
     case"closeview":S.view=null;render();break;
