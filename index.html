@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Köder-Guide</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Köder-Guide">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#edf2f0" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#0b1615" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png">
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}
+/* Layout: Ein-Hand-App. Oben Titel, Mitte scrollender Inhalt mit großen Tippflächen, unten feste Leiste mit 5 Bereichen. */
+:root{
+  --bg:#edf2f0; --surface:#ffffff; --sunk:#e2eae7; --ink:#10201d; --muted:#52676a; --line:#cbd8d4;
+  --water:#0f5c5a; --on-water:#ffffff; --pose:#d9481a; --on-pose:#ffffff;
+  --ok:#2c7a39; --warn:#9a6410; --stop:#b93227;
+  --ok-bg:#dcf0df; --warn-bg:#f6e8c8; --stop-bg:#f8dcd8;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0b1615; --surface:#14211f; --sunk:#0f1b19; --ink:#e6efec; --muted:#93a8a4; --line:#27403b;
+  --water:#5fc4bb; --on-water:#06201e; --pose:#ff7a45; --on-pose:#2a0e02;
+  --ok:#74cc82; --warn:#e3b455; --stop:#f48477;
+  --ok-bg:#16301b; --warn-bg:#352a10; --stop-bg:#3a1a16; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0b1615; --surface:#14211f; --sunk:#0f1b19; --ink:#e6efec; --muted:#93a8a4; --line:#27403b;
+  --water:#5fc4bb; --on-water:#06201e; --pose:#ff7a45; --on-pose:#2a0e02;
+  --ok:#74cc82; --warn:#e3b455; --stop:#f48477;
+  --ok-bg:#16301b; --warn-bg:#352a10; --stop-bg:#3a1a16; color-scheme:dark }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+#app{max-width:680px;margin:0 auto;padding-block:12px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.2}
+h1{font-size:1.6rem;font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.2rem;font-weight:750}
+h3{font-size:1rem;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+.lat{font-style:italic;color:var(--muted);font-size:.86rem}
+.head{display:flex;align-items:center;gap:10px;min-height:44px}
+.head h1,.head h2{flex:1;min-width:0}
+.float{width:14px;height:34px;flex:none;border-radius:7px;background:linear-gradient(var(--pose) 0 38%,var(--surface) 38% 50%,var(--ink) 50%);border:1px solid var(--line)}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--pose);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 16px;min-height:48px;font-weight:650;text-align:center}
+.btn.primary{background:var(--pose);color:var(--on-pose);border-color:var(--pose);font-size:1.1rem;padding:16px}
+.btn.water{background:var(--water);color:var(--on-water);border-color:var(--water)}
+.btn.ghost{background:transparent}
+.btn.back{padding:8px 12px;min-height:40px;flex:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>.grow{flex:1;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:560px){.grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tile{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px;min-height:76px;text-align:left;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.tile b{font-size:1.02rem;overflow-wrap:anywhere}
+.tile span{color:var(--muted);font-size:.84rem}
+.tile.on{border-color:var(--water);box-shadow:inset 0 0 0 2px var(--water)}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:12px 14px;text-align:left;display:flex;gap:10px;align-items:center;width:100%;min-height:56px}
+.item .grow{flex:1;min-width:0}
+.item b{display:block;overflow-wrap:anywhere}
+.chev{color:var(--muted);flex:none}
+.card{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:10px}
+.card.sunk{background:var(--sunk)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 14px;min-height:42px;font-size:.94rem}
+.chip.on{background:var(--water);color:var(--on-water);border-color:var(--water);font-weight:650}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:700;letter-spacing:.02em;white-space:nowrap}
+.pill.k{background:var(--sunk);color:var(--water);border:1px solid var(--line)}
+.pill.n{background:var(--warn-bg);color:var(--warn)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)} .pill.stop{background:var(--stop-bg);color:var(--stop)}
+.dots{display:inline-flex;gap:3px;flex:none}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.f{background:var(--pose)}
+.kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;font-size:.94rem}
+.kv dt{color:var(--muted)} .kv dd{margin:0;overflow-wrap:anywhere}
+.label{font-size:.76rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.steps{display:flex;gap:6px}
+.steps i{height:5px;flex:1;border-radius:3px;background:var(--line)}
+.steps i.f{background:var(--pose)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;min-height:48px;width:100%}
+.months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px}
+.months i{height:22px;border-radius:4px;background:var(--line);font-style:normal;font-size:.62rem;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.months i.a1{background:color-mix(in srgb,var(--water) 30%,var(--line))}
+.months i.a2{background:color-mix(in srgb,var(--water) 65%,var(--line));color:var(--on-water)}
+.months i.a3{background:var(--water);color:var(--on-water)}
+.months i.now{outline:2px solid var(--pose);outline-offset:1px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.notice{border-left:4px solid var(--warn);background:var(--warn-bg);border-radius:8px;padding:10px 12px;font-size:.88rem}
+.notice.stop{border-color:var(--stop);background:var(--stop-bg)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}
+nav.tabs div{display:flex;width:100%;max-width:680px}
+nav.tabs button{flex:1;min-width:0;border:0;background:none;padding:8px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.7rem;color:var(--muted);font-weight:600}
+nav.tabs button.on{color:var(--pose)}
+nav.tabs svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (prefers-reduced-motion:no-preference){.tile,.item,.chip,.btn{transition:transform .08s}.tile:active,.item:active,.chip:active,.btn:active{transform:scale(.98)}}
+.rule{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.pill{white-space:normal}
+</style></head><body>
+<div id="app"></div>
+<nav class="tabs" id="tabs" aria-label="Bereiche"></nav>
+<script>
+window.REGS={"baden-wuerttemberg":{"name":"Baden-Württemberg","stand":"2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"15.09.","bis":"01.03.","mass":"50","fn":"6"},{"art":"Aland (Leuciscus idus)","von":"01.04.","bis":"31.05.","mass":"25","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.02.","bis":"30.04.","mass":"30","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.02.","bis":"30.04.","mass":"30","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"28.02.","mass":"20","fn":"2"},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"28.02.","mass":"35","fn":"3"},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"28.02.","mass":"25","fn":"4"},{"art":"Bachsaibling (Salvelinus fontinalis)","von":"01.10.","bis":"28.02.","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"01.05.","bis":"15.06.","mass":"40","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Felchen (Coregonus spec.)","von":"15.10.","bis":"10.01.","mass":"30","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Frauennerfling (rutilus pigus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"15.05.","mass":"50","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"30.04.","mass":"50","fn":"5"},{"art":"Huchen (Hucho hucho)","von":"01.02.","bis":"31.05.","mass":"70","fn":"1"},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"15.03.","bis":"31.05.","mass":"35","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe (Lota lota)","von":"01.11.","bis":"28.02.","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"01.03.","bis":"31.05.","mass":"40","fn":"1"},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"01.10.","bis":"28.02.","mass":"-","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"15.05.","bis":"30.06.","mass":"25","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schrätzer (gymnocephalus schraetzer)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"01.10.","bis":"28.02.","mass":"50","fn":null},{"art":"Seesaibling (Salvelinus alpinus)","von":"01.10.","bis":"28.02.","mass":"25","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Streber (Zingel streber)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Strömer (Leuciscus souffia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.04.","bis":"15.05.","mass":"45","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.02.","bis":"30.04.","mass":"50","fn":"5"},{"art":"Zingel (Zingel zingel)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Neunaugen (alle)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"gilt nur in der Donau und ihrem Gewässersystem","2":"in Fließgewässern oberhalb 800 m ü. N. N.","3":"im Hochrhein","4":"in sonstigen Gewässern","5":"im Main","6":"gilt nur im Rhein und seinem Gewässersystem (letzte Änderung: 15.09.2021) Krebse und Muscheln Außer den o.g. Fischen sind auch viele Krebse und Muscheln in Baden-Württemberg ganzjährig geschützt. Landesfischereiverordnung Baden-Württemberg Die oben genannten Schonzeiten und Mindestmaße haben wir nach bestem Wissen und Gewissen zusammengestellt. Da sich hier Änderungen ergeben können, empfehlen wir Euch zusätzlich einen Blick in die Landesfischereiverordnung von Baden-Württemberg: Landesfischereiverordnung Baden-Württemberg Bildrechte Viele Bilder unseres Fischlexikons sind durch Creative Commons (abgekürzt CC) oder andere Urheberrechte geschützt. Creative Commons ist nicht der Name einer einzigen Lizenz. Die verschiedenen Lizenzen von Creative Commons weisen vielmehr große Unterschiede auf. Weitere Informationen zu Creative Commons Lizenzen findet Ihr [ hier ]. Informationen zur GNU-Lizenz für freie Dokumentation (kurz: GFDL) findet ihr [ hier ]. Die Urheber und Lizenzrechte für die Bilder auf dieser Seite werden angezeigt, wenn Ihr auf das jeweilige Bild oder auf \"Bildrechte anzeigen\" klickt. Alle Bilder wurden von uns digital bearbeitet und in der Größe beschnitten. Haftungsausschluss, Youtube-Videos Alle Artikel unseres Fischlexikons dienen ausschließlich der allgemeinen Information und erheben keinen Anspruch auf Richtigkeit und Vollständigkeit. Für die Vollständigkeit und Richtigkeit wird keine Haftung übernommen. Wenn diese Seite Videos enthält und Ihr ein Video anklickt (öffnet), werden personenbezogene Daten (IP-Adresse) an den Betreiber des Videoportals (YouTube) gesendet. Daher ist es möglich, dass der Videoanbieter Eure Zugriffe speichert und Euer Verhalten analysieren kann. Dies geschieht jedoch erst, wenn Ihr ein Video auf dieser Seite öffnet. Alle Bilder wurden von uns digital bearbeitet und beschnitten. Weitere Infos unter \" Bildrechte \". -->"}},"bayern":{"name":"Bayern","stand":"15.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"01.11.","bis":"28.02.","mass":"50","fn":"1"},{"art":"Äsche (Thymallus thymallus)","von":"01.01.","bis":"30.04.","mass":"35","fn":null},{"art":"Ammersee-Kilch (Coregonus bavaricus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Atlantischer Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"28.02.","mass":"26","fn":null},{"art":"Bachsaibling (Salvelinus fontinalis)","von":"01.10.","bis":"28.02.","mass":"20","fn":null},{"art":"Barbe (Barbus barbus)","von":"01.05.","bis":"15.06.","mass":"40","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Donaukaulbarsch (Gymnocephalus baloni)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Donaustromgründling (Romanogobio vladykovi)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Frauennerfling (rutilus pigus)","von":"01.03.","bis":"30.06.","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"15.04.","mass":"50","fn":null},{"art":"Huchen (Hucho hucho)","von":"15.02.","bis":"31.05.","mass":"90","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Kesslers Gründling (Romanogobio kesslerii)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"01.03.","bis":"30.04.","mass":"30","fn":null},{"art":"Nerfling, Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Neunstachliger Stichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Perlfisch (Rutilus meidingeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"15.12.","bis":"15.04.","mass":"26","fn":null},{"art":"Renken/Felchen","von":"15.10.","bis":"31.12.","mass":"30","fn":null},{"art":"Rutte, Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Schied, Rapfen (Leuciscus aspius)","von":"01.04.","bis":"31.05.","mass":"40","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"26","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schrätzer (gymnocephalus schraetzer)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"01.10.","bis":"28.02.","mass":"60","fn":null},{"art":"Seesaiblinge (Salvelinus spp.)","von":"01.10.","bis":"31.12.","mass":"30","fn":null},{"art":"Sichling, Ziege (Pelecus cultratus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steingreßling (Romanogobio uranoscopus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Sterlet (Acipenser ruthenus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Streber (Zingel streber)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Strömer (Leuciscus souffia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.03.","bis":"30.04.","mass":"50","fn":null},{"art":"Zingel (Zingel zingel)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zope (Abramis ballerus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Donauneunaugen (Eudontomyzon spp.)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"§ 12 Abs. 2: Schonzeit nur im Aaleinzugsgebiet"}},"berlin":{"name":"Berlin","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.12.","bis":"31.05.","mass":"30","fn":null},{"art":"Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Atlantischer Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"30.04.","mass":"30","fn":null},{"art":"Bachsaibling (Salvelinus fontinalis)","von":"01.10.","bis":"30.04.","mass":"25","fn":null},{"art":"Barbe (Barbus barbus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Döbel (Squalius cephalus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flussstint (Osmerus eperlanus)","von":"01.02.","bis":"30.04.","mass":"-","fn":null},{"art":"Große Maräne (Coregonus nasus und C. lavaretus)","von":"01.10.","bis":"31.12.","mass":"30","fn":"1"},{"art":"Große Maräne (Coregonus nasus und C. lavaretus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":"2"},{"art":"Gründling (Gobio gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Hecht (Esox lucius)","von":"01.01.","bis":"30.04.","mass":"45","fn":"3"},{"art":"Karausche (Carassius carassius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Kleine Maräne (Coregonus albula)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ostgroppe (Cottus poecilopus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"01.04.","bis":"30.06.","mass":"40","fn":null},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"01.10.","bis":"30.04.","mass":"25","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"01.10.","bis":"31.05.","mass":"60","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Weißflossen-Gründling (Romanogobio albipinnatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Wels (Silurus glanis)","von":"keine","bis":"keine","mass":"75","fn":null},{"art":"Westgroppe, Groppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.01.","bis":"31.05.","mass":"45","fn":"3"},{"art":"Ziege (Pelecus cultratus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zope (Abramis ballerus)","von":"01.03.","bis":"31.05.","mass":"20","fn":null},{"art":"Zwergstichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"als Satzfisch eingebracht","2":"in Fließgewässern","3":"soweit mit der Handangel nachgestellt"}},"brandenburg":{"name":"Brandenburg","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.12.","bis":"31.05.","mass":"30","fn":null},{"art":"Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"16.10.","bis":"15.04.","mass":"30","fn":null},{"art":"Barbe (Barbus barbus)","von":"01.05.","bis":"31.07.","mass":"40","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Goldsteinbeißer (Sabanejewia balcanica)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Große Maräne (Coregonus nasus und C. lavaretus)","von":"01.10.","bis":"31.12.","mass":"30","fn":"1"},{"art":"Große Maräne (Coregonus nasus und C. lavaretus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":"4"},{"art":"Gründling (Gobio gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"31.03.","mass":"45","fn":"2"},{"art":"Hecht (Esox lucius)","von":"-","bis":"-","mass":"45","fn":"5"},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Kleine Maräne (Coregonus albula)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Kleiner Stichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Lachs (Salmo salar)","von":"16.10.","bis":"15.04.","mass":"60","fn":"3"},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"16.10.","bis":"15.04.","mass":"60","fn":"3"},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"01.04.","bis":"30.06.","mass":"40","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle, Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"16.10.","bis":"15.04.","mass":"60","fn":"3"},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stint (Osmerus eperlanus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Weißflossen-Gründling (Romanogobio albipinnatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.04.","bis":"31.05.","mass":"45","fn":"2"},{"art":"Zander (Sander lucioperca)","von":"-","bis":"-","mass":"45","fn":"5"},{"art":"Ziege (Pelecus cultratus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zope (Abramis ballerus)","von":"01.03.","bis":"31.05.","mass":"20","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"in stehenden Gewässern nach Besatz","2":"soweit mit der Handangel nachgestellt","3":"wenn als Satzfisch eingebracht, ansonsten ist diese Art ganzjährig geschützt","4":"in Fließgewässern","5":"soweit mit Fanggeräten der Erwerbsfischerei nachgestellt: 4 aufeinanderfolgende Wochen nach Maßgabe der zeitlichen Festlegung im Hegeplan)"}},"bremen":{"name":"Bremen","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.03.","bis":"15.05.","mass":"35","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"15.10.","bis":"15.03.","mass":"30","fn":"1"},{"art":"Barsch (Perca fluviatilis)","von":"01.02.","bis":"15.05.","mass":"15","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Döbel (Squalius cephalus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flunder (Platichthys flesus)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"15.05.","mass":"60","fn":null},{"art":"Lachs (Salmo salar)","von":"15.10.","bis":"15.03.","mass":"60","fn":"1"},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"15.10.","bis":"15.03.","mass":"50","fn":"1"},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"40","fn":"1"},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schmerle, Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.02.","bis":"15.05.","mass":"40","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäulser: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"diese Fische dürfen nur gefangen werden, wenn sie als Besatz nachweislich in das Gewässer eingebracht oder wenn für diese Arten bestandsunterstützende Maßnahmen durchgeführt worden sind. Ansonsten sind diese Arten ganzjährig geschützt. Während der Raubfischschonzeiten vom 1. Februar bis 15. Mai ist jegliche Spinnfischerei, einschließlich Blinkern und Twistern sowie das Fischen mit Köderfisch oder Köderfischteilen verboten. In offenen Binnengewässern dürfen nur Fische oder Fischteile als Köder verwendet werden, die aus dem Gewässersystem des Fanggewässers stammen oder die in Teichwirtschaften oder vergleichbaren Anlagen aus heimischen Arten erzeugt wurden."}},"hamburg":{"name":"Hamburg","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.01.","bis":"15.05.","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"15.10.","bis":"15.02.","mass":"20","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flussbarsch (Perca fluviatilis)","von":"-","bis":"-","mass":"10","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"31.05.","mass":"45","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"15.10.","bis":"15.02.","mass":"40","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Neunstachliger Stichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle, Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schnäpel (Coregonus ssp.)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"","fn":null},{"art":"Stromgründling (Romanogobio belingi)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.02.","bis":"31.05.","mass":"45","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"hessen":{"name":"Hessen","stand":"15.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"01.10.","bis":"01.03.","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.03.","bis":"15.05.","mass":"30","fn":null},{"art":"Atlantischer Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Atlantischer Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"31.03.","mass":"25","fn":null},{"art":"Barbe (Barbus barbus)","von":"-","bis":"-","mass":"40","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flunder (Platichthys flesus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"15.04.","mass":"50","fn":null},{"art":"Karausche (Carassius carassius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Karpfen, Wildform (Cyprinus carpio)","von":"15.03.","bis":"31.05.","mass":"45","fn":null},{"art":"Koppe (Groppe, Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.10.","bis":"31.03.","mass":"25","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"01.05.","bis":"30.06.","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"15.03.","bis":"30.04.","mass":"25","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rheinfelchen (Coregonus spec.)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rotfeder (Scardinius erythrophthalmus)","von":"15.03.","bis":"31.05.","mass":"20","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"01.05.","bis":"30.06.","mass":"25","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"15.10.","bis":"31.03.","mass":"25","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Strömer (Leuciscus souffia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"-","bis":"-","mass":"50","fn":null},{"art":"Zwergstichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"mecklenburg-vorpommern-binnen":{"name":"Mecklenburg-Vorpommern (Binnen)","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"01.12.","bis":"28.02.","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"31.03.","mass":"30","fn":null},{"art":"Bachschmerle (Barbatula barbatula)","von":"01.03.","bis":"31.05.","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Barsch (Perca fluviatilis)","von":"keine","bis":"keine","mass":"17","fn":null},{"art":"Binnenstint (Osmerus eperlanus spirinchus)","von":"01.03.","bis":"30.04.","mass":"-","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"01.04.","bis":"30.06.","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"01.04.","bis":"30.06.","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"01.03.","bis":"31.05.","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"40","fn":null},{"art":"Lachs (Salmo salar)","von":"01.09.","bis":"31.03.","mass":"60","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maräne, Lavaret (Coregonus lavaretus)","von":"01.10.","bis":"31.12.","mass":"30","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.09.","bis":"31.03.","mass":"45","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ostgroppe, Sibirische Groppe (Cottus poecilopus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"01.01.","bis":"15.02.","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"01.04.","bis":"31.07.","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"01.04.","bis":"31.07.","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Atlantischer oxiyrinchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Wels (Silurus glanis)","von":"01.05.","bis":"30.06.","mass":"70","fn":null},{"art":"Zährte (Vimba vimba)","von":"01.05.","bis":"31.07.","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Ziege (Pelecus cultratus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zope (Abramis ballerus)","von":"01.04.","bis":"31.05.","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"mecklenburg-vorpommern-kueste":{"name":"Mecklenburg-Vorpommern (Küste)","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"01.12.","bis":"28.02.","mass":"50","fn":"1"},{"art":"Barsch (Perca fluviatilis)","von":"keine","bis":"keine","mass":"20","fn":null},{"art":"Dorsch (Gadus morhua)","von":"01.02.","bis":"31.03.","mass":"35","fn":"3"},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flunder (Platichthys flesus)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Glattbutt (Scophthalmus rhombus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"01.03.","bis":"30.04.","mass":"50","fn":null},{"art":"Kliesche (Limanda limanda)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Lachs (Salmo salar)","von":"15.09.","bis":"14.12.","mass":"60","fn":"3"},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"15.09.","bis":"14.12.","mass":"45","fn":null},{"art":"Ostseeschnäpel (Coregonus maraena)","von":"01.11.","bis":"30.11.","mass":"40","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Scholle (Pleuronectes platessa)","von":"keine","bis":"keine","mass":"25","fn":"3"},{"art":"Steinbutt (Scophthalmus maximus)","von":"01.06.","bis":"31.07.","mass":"30","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser oxyrinchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"23.04.","bis":"22.05.","mass":"45","fn":"2"},{"art":"Ziege (Pelecus cultratus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"gilt für den Fischfang mit der Handangel (zusätzlich gilt ein Fangverbot außerhalb der Drei-Seemeilen-Zone vom 01.10.-31.03.)","2":"in den Fischereibezirken Darßer Boddenkette, Peenestrom und Stettiner Haff: 40 cm Schonmaß","3":"für Berufsfischer gilt das Rückwurfverbot, womit auch untermaßige Fische der Arten Dorsch, Scholle und Lachs anzulanden sind und auf die Quote angerechnet werden"}},"niedersachsen-binnen":{"name":"Niedersachsen (Binnen)","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"35","fn":"2"},{"art":"Äsche (Thymallus thymallus)","von":"01.03.","bis":"15.05.","mass":"30","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"15.10.","bis":"15.02.","mass":"25","fn":null},{"art":"Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"15.04.","mass":"40","fn":null},{"art":"Lachs (Salmo salar)","von":"15.10.","bis":"15.03.","mass":"50","fn":"1"},{"art":"Meerforelle (Salmo trutta trutta)","von":"15.10.","bis":"15.02.","mass":"40","fn":"1"},{"art":"Nase (Chondrostoma nasus)","von":"keine","bis":"keine","mass":"25","fn":"1"},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"40","fn":"1"},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"01.01.","bis":"31.07.","mass":"100","fn":"1"},{"art":"Wels (Silurus glanis)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.03.","bis":"30.04.","mass":"35","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"Lachse, Meerforellen, Nasen, Rapfen und Störe dürfen in Gewässern, in die sie als Besatz eingebracht worden sind, gefangen werden. Die Gewässer sind dem Fischereikundlichen Dienst anzuzeigen. Ohne diese Voraussetzungen sind diese Fische ganzjährig geschützt.","2":"In den Landkreisen Leer, Aurich, Friesland, Wittmund, Ammerland, Wesermarsch, Cuxhaven und Stade sowie den kreisfreien Städten Emden und Wilhelmshaven dürfen Aale mit einer Länge ab 28 cm gefangen werden."}},"niedersachsen-kueste":{"name":"Niedersachsen (Küste)","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"45","fn":"1"},{"art":"Glattbutt (Scophthalmus rhombus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Lachs (Salmo salar)","von":"01.10.","bis":"15.03.","mass":"60","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meeräschen (Mugilidae)","von":"keine","bis":"keine","mass":"40","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.10.","bis":"15.02.","mass":"40","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbutt (Scophthalmus maximus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.03.","bis":"15.05.","mass":"40","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"Dies gilt nicht für Aale, die als Satzaale Verwendung finden sollen. Sie dürfen in den Küstengewässern nur mit Erlaubnis des Fischereiamtes gefangen werden und sind dem gleichen Gewässersystem zu Besatzzwecken wieder zuzuführen."}},"nordrhein-westfalen":{"name":"Nordrhein-Westfalen","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"01.10.","bis":"01.03.","mass":"50","fn":"1"},{"art":"Äsche (Thymallus thymallus)","von":"01.03.","bis":"30.04.","mass":"30","fn":"2"},{"art":"Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"20.10.","bis":"15.03.","mass":"25","fn":null},{"art":"Barbe (Barbus barbus)","von":"15.05.","bis":"15.06.","mass":"35","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"30.04.","mass":"45","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"01.03.","bis":"30.04.","mass":"30","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle, Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"20.10.","bis":"15.03.","mass":"50","fn":null},{"art":"Seesaibling (Salvelinus alpinus)","von":"20.10.","bis":"15.03.","mass":"30","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.04.","bis":"31.05.","mass":"40","fn":null},{"art":"Zwergstichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"im Rheinhauptstrom, ohne Nebengewässer","2":"Die Äsche darf dem Wasser in den Gewässerabschnitten nicht entnommen werden, die die oberste Fischereibehörde durch Verwaltungsvorschrift zum Schutz der heimischen Äschenbestände festlegt. Die Verwaltungsvorschrift ist im Ministerialblatt zu veröffentlichen."}},"rheinland-pfalz":{"name":"Rheinland-Pfalz","stand":"16.09.21","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"15.02.","bis":"30.04.","mass":"30","fn":null},{"art":"Aland (Leuciscus idus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"15.10.","bis":"15.03.","mass":"25","fn":"1"},{"art":"Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"01.05.","bis":"15.06.","mass":"35","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Blaufelchen, Bodenseefelchen (Coregonus wartmanni)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Flunder (Platichthys flesus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Güster(Blicca bjoerkna)","von":"-","bis":"-","mass":"15","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"-","bis":"-","mass":"15","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"31.05.","mass":"50","fn":null},{"art":"Karausche (Carassius carassius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Koppe, Groppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"15.03.","bis":"30.04.","mass":"30","fn":"2"},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rotauge, Plötze (Rutilus rutilus)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Rotfeder (Scardinius erythrophthalmus)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"-","bis":"-","mass":"60","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.03.","bis":"15.05.","mass":"45","fn":"3"},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"In Gewässern, in denen die Winterschonzeit nicht gilt (siehe unten).","2":"in allen Gewässern außer Rhein, Mosel und Lahn.","3":"in der Lahn vom 1. April bis 31. Mai, im Übrigen vom 15. März bis 15. Mai"}},"saarland":{"name":"Saarland","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.03.","bis":"30.04.","mass":"30","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"31.03.","mass":"25","fn":null},{"art":"Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"15.03.","bis":"15.06.","mass":"40","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Dreistachliger Stichling (Gasterosteus aculeatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"31.05.","mass":"50","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"15.03.","bis":"15.06.","mass":"35","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.02.","bis":"31.05.","mass":"45","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"sachsen":{"name":"Sachsen","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.01.","bis":"15.06.","mass":"35","fn":null},{"art":"Aland (Leuciscus idus)","von":"keine","bis":"keine","mass":"20","fn":null},{"art":"Atlantischer Lachs (Salmo salar)","von":"01.10.","bis":"30.04.","mass":"60","fn":null},{"art":"Atlantischer Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"30.04.","mass":"28","fn":null},{"art":"Bachsaibling (Salvelinus fontinalis)","von":"01.10.","bis":"30.04.","mass":"28","fn":null},{"art":"Barbe (Barbus barbus)","von":"15.04.","bis":"30.06.","mass":"50","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Große Maräne, Lavaret (Coregonus lavaretus)","von":"01.10.","bis":"31.12.","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"01.02.","bis":"30.04.","mass":"50","fn":null},{"art":"Karausche (Carassius carassius)","von":"01.02.","bis":"30.06.","mass":"15","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"40","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.10.","bis":"30.04.","mass":"60","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":"1"},{"art":"Neunstachliger Stichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"30","fn":"2"},{"art":"Rapfen (Leuciscus aspius)","von":"01.01.","bis":"31.05.","mass":"40","fn":null},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"01.10.","bis":"30.04.","mass":"25","fn":null},{"art":"Rotfeder (Scardinius erythrophthalmus)","von":"keine","bis":"keine","mass":"20","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Seeforelle (Salmo trutta lacustris)","von":"01.10.","bis":"30.04.","mass":"60","fn":null},{"art":"Seesaibling (Salvelinus alpinus)","von":"01.10.","bis":"30.04.","mass":"28","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stromgründling (Romanogobio belingi)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.02.","bis":"31.05.","mass":"50","fn":null},{"art":"Zope (Abramis ballerus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Neunaugen (Petromyzontidae spec.)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"in der Elbe vom 1. Januar bis 15. Juni","2":"in der Elbe, der Vereinigten Mulde und der Weißen Elster vom 1. Januar bis 31. März"}},"sachsen-anhalt":{"name":"Sachsen-Anhalt","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.12.","bis":"15.05.","mass":"30","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"15.09.","bis":"31.03.","mass":"25","fn":null},{"art":"Barbe (Barbus barbus)","von":"01.04.","bis":"30.06.","mass":"45","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Große Maräne, Lavaret (Coregonus lavaretus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"30.04.","mass":"50","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Kleine Maräne (Coregonus albula)","von":"keine","bis":"keine","mass":"12","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrinchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"40","fn":null},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Weißflossen-Gründling (Romanogobio albipinnatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.02.","bis":"31.05.","mass":"50","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"schleswig-holstein-binnen":{"name":"Schleswig-Holstein (Binnen)","stand":"16.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.01.","bis":"30.04.","mass":"35","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"28.02.","mass":"30","fn":null},{"art":"Bachschmerle (Barbatula barbatula)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Barbe (Barbus barbus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Dorsch (Gadus morhua)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Elritze (Phoxinus phoxinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Finte (Alosa fallax)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Große Maräne, Lavaret (Coregonus lavaretus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Gründling (Gobio gobio)","von":"01.04.","bis":"30.06.","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"15.04.","mass":"45","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"01.10.","bis":"28.02","mass":"60","fn":null},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.10.","bis":"28.02.","mass":"40","fn":null},{"art":"Moderlieschen (Leucaspius delineatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ostgroppe (Cottus poecilopus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ostseeschnäpel (Coregonus maraena)","von":"01.11.","bis":"31.01.","mass":"40","fn":null},{"art":"Quappe (Lota lota)","von":"01.01.","bis":"28.02.","mass":"35","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Störe: Acipenser sturio + Acipenser oxyrinchus","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ukelei (Alburnus alburnus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.03.","bis":"15.05.","mass":"45","fn":null},{"art":"Zope (Abramis ballerus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{}},"schleswig-holstein-kueste":{"name":"Schleswig-Holstein (Küste)","stand":"17.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Aalmutter (Zoarces viviparus)","von":"15.09.","bis":"31.01.","mass":"23","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"31.12.","mass":"40","fn":"1"},{"art":"Dorsch (Gadus morhua) (NS)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Dorsch (Gadus morhua) (OS)","von":"keine","bis":"keine","mass":"38","fn":null},{"art":"Finte (Alosa fallax) (NS)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Flunder (Platichthys flesus) (2 (NS+OS))","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Glattbutt (Scophthalmus rhombus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Glattbutt (Scophthalmus rhombus) (OS)","von":"01.06.","bis":"31.07.","mass":"30","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"30.04.","mass":"45","fn":null},{"art":"Hering (Clupea harengus) (NS)","von":"keine","bis":"keine","mass":"20","fn":null},{"art":"Hering (Clupea harengus) (OS)","von":"keine","bis":"keine","mass":"11","fn":null},{"art":"Lachs (Salmo salar)","von":"01.10.","bis":"31.12.","mass":"60","fn":"1"},{"art":"Maifisch (Alosa alosa)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Makrele (Scomber scombrus) (NS)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Meeräsche (Chelon labrosus)","von":"keine","bis":"keine","mass":"40","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"01.10.","bis":"31.12.","mass":"40","fn":"1"},{"art":"Nordseeschnäpel (Coregonus oxyrhynchus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Ostseeschnäpel (Coregonus maraena)","von":"01.12.","bis":"28.02.","mass":"40","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":"3"},{"art":"Scharbe, Kliesche (Limanda limanda)","von":"keine","bis":"keine","mass":"23","fn":null},{"art":"Schellfisch (Melanogrammus aeglefinus) (NS)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Scholle (Pleuronectes platessa) (NS)","von":"keine","bis":"keine","mass":"27","fn":"2"},{"art":"Scholle (Pleuronectes platessa) (OS)","von":"keine","bis":"keine","mass":"25","fn":"2"},{"art":"Seezunge (Solea solea)","von":"keine","bis":"keine","mass":"24","fn":null},{"art":"Steinbutt (Scophthalmus maximus)","von":"keine","bis":"keine","mass":"30","fn":null},{"art":"Steinbutt (Scophthalmus maximus) (OS)","von":"01.06.","bis":"31.07.","mass":"30","fn":null},{"art":"Störe: Acipenser sturio + Acipenser oxyrinchus","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Wels (Silurus glanis)","von":"keine","bis":"keine","mass":"70","fn":null},{"art":"Wittling (Merlangius merlangus) (NS)","von":"keine","bis":"keine","mass":"27","fn":null},{"art":"Wittling (Merlangius merlangus) (OS)","von":"keine","bis":"keine","mass":"23","fn":null},{"art":"Wolfsbarsch (Dicentrarchus labrax)","von":"keine","bis":"keine","mass":"42","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"15.02.","bis":"15.05.","mass":"40","fn":"3"},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Meerneunauge (Petromyzon marinus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"vom 1. Oktober bis 31. Dezember für Fische im Laichkleid, silbrige Fische mit losen Schuppen sind ausgenommen","2":"Rogner (Weibchen) Schonzeit vom 01.02. - 30.04.","3":"in Elbe und Nebengewässern (OS) = Ostsee, (NS) = Nordsee"}},"thueringen":{"name":"Thüringen","stand":"17.09.2021","rows":[{"art":"Aal (Anguilla anguilla)","von":"keine","bis":"keine","mass":"45","fn":null},{"art":"Äsche (Thymallus thymallus)","von":"01.02.","bis":"31.05.","mass":"30","fn":null},{"art":"Aland (Leuciscus idus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bachforelle (Salmo trutta fario)","von":"01.10.","bis":"31.03.","mass":"25","fn":"1"},{"art":"Bachsaibling (Salvelinus fontinalis)","von":"01.10.","bis":"31.03.","mass":"25","fn":null},{"art":"Barbe (Barbus barbus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Bitterling (Rhodeus amarus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Döbel (Squalius cephalus)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Groppe, Koppe (Cottus gobio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Hasel (Leuciscus leuciscus)","von":"01.04.","bis":"31.05.","mass":"20","fn":null},{"art":"Hecht (Esox lucius)","von":"15.02.","bis":"30.04.","mass":"45","fn":null},{"art":"Karpfen (Cyprinus carpio)","von":"keine","bis":"keine","mass":"35","fn":null},{"art":"Lachs (Salmo salar)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Meerforelle (Salmo trutta trutta)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Nase (Chondrostoma nasus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Neunstachliger Stichling (Pungitius pungitius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Quappe, Rutte (Lota lota)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rapfen (Leuciscus aspius)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Regenbogenforelle (Oncorhynchus mykiss)","von":"01.02.","bis":"31.03.","mass":"25","fn":"1"},{"art":"Rotfeder (Scardinius erythrophthalmus)","von":"keine","bis":"keine","mass":"15","fn":null},{"art":"Schlammpeitzger (Misgurnus fossilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Schleie (Tinca tinca)","von":"keine","bis":"keine","mass":"25","fn":null},{"art":"Schneider (Alburnoides bipunctatus)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Steinbeißer (Cobitis taenia)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Stör (Acipenser sturio)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Wels (Silurus glanis)","von":"keine","bis":"keine","mass":"50","fn":null},{"art":"Zährte (Vimba vimba)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Zander (Sander lucioperca)","von":"01.04.","bis":"31.05.","mass":"45","fn":null},{"art":"Rundmäuler: Bachneunauge (Lampetra planeri)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null},{"art":"Rundmäuler: Flußneunauge (Lampetra fluviatilis)","von":"ganzjährig","bis":"ganzjährig","mass":"-","fn":null}],"notes":{"1":"bei gemeinsamem Vorkommen von Bach- und Regenbogenforelle in einer Fließgewässerregion gilt für die Regenbogenforelle die Schonzeit der Bachforelle (1. Oktober bis 31. März)."}}};
+// Köder-Katalog. t: K = Kunstköder, N = Naturköder
+// tempo: 1 langsam, 2 mittel, 3 schnell · tiefe: o oben, m Mittelwasser, g Grund · laut: Druckwelle/Rassel/Flash (trübes Wasser)
+window.BAITS = [
+// ---------- Kunstköder: Weichplastik ----------
+{id:"gummifisch",t:"K",kat:"Gummiköder",n:"Gummifisch (Shad)",groesse:"5–25 cm",tempo:2,tiefe:"g",laut:2,
+ info:"Allrounder für Raubfische. Schaufelschwanz erzeugt Druckwelle.",
+ fuehrung:"Faulenzen (2 Kurbelumdrehungen, absinken lassen) oder Jiggen mit Rutenspitze; Biss meist in der Absinkphase.",
+ montage:"Jigkopf (Gewicht so wählen, dass der Köder 2–4 s sinkt) oder Texas/Cheburashka; bei Hecht Stahl-/Titanvorfach."},
+{id:"twister",t:"K",kat:"Gummiköder",n:"Twister",groesse:"4–15 cm",tempo:2,tiefe:"m",laut:1,
+ info:"Sichelschwanz flattert schon bei langsamer Führung.",fuehrung:"Gleichmäßig einleiern oder leicht jiggen.",montage:"Jigkopf, Offset-Haken."},
+{id:"creature",t:"K",kat:"Gummiköder",n:"Krebs-/Creature-Bait",groesse:"5–12 cm",tempo:1,tiefe:"g",laut:1,
+ info:"Imitiert Krebse und Grundtiere. Stark bei Barsch, Schwarzbarsch, Döbel.",fuehrung:"Über Grund schleifen, kurze Hüpfer, Pausen.",montage:"Texas-Rig, Carolina-Rig, Free-Rig."},
+{id:"pintail",t:"K",kat:"Gummiköder",n:"No-Action-Shad / Pintail",groesse:"6–15 cm",tempo:2,tiefe:"m",laut:0,
+ info:"Ohne Eigenaktion, wirkt durch Führung. Top bei klarem Wasser und vorsichtigen Zandern.",fuehrung:"Zupfen, Twitchen, Dropshot.",montage:"Jigkopf, Dropshot, Neko-Rig."},
+{id:"wurm_gummi",t:"K",kat:"Gummiköder",n:"Gummiwurm (Finesse)",groesse:"7–20 cm",tempo:1,tiefe:"g",laut:0,
+ info:"Feinfühliger Köder für schwierige Tage.",fuehrung:"Sehr langsam, viel auf der Stelle zittern.",montage:"Wacky, Neko, Texas, Dropshot."},
+{id:"krautkoeder",t:"K",kat:"Gummiköder",n:"Weedless Frosch / Krautköder",groesse:"5–8 cm",tempo:2,tiefe:"o",laut:1,
+ info:"Über Seerosen und Kraut, ohne Hänger.",fuehrung:"Über die Oberfläche springen lassen, Pausen an Lücken.",montage:"Hohlkörper mit Doppelhaken, kräftige Geflochtene."},
+{id:"dropshot",t:"K",kat:"Montage",n:"Dropshot-Rig mit Gummi",groesse:"5–10 cm",tempo:1,tiefe:"g",laut:0,
+ info:"Köder schwebt über dem Grund, ideal für Barsch und Zander an Kanten.",fuehrung:"Blei bleibt am Grund, Köder mit Rutenspitze zittern lassen.",montage:"Dropshot-Haken 30–60 cm über dem Blei."},
+{id:"jerkbait_gummi",t:"K",kat:"Gummiköder",n:"Gummi-Jerkbait / Slug",groesse:"10–25 cm",tempo:2,tiefe:"m",laut:1,
+ info:"Seitliches Ausbrechen reizt Hecht und Rapfen.",fuehrung:"Kurze Schläge aus dem Handgelenk, Pausen.",montage:"Offset-Haken oder Jighaken, Stahlvorfach bei Hecht."},
+{id:"swimbait",t:"K",kat:"Gummiköder",n:"Swimbait (realistisch)",groesse:"10–30 cm",tempo:1,tiefe:"m",laut:1,
+ info:"Naturgetreue Fischimitation für große Räuber.",fuehrung:"Langsam und gleichmäßig einleiern.",montage:"Integriertes Blei und Drilling, Stahlvorfach."},
+// ---------- Hartköder ----------
+{id:"wobbler_flach",t:"K",kat:"Wobbler",n:"Wobbler flachlaufend (Crankbait/Minnow)",groesse:"5–15 cm",tempo:2,tiefe:"o",laut:2,
+ info:"Läuft 0,5–2 m tief. Klassiker für Hecht, Barsch, Forelle, Döbel.",fuehrung:"Gleichmäßig, mit Spinnstopps oder Twitches.",montage:"Snap am Vorfach, bei Hecht Stahl."},
+{id:"wobbler_tief",t:"K",kat:"Wobbler",n:"Wobbler tieflaufend (Deep Diver)",groesse:"6–15 cm",tempo:2,tiefe:"m",laut:2,
+ info:"Lange Tauchschaufel, 3–8 m. Für Kanten und Freiwasser.",fuehrung:"Schnell auf Tiefe kurbeln, dann gleichmäßig; Grundkontakt erwünscht.",montage:"Snap, Fluorocarbon oder Stahl."},
+{id:"jerkbait",t:"K",kat:"Wobbler",n:"Jerkbait (Hartplastik/Holz)",groesse:"10–20 cm",tempo:2,tiefe:"m",laut:1,
+ info:"Ohne Tauchschaufel, bricht seitlich aus. Großhecht-Köder.",fuehrung:"Rhythmische Schläge, Pausen; im Kalten lange Pausen.",montage:"Kräftige Rute, Stahl/Titan 50 cm."},
+{id:"suspender",t:"K",kat:"Wobbler",n:"Suspender-Wobbler",groesse:"7–12 cm",tempo:1,tiefe:"m",laut:1,
+ info:"Schwebt in der Pause auf der Stelle. Top im kalten Wasser.",fuehrung:"Twitch – Pause 3–10 s – Twitch.",montage:"Snap, Fluorocarbon."},
+{id:"lipless",t:"K",kat:"Wobbler",n:"Lipless Crank / Vibration",groesse:"5–10 cm",tempo:3,tiefe:"m",laut:3,
+ info:"Starke Vibration und Rasseln. Weitwurf, gut bei trübem Wasser.",fuehrung:"Durchkurbeln oder Lift & Drop.",montage:"Snap."},
+{id:"topwater_popper",t:"K",kat:"Oberfläche",n:"Popper",groesse:"5–15 cm",tempo:2,tiefe:"o",laut:3,
+ info:"Plopp-Geräusch an der Oberfläche. Warmes Wasser, Dämmerung.",fuehrung:"Kurze Rucke, Pausen.",montage:"Snap ohne Wirbel davor."},
+{id:"topwater_stick",t:"K",kat:"Oberfläche",n:"Stickbait / Walk-the-Dog",groesse:"7–20 cm",tempo:2,tiefe:"o",laut:2,
+ info:"Zick-Zack-Lauf an der Oberfläche. Rapfen, Barsch, Wolfsbarsch, GT.",fuehrung:"Rhythmisches Zupfen bei lockerer Schnur.",montage:"Snap, im Salzwasser verstärkte Drillinge."},
+{id:"propbait",t:"K",kat:"Oberfläche",n:"Propellerköder / Buzzbait",groesse:"5–15 cm",tempo:3,tiefe:"o",laut:3,
+ info:"Propeller wirbelt Wasser auf. Sommer, Kraut, Dämmerung.",fuehrung:"Gleichmäßig durchziehen.",montage:"Stahlvorfach bei Hecht."},
+{id:"glidebait",t:"K",kat:"Wobbler",n:"Glidebait",groesse:"15–25 cm",tempo:1,tiefe:"m",laut:1,
+ info:"Gleitet in weiten S-Kurven. Großhecht, Musky.",fuehrung:"Kurze Kurbel-Rucke, gleiten lassen.",montage:"Schwere Rute, Titanvorfach."},
+// ---------- Metall ----------
+{id:"spinner",t:"K",kat:"Metall",n:"Spinner",groesse:"Gr. 0–5",tempo:2,tiefe:"m",laut:2,
+ info:"Rotierendes Blatt mit Flash und Druck. Forelle, Barsch, Hecht, Döbel.",fuehrung:"Gleichmäßig, gerade so schnell, dass das Blatt dreht.",montage:"Wirbel gegen Schnurdrall."},
+{id:"spinnerbait",t:"K",kat:"Metall",n:"Spinnerbait / Chatterbait",groesse:"10–30 g",tempo:2,tiefe:"m",laut:3,
+ info:"Viel Druck und Flash, fast hängerfrei. Trübes Wasser, Kraut.",fuehrung:"Einleiern, an Hindernissen kurz absacken lassen.",montage:"Direkt einhängen, Hecht ggf. Stahl."},
+{id:"blinker",t:"K",kat:"Metall",n:"Blinker",groesse:"5–40 g",tempo:2,tiefe:"m",laut:2,
+ info:"Taumelnder Metallköder. Weite Würfe, Hecht, Forelle, Meerforelle.",fuehrung:"Gleichmäßig oder mit Spinnstopps.",montage:"Wirbel, bei Hecht Stahl."},
+{id:"kuestenblinker",t:"K",kat:"Metall",n:"Küstenblinker / Wattwurm-Blinker",groesse:"15–28 g",tempo:3,tiefe:"m",laut:1,
+ info:"Schlanker Wurfblinker für die Meerforelle an der Ostsee.",fuehrung:"Zügig, wechselnde Geschwindigkeit, Spinnstopps.",montage:"Fluorocarbon 0,30 mm, Einzelhaken."},
+{id:"pilker",t:"K",kat:"Metall",n:"Pilker",groesse:"40–500 g",tempo:2,tiefe:"g",laut:2,
+ info:"Schwerer Metallköder vom Boot. Dorsch, Köhler, Leng.",fuehrung:"Anheben, absacken lassen, Grundkontakt halten.",montage:"Mit Beifänger (Twister/Fliege) 1 m darüber."},
+{id:"jig_metall",t:"K",kat:"Metall",n:"Speed-/Slow-Jig",groesse:"40–400 g",tempo:3,tiefe:"m",laut:2,
+ info:"Vertikal im Meer. Thun, Amberjack, Grouper, Kingfish.",fuehrung:"Speed: schnelle Jerks; Slow: flattern lassen.",montage:"Assist-Hooks, Fluorocarbon-Leader 40–100 lb."},
+{id:"zocker",t:"K",kat:"Metall",n:"Zocker / Eisangel-Balance",groesse:"5–30 g",tempo:1,tiefe:"g",laut:1,
+ info:"Vertikalköder für Barsch, Zander, Eisangeln.",fuehrung:"Kurz anheben, fallen lassen, zittern.",montage:"Direkt an der Hauptschnur."},
+{id:"jigspinner",t:"K",kat:"Metall",n:"Jigspinner / Tail-Spinner",groesse:"7–30 g",tempo:3,tiefe:"m",laut:3,
+ info:"Weitwurf mit Spinnerblatt. Rapfen, Barsch, Wolfsbarsch.",fuehrung:"Schnell einkurbeln oder jiggen.",montage:"Snap."},
+{id:"inline_spoon",t:"K",kat:"Metall",n:"Forellen-Spoon (Area)",groesse:"1–4 g",tempo:1,tiefe:"m",laut:1,
+ info:"Kleine Löffel für Forellenseen.",fuehrung:"Sehr langsam, Farbe wechseln bis es beißt.",montage:"Einzelhaken, dünnes Mono."},
+// ---------- Salzwasser speziell ----------
+{id:"gummi_salz",t:"K",kat:"Meer",n:"Gummi-Shad Meer / Jighead",groesse:"10–25 cm",tempo:2,tiefe:"g",laut:2,
+ info:"Für Dorsch, Wolfsbarsch, Snook, Pollack.",fuehrung:"Jiggen über Grund, im Tidenstrom schwerer.",montage:"Jigkopf 20–200 g, Fluorocarbon-Leader."},
+{id:"buckeltail",t:"K",kat:"Meer",n:"Bucktail-Jig",groesse:"7–60 g",tempo:2,tiefe:"g",laut:1,
+ info:"Hirschhaar-Jig, im Meer weltweit bewährt.",fuehrung:"Hüpfend über Grund.",montage:"Leader, oft mit Gummi-Trailer."},
+{id:"sabiki",t:"K",kat:"Meer",n:"Paternoster / Sabiki / Heringsvorfach",groesse:"Haken 6–12",tempo:2,tiefe:"m",laut:1,
+ info:"Viele kleine Glitzerhaken. Hering, Makrele, Köderfische.",fuehrung:"Auf und ab pumpen.",montage:"Blei oder kleiner Pilker unten."},
+{id:"trolling",t:"K",kat:"Meer",n:"Trolling-Lure / Octopus Skirt",groesse:"15–35 cm",tempo:3,tiefe:"o",laut:2,
+ info:"Hinter dem Boot geschleppt. Marlin, Thun, Mahi-Mahi, Wahoo.",fuehrung:"6–9 Knoten schleppen, Spread mit Teasern.",montage:"Schwere Mono-Leader, Crimps."},
+{id:"tintenfisch_koeder",t:"K",kat:"Meer",n:"Squid-Jig (Egi)",groesse:"2,5–4,0",tempo:1,tiefe:"m",laut:0,
+ info:"Für Tintenfische und Kalmare.",fuehrung:"Zwei Jerks, lange Absinkphase.",montage:"Fluorocarbon, kein Wirbel nötig."},
+{id:"meeresfliege",t:"K",kat:"Fliege",n:"Salzwasserfliege (Clouser, Garnele)",groesse:"Haken 1/0–6",tempo:2,tiefe:"m",laut:0,
+ info:"Für Bonefish, Permit, Meerforelle, Wolfsbarsch.",fuehrung:"Kurze Strips, Pausen.",montage:"Fliegenrute #6–#10, Fluorocarbon-Vorfach."},
+// ---------- Fliege ----------
+{id:"trockenfliege",t:"K",kat:"Fliege",n:"Trockenfliege",groesse:"Haken 12–20",tempo:1,tiefe:"o",laut:0,
+ info:"Schwimmt auf. Forelle, Äsche, Döbel beim Steigen.",fuehrung:"Driftfrei treiben lassen.",montage:"Fliegenrute #3–#5, feines Vorfach."},
+{id:"nymphe",t:"K",kat:"Fliege",n:"Nymphe",groesse:"Haken 10–18",tempo:1,tiefe:"g",laut:0,
+ info:"Larven-Imitation am Grund. Ganzjährig fängig.",fuehrung:"Mit der Strömung treiben, Bissanzeiger beobachten.",montage:"Tschechisch/Euro-Nymphing oder mit Indikator."},
+{id:"streamer",t:"K",kat:"Fliege",n:"Streamer",groesse:"Haken 2–8",tempo:2,tiefe:"m",laut:1,
+ info:"Fischchen-Imitation. Große Forellen, Barsch, Hecht.",fuehrung:"Ruckartig strippen.",montage:"Sinkschnur oder Sinktip."},
+{id:"hechtfliege",t:"K",kat:"Fliege",n:"Hechtfliege",groesse:"15–25 cm",tempo:2,tiefe:"m",laut:1,
+ info:"Große, voluminöse Fliege.",fuehrung:"Lange Strips, Pausen.",montage:"#9–#10, Stahl-/Fluorovorfach."},
+// ---------- Naturköder ----------
+{id:"tauwurm",t:"N",kat:"Würmer",n:"Tauwurm",groesse:"ganz oder halb",tempo:1,tiefe:"g",laut:0,
+ info:"Universalköder. Besonders nach Regen und bei trübem Wasser.",fuehrung:"Am Grund liegend oder an der Pose, ab und zu bewegen.",montage:"Haken 2–6, Grundblei oder Pose."},
+{id:"rotwurm",t:"N",kat:"Würmer",n:"Rotwurm / Mistwurm",groesse:"1–3 Stück",tempo:1,tiefe:"g",laut:0,
+ info:"Kleiner, sehr aktiver Wurm. Barsch, Aal, Forelle, Weißfisch.",fuehrung:"Pose oder leichte Grundmontage.",montage:"Haken 8–12."},
+{id:"wattwurm",t:"N",kat:"Würmer",n:"Wattwurm",groesse:"1–3 Stück",tempo:1,tiefe:"g",laut:0,
+ info:"Klassiker beim Brandungsangeln.",fuehrung:"Grund, Montage liegen lassen.",montage:"Brandungsvorfach, Haken 1–4, Wurmnadel."},
+{id:"seeringler",t:"N",kat:"Würmer",n:"Seeringelwurm",groesse:"5–15 cm",tempo:1,tiefe:"g",laut:0,
+ info:"Robuster Meereswurm. Dorsch, Plattfisch, Wolfsbarsch.",fuehrung:"Grund, Pose oder hinter Blinker.",montage:"Brandungsvorfach."},
+{id:"made",t:"N",kat:"Insekten",n:"Maden / Caster",groesse:"2–5 Stück",tempo:1,tiefe:"m",laut:0,
+ info:"Für Weißfisch, Forelle, Barsch. Mit Futter anlocken.",fuehrung:"Pose oder Feeder.",montage:"Haken 14–18, dünnes Vorfach."},
+{id:"mais",t:"N",kat:"Pflanzlich",n:"Mais",groesse:"1–5 Körner",tempo:1,tiefe:"g",laut:0,
+ info:"Günstig, selektiert auf Karpfen, Schleie, Brasse.",fuehrung:"Grund, Haar-Montage oder Pose.",montage:"Haken 6–12 oder Haar-Rig."},
+{id:"brot",t:"N",kat:"Pflanzlich",n:"Brotflocke / Teig",groesse:"Daumennagel",tempo:1,tiefe:"m",laut:0,
+ info:"Rotauge, Karpfen, Döbel. Schwimmbrot an der Oberfläche.",fuehrung:"Pose, Grund oder freie Leine.",montage:"Haken 6–14."},
+{id:"boilie",t:"N",kat:"Karpfen",n:"Boilie / Pop-up",groesse:"12–24 mm",tempo:1,tiefe:"g",laut:0,
+ info:"Selektiv auf große Karpfen. Futterplatz vorher anlegen.",fuehrung:"Selbsthakmontage, lange Ansitze.",montage:"Haar-Rig, Safety-Clip, Bissanzeiger."},
+{id:"pellet",t:"N",kat:"Karpfen",n:"Pellets / Partikel (Tigernuss, Hanf)",groesse:"6–20 mm",tempo:1,tiefe:"g",laut:0,
+ info:"Lockt mit Öl und Duft. Karpfen, Barbe, Brasse, Schleie.",fuehrung:"Feeder oder Futterplatz.",montage:"Method-Feeder, Haar."},
+{id:"koederfisch",t:"N",kat:"Fisch",n:"Köderfisch (ganz, tot)",groesse:"8–25 cm",tempo:1,tiefe:"g",laut:1,
+ info:"Für Hecht, Zander, Aal, Wels. Nur mit Fischen aus dem Gewässer (wo erlaubt).",fuehrung:"Grund oder Pose, ab und zu anzupfen.",montage:"Stahlvorfach bei Hecht, Drilling oder Einzelhaken."},
+{id:"fetzen",t:"N",kat:"Fisch",n:"Fischfetzen",groesse:"3–8 cm",tempo:1,tiefe:"g",laut:1,
+ info:"Duftspur für Zander, Aal, Plattfisch, Meeresfische.",fuehrung:"Grund, langsam schleifen.",montage:"Einzelhaken, Grundblei."},
+{id:"koederfisch_tot_meer",t:"N",kat:"Fisch",n:"Hering / Makrele / Sardine",groesse:"ganz oder Fetzen",tempo:1,tiefe:"g",laut:1,
+ info:"Fängt im Meer fast alles: Dorsch, Hai, Grouper, Snapper.",fuehrung:"Grund oder Drift.",montage:"Kreishaken, Leader nach Zielfisch."},
+{id:"livebait_meer",t:"N",kat:"Fisch",n:"Lebender Köderfisch (wo erlaubt)",groesse:"5–30 cm",tempo:1,tiefe:"m",laut:2,
+ info:"Im Ausland üblich (Tarpon, Snook, Thun, Barramundi). In Deutschland grundsätzlich verboten (Tierschutz).",fuehrung:"Frei schwimmen lassen oder Pose.",montage:"Kreishaken, Leader."},
+{id:"garnele",t:"N",kat:"Krebstiere",n:"Garnele / Shrimp",groesse:"ganz oder Stück",tempo:1,tiefe:"g",laut:0,
+ info:"In Lagunen und Tropen top: Bonefish, Snapper, Brasse, Snook.",fuehrung:"Grund oder Pose, wenig bewegen.",montage:"Kreishaken, Fluorocarbon."},
+{id:"krabbe",t:"N",kat:"Krebstiere",n:"Krabbe / Krebs",groesse:"ganz",tempo:1,tiefe:"g",laut:0,
+ info:"Permit, Schwarzbarsch, Brassen, Döbel.",fuehrung:"Grund.",montage:"Kreishaken."},
+{id:"tintenfisch",t:"N",kat:"Meer",n:"Tintenfisch-Streifen",groesse:"5–15 cm",tempo:1,tiefe:"g",laut:0,
+ info:"Hält gut am Haken. Meer weltweit.",fuehrung:"Grund oder Drift.",montage:"Einzelhaken oder Kreishaken."},
+{id:"muschel",t:"N",kat:"Meer",n:"Muschelfleisch / Sandaal",groesse:"Stück",tempo:1,tiefe:"g",laut:0,
+ info:"Plattfisch, Dorsch, Brassen.",fuehrung:"Grund.",montage:"Mit Ködergarn fixieren."},
+{id:"heuschrecke",t:"N",kat:"Insekten",n:"Heuschrecke / Käfer",groesse:"ganz",tempo:1,tiefe:"o",laut:0,
+ info:"Sommerköder für Döbel, Aland, Forelle an der Oberfläche.",fuehrung:"Frei treiben lassen.",montage:"Haken 6–10, kein Blei."},
+{id:"leber_kaese",t:"N",kat:"Spezial",n:"Leber / Käse / Hühnerherz",groesse:"Stück",tempo:1,tiefe:"g",laut:0,
+ info:"Für Wels, Barbe, Aal, Catfish.",fuehrung:"Grund, Strömung nutzen.",montage:"Kräftiger Einzelhaken."},
+{id:"pellet_wels",t:"N",kat:"Spezial",n:"Heilbutt-Pellets / Blutegel (Wels)",groesse:"21–30 mm",tempo:1,tiefe:"g",laut:0,
+ info:"Selektiv auf Wels.",fuehrung:"Grund oder U-Pose.",montage:"Haar-Rig, 0,50+ Geflochtene."},
+{id:"teig_forelle",t:"N",kat:"Spezial",n:"Forellenteig (Powerbait)",groesse:"Kugel",tempo:1,tiefe:"m",laut:0,
+ info:"Für Besatzforellen.",fuehrung:"Auftreibend über Grund.",montage:"Laufblei, 50–150 cm Vorfach."},
+{id:"frucht",t:"N",kat:"Pflanzlich",n:"Frucht / Nuss (Amazonas)",groesse:"Stück",tempo:1,tiefe:"o",laut:0,
+ info:"Pacu und Tambaqui fressen herabfallende Früchte.",fuehrung:"Unter Bäumen anbieten.",montage:"Kräftiger Haken, Stahl gegen Zähne."}
+];
+// Fisch-Katalog. m = Beißaktivität Jan..Dez (0–3), Nordhalbkugel; Südhalbkugel wird in der App um 6 Monate verschoben.
+// tz: d Dämmerung, t Tag, n Nacht · w: Gewässertypen · r: Regionen · temp: Wohlfühltemperatur °C
+// reg: Name in den Schonzeit-Tabellen (Anfang des Eintrags) · b: [Köder-ID, Eignung 1–3, Tipp]
+window.FISH = [
+// ================= Süßwasser Europa: Raubfische =================
+{id:"hecht",n:"Hecht",lat:"Esox lucius",g:"Raubfisch",r:["eu","nord","na","as"],w:["see","fluss","strom","kanal","teich","talsperre","lagune","bach"],m:"222213223333",tz:"dt",temp:"8–20",size:"50–100 cm",reg:"Hecht",
+ tipp:"Steht an Krautkanten, Schilf, Seerosen und Totholz. Herbst ist Großhechtzeit. Immer Stahl-, Titan- oder dickes Fluorocarbonvorfach.",
+ b:[["gummifisch",3,"12–20 cm, im Winter langsam am Grund"],["jerkbait",3,"Herbst und Winter mit langen Pausen"],["wobbler_flach",3,"Über Kraut im Sommer"],["spinnerbait",3,"Trübes Wasser, Krautfelder"],["blinker",2,"Weite Würfe am See"],["koederfisch",3,"Rotauge/Brasse an Pose oder Grund, kalte Monate"],["glidebait",2,"Für Großhechte im Herbst"],["propbait",2,"Sommerabend über Kraut"],["krautkoeder",2,"Seerosenfelder"],["hechtfliege",2,"Flachwasser im Frühjahr nach Schonzeit"],["swimbait",2,"Klarwasser, Großfisch"],["jerkbait_gummi",2,"Mittelwasser, Sommer"]]},
+{id:"zander",n:"Zander",lat:"Sander lucioperca",g:"Raubfisch",r:["eu","as"],w:["strom","fluss","see","kanal","talsperre","lagune"],m:"221012233332",tz:"dn",temp:"10–22",size:"45–80 cm",reg:"Zander",
+ tipp:"Lichtscheu: Dämmerung, Nacht und trübes Wasser. Steht an Buhnenköpfen, Kanten, Steinpackungen. Biss oft nur ein leichtes Tock in der Absinkphase.",
+ b:[["gummifisch",3,"8–14 cm, Faulenzen an Buhnen und Kanten"],["pintail",3,"Klares Wasser, vorsichtige Fische"],["koederfisch",3,"Kleiner toter Köderfisch an der Grundmontage, nachts"],["fetzen",2,"Nachtangeln am Grund"],["dropshot",2,"Hafenbecken, Spundwände"],["wobbler_flach",2,"Nachts im Flachwasser langsam einleiern"],["wobbler_tief",2,"Schleppen an Kanten"],["zocker",2,"Vertikal vom Boot im Winter"],["tauwurm",1,"Beifang, bei trübem Wasser"]]},
+{id:"barsch",n:"Flussbarsch",lat:"Perca fluviatilis",g:"Raubfisch",r:["eu","nord","as"],w:["see","fluss","strom","kanal","teich","talsperre","bach","lagune"],m:"112223333332",tz:"t",temp:"12–24",size:"20–40 cm",reg:"Barsch",
+ tipp:"Jagt in Schwärmen am Tag. Möwen und springende Kleinfische zeigen Raubphasen. Große Barsche im Herbst und Winter tief.",
+ b:[["dropshot",3,"Ganzjährig an Kanten und Hindernissen"],["gummifisch",3,"5–8 cm, gedeckte Farben"],["spinner",3,"Größe 1–3"],["creature",2,"Steinpackungen, Krebsimitat"],["wobbler_flach",2,"Kleine Crankbaits"],["rotwurm",3,"An der Pose"],["jigspinner",2,"Raubende Schwärme"],["topwater_stick",2,"Sommer, wenn sie oben rauben"],["zocker",2,"Winter vertikal und Eisangeln"],["streamer",2,"Fliegenfischen"],["made",1,"Kleine Barsche"],["koederfisch",2,"Kleiner Köderfisch für Großbarsche"]]},
+{id:"wels",n:"Wels / Waller",lat:"Silurus glanis",g:"Raubfisch",r:["eu","as"],w:["strom","fluss","see","kanal","talsperre"],m:"000123333200",tz:"dn",temp:"18–28",size:"100–250 cm",reg:"Wels",
+ tipp:"Ab 15 °C Wassertemperatur aktiv, Hauptsaison Juni bis September. Nachts im Flachwasser auf Raubzug. Sehr kräftiges Gerät (Geflochtene 0,50 mm+).",
+ b:[["tauwurm",3,"Großes Wurmbündel an U-Pose oder Grund"],["koederfisch",3,"Großer toter Köderfisch"],["pellet_wels",3,"Heilbutt-Pellets am Haar"],["leber_kaese",2,"Grundmontage in der Strömung"],["gummifisch",2,"20–30 cm, langsam am Grund"],["spinnerbait",1,"Flachwasser im Hochsommer"],["fetzen",2,"Große Fetzen"]]},
+{id:"rapfen",n:"Rapfen",lat:"Leuciscus aspius",g:"Raubfisch",r:["eu"],w:["strom","fluss","kanal","see"],m:"001123333210",tz:"dt",temp:"12–24",size:"50–80 cm",reg:"Rapfen",
+ tipp:"Jagt an der Oberfläche in Strömungskanten, Buhnenfeldern, Wehren. Spektakuläre Bisse bei schneller Führung.",
+ b:[["jigspinner",3,"Weit werfen, schnell einkurbeln"],["topwater_stick",3,"Sommer, rauben an der Oberfläche"],["lipless",3,"Weitwurf, schnell"],["blinker",2,"Schlanke Wurfblinker"],["wobbler_flach",2,"Schnell geführt"],["jerkbait_gummi",2,"Mittelwasser"],["spinner",1,"Kleinere Rapfen"]]},
+{id:"aal",n:"Aal",lat:"Anguilla anguilla",g:"Raubfisch",r:["eu","med","af"],w:["strom","fluss","see","kanal","teich","lagune","hafen"],m:"000233333100",tz:"n",temp:"16–26",size:"50–90 cm",reg:"Aal",
+ tipp:"Stark gefährdet: Regeln prüfen (teils Fangverbote, z. B. Weser/Hunte seit 2025, EU-Schonzeiten im Meer). Beste Nächte: warm, schwül, Gewitter, trübes Wasser.",
+ b:[["tauwurm",3,"Grundmontage, Knicklicht an der Rutenspitze"],["rotwurm",3,"Bündel"],["koederfisch",2,"Kleiner Köderfisch, große Aale"],["fetzen",2,"Fischfetzen"],["made",1,"Kleinere Aale"]]},
+{id:"quappe",n:"Quappe / Rutte",lat:"Lota lota",g:"Raubfisch",r:["eu","nord","na","as"],w:["strom","fluss","see","talsperre"],m:"332000000123",tz:"n",temp:"2–12",size:"30–50 cm",reg:"Quappe",
+ tipp:"Einziger Dorschartiger im Süßwasser. Beißt im Winter nachts, am besten bei Frost.",
+ b:[["tauwurm",3,"Grund, Steinpackungen"],["koederfisch",2,"Kleine tote Köderfische"],["fetzen",2,"Fischfetzen"],["rotwurm",2,"Bündel"]]},
+{id:"schwarzbarsch",n:"Schwarzbarsch (Largemouth Bass)",lat:"Micropterus salmoides",g:"Raubfisch",r:["na","eu","af","as"],w:["see","teich","fluss","talsperre","kanal"],m:"012333333210",tz:"dt",temp:"18–28",size:"30–60 cm",
+ tipp:"Standorttreu an Deckung: Seerosen, Totholz, Stege. In Südeuropa (Spanien, Italien) und Südafrika eingebürgert.",
+ b:[["creature",3,"Texas-Rig in Deckung"],["wurm_gummi",3,"Wacky- oder Neko-Rig"],["spinnerbait",3,"Ufer abfischen"],["krautkoeder",3,"Seerosen im Sommer"],["topwater_popper",2,"Morgens und abends"],["wobbler_tief",2,"Crankbait an Kanten"],["swimbait",2,"Große Bass"],["tauwurm",1,"Naturköder"]]},
+{id:"musky",n:"Muskellunge (Musky)",lat:"Esox masquinongy",g:"Raubfisch",r:["na"],w:["see","fluss"],m:"000012233320",tz:"dt",temp:"10–24",size:"90–130 cm",
+ tipp:"Fisch der 10.000 Würfe. Achterfigur am Bootsende (Figure-8) bringt viele Bisse.",
+ b:[["glidebait",3,"Große Glides"],["jerkbait",3,"Herbst"],["spinnerbait",3,"Bucktail-Spinner"],["swimbait",2,"Große Swimbaits"],["propbait",2,"Sommer Topwater"]]},
+{id:"walleye",n:"Glasaugenbarsch (Walleye)",lat:"Sander vitreus",g:"Raubfisch",r:["na"],w:["see","fluss","talsperre"],m:"222233222233",tz:"dn",temp:"12–22",size:"40–70 cm",
+ tipp:"Nordamerikanischer Verwandter des Zanders. Eisangeln im Winter sehr beliebt.",
+ b:[["gummifisch",3,"Jig mit Twister"],["wobbler_tief",3,"Schleppen"],["zocker",2,"Eisangeln"],["tauwurm",3,"Hinter Spinner-Rig (Crawler Harness)"],["koederfisch",2,"Kleine Minnows"]]},
+{id:"huchen",n:"Huchen",lat:"Hucho hucho",g:"Salmonide",r:["eu"],w:["fluss"],m:"332000000233",tz:"dt",temp:"4–14",size:"70–120 cm",reg:"Huchen",
+ tipp:"Donaulachs, nur in Donau-Zuflüssen. Saison Herbst bis Winter, starke Schonregeln, oft nur Entnahme 1 Fisch/Jahr.",
+ b:[["swimbait",3,"Huchenzopf oder großer Gummi"],["gummifisch",3,"Langsam in Gumpen"],["wobbler_flach",2,"Große Wobbler"],["streamer",2,"Große Streamer"]]},
+// ================= Salmoniden =================
+{id:"bachforelle",n:"Bachforelle",lat:"Salmo trutta fario",g:"Salmonide",r:["eu","nord","na","sa","au","af"],w:["bach","fluss","see","talsperre"],m:"001333332100",tz:"dt",temp:"8–16",size:"25–50 cm",reg:"Bachforelle",
+ tipp:"Steht hinter Steinen, unter Ufern, in Gumpen. Stromauf werfen, Schatten nutzen. Bei Hochwasser und trübem Wasser Wurm und Streamer.",
+ b:[["spinner",3,"Größe 0–2, stromauf werfen"],["wobbler_flach",3,"Kleine Minnows 5–7 cm, twitchen"],["trockenfliege",3,"Beim Steigen, Sommerabende"],["nymphe",3,"Ganzjährig in der Saison"],["streamer",2,"Große Forellen, trübes Wasser"],["tauwurm",2,"Nach Regen, trübes Wasser"],["made",1,"Pose in Gumpen"],["heuschrecke",2,"Sommer"]]},
+{id:"regenbogen",n:"Regenbogenforelle",lat:"Oncorhynchus mykiss",g:"Salmonide",r:["eu","na","sa","au","af","as","nord"],w:["teich","bach","fluss","see","talsperre"],m:"332333223333",tz:"dt",temp:"8–18",size:"25–60 cm",reg:"Regenbogenforelle",
+ tipp:"Häufigster Besatzfisch in Forellenseen. Tiefe suchen, bis Bisse kommen; Farben oft wechseln.",
+ b:[["teig_forelle",3,"Auftreibend 30–80 cm über Grund"],["inline_spoon",3,"Area-Spoons, Farbe wechseln"],["spinner",3,"Klein, gleichmäßig"],["made",2,"Pose oder Sbirolino"],["wobbler_flach",2,"Kleine Wobbler"],["nymphe",2,"Fliegenfischen"],["tauwurm",2,"Grund"],["trockenfliege",1,"Beim Steigen"]]},
+{id:"seeforelle",n:"Seeforelle",lat:"Salmo trutta lacustris",g:"Salmonide",r:["eu","nord"],w:["see","talsperre"],m:"332100000123",tz:"dt",temp:"6–14",size:"50–90 cm",reg:"Seeforelle",
+ tipp:"Alpen- und Voralpenseen, oft Schleppangeln. Im kalten Halbjahr nahe der Oberfläche.",
+ b:[["blinker",3,"Schleppen"],["wobbler_flach",3,"Schleppen 2–8 m"],["koederfisch",2,"Laube/Renke"],["streamer",2,"Ufer im Winter"]]},
+{id:"saibling",n:"Saibling",lat:"Salvelinus alpinus / fontinalis",g:"Salmonide",r:["eu","nord","na"],w:["see","talsperre","bach","teich"],m:"222333222222",tz:"dt",temp:"4–14",size:"25–50 cm",reg:"Seesaibling",
+ tipp:"Seesaibling steht tief im Freiwasser, Bachsaibling in kalten Bächen und Besatzteichen.",
+ b:[["nymphe",3,"Tief"],["inline_spoon",2,"Spoons"],["spinner",2,"Klein"],["made",2,"Hegene/Pose"],["zocker",2,"Eisangeln"]]},
+{id:"aesche",n:"Äsche",lat:"Thymallus thymallus",g:"Salmonide",r:["eu","nord"],w:["fluss","bach"],m:"300013333333",tz:"t",temp:"8–16",size:"30–45 cm",reg:"Äsche",
+ tipp:"Nimmt kleine Insekten. In vielen Gewässern streng geschützt oder ganzjährig geschont – Regeln prüfen.",
+ b:[["nymphe",3,"Kleine Goldkopfnymphen"],["trockenfliege",3,"Kleine Muster Gr. 16–20"],["made",2,"Wo Naturköder erlaubt"],["spinner",1,"Oft verboten, prüfen"]]},
+{id:"lachs",n:"Atlantischer Lachs",lat:"Salmo salar",g:"Salmonide",r:["eu","nord","na"],w:["fluss","fjord","hochsee"],m:"000123333200",tz:"dt",temp:"6–16",size:"60–110 cm",reg:"Lachs",
+ tipp:"Klassische Lachsflüsse in Norwegen, Schottland, Irland, Kanada. In Deutschland meist ganzjährig geschützt (Wiederansiedlung).",
+ b:[["streamer",3,"Tubenfliegen, Lachsfliegen"],["blinker",3,"Flusslöffel"],["wobbler_flach",2,"Flussmündungen"],["spinner",2,"Große Spinner"],["tauwurm",1,"Wo erlaubt"]]},
+{id:"meerforelle",n:"Meerforelle",lat:"Salmo trutta trutta",g:"Salmonide",r:["eu","nord"],w:["brandung","fels","lagune","fjord","fluss"],m:"333320001233",tz:"dt",temp:"6–14",size:"40–80 cm",reg:"Meerforelle",
+ tipp:"Ostseeküste: Steinfelder, Leopardengrund, auflandiger Wind und leicht trübes Wasser. Beste Zeit Oktober bis April; im Hochsommer nachts.",
+ b:[["kuestenblinker",3,"Weit werfen, Spinnstopps"],["wobbler_flach",3,"Schlanke Küstenwobbler"],["meeresfliege",3,"Garnelenmuster, Fliegenrute"],["seeringler",2,"Hinter Spirolino"],["blinker",2,"Flussmündungen"],["streamer",2,"Nachts im Sommer"]]},
+{id:"steelhead",n:"Steelhead",lat:"Oncorhynchus mykiss (wandernd)",g:"Salmonide",r:["na"],w:["fluss"],m:"332100000233",tz:"dt",temp:"4–12",size:"60–90 cm",
+ tipp:"Meerwandernde Regenbogenforelle der Pazifikküste. Wintersaison.",
+ b:[["streamer",3,"Swing-Fliegen"],["spinner",2,"Große Spinner"],["teig_forelle",2,"Eierimitationen"],["nymphe",2,"Eier und Nymphen"]]},
+{id:"pazifiklachs",n:"Pazifiklachs (King, Silver, Sockeye)",lat:"Oncorhynchus spp.",g:"Salmonide",r:["na","as"],w:["fluss","fjord","hochsee"],m:"000013333200",tz:"dt",temp:"6–14",size:"50–110 cm",
+ tipp:"Alaska, Kanada, Kamtschatka. Fangfenster richten sich nach den Laichwanderungen.",
+ b:[["spinner",3,"Silver und Pink"],["blinker",3,"Flusslöffel"],["trolling",2,"Schleppen an der Küste"],["streamer",2,"Fliege"],["koederfisch_tot_meer",2,"Hering beim Mooching"]]},
+{id:"renke",n:"Renke / Maräne / Felchen",lat:"Coregonus spp.",g:"Salmonide",r:["eu","nord"],w:["see","talsperre"],m:"112333322112",tz:"t",temp:"6–16",size:"30–50 cm",reg:"Große Maräne",
+ tipp:"Freiwasserfisch, frisst Plankton. Hegene mit Nymphen, Tiefe genau finden (Echolot).",
+ b:[["nymphe",3,"Hegene mit 3–5 Nymphen"],["made",2,"Wo erlaubt"],["zocker",1,"Eisangeln"]]},
+// ================= Friedfische Europa =================
+{id:"karpfen",n:"Karpfen",lat:"Cyprinus carpio",g:"Friedfisch",r:["eu","na","as","af","au","sa"],w:["see","teich","fluss","strom","kanal","talsperre"],m:"001233333210",tz:"dnt",temp:"16–26",size:"50–90 cm",reg:"Karpfen",
+ tipp:"Futterplatz einige Tage anlegen. Wind auf ein Ufer treibt Nahrung zusammen. Im Sommer Oberflächenangeln mit Schwimmbrot.",
+ b:[["boilie",3,"Haar-Rig, Futterplatz"],["mais",3,"Pose oder Haar"],["pellet",3,"Method-Feeder"],["tauwurm",2,"Kalte Monate"],["brot",2,"Schwimmbrot im Sommer"],["made",1,"Mit Futterkorb"]]},
+{id:"schleie",n:"Schleie",lat:"Tinca tinca",g:"Friedfisch",r:["eu","as"],w:["teich","see","kanal"],m:"000233332100",tz:"d",temp:"18–26",size:"25–50 cm",reg:"Schleie",
+ tipp:"Früh morgens an Seerosen und Schilf. Aufsteigende Bläschen verraten fressende Schleien.",
+ b:[["rotwurm",3,"Lift-Methode an der Pose"],["mais",3,"Kleine Portionen"],["made",2,"Caster"],["pellet",2,"Feeder"],["brot",1,"Teig"]]},
+{id:"brasse",n:"Brasse / Blei",lat:"Abramis brama",g:"Friedfisch",r:["eu","as"],w:["see","strom","fluss","kanal","teich","talsperre","lagune"],m:"112233333221",tz:"dn",temp:"14–24",size:"30–60 cm",reg:"Brasse",
+ tipp:"Schwarmfisch. Viel Futter (Feeder), dann bleibt der Schwarm. Abends und nachts am stärksten.",
+ b:[["made",3,"Feeder"],["rotwurm",3,"Feeder oder Pose"],["mais",2,"Grund"],["pellet",2,"Method-Feeder"],["brot",2,"Teig"]]},
+{id:"rotauge",n:"Rotauge / Plötze",lat:"Rutilus rutilus",g:"Friedfisch",r:["eu","as"],w:["see","fluss","strom","kanal","teich","bach","lagune"],m:"222333333332",tz:"t",temp:"8–22",size:"15–35 cm",reg:"Plötze",
+ tipp:"Häufigster Weißfisch. Feine Montage, wenig aber regelmäßig füttern.",
+ b:[["made",3,"Stippe oder Pose"],["brot",2,"Brotflocke"],["mais",2,"Größere Rotaugen"],["rotwurm",2,"Pose"]]},
+{id:"rotfeder",n:"Rotfeder",lat:"Scardinius erythrophthalmus",g:"Friedfisch",r:["eu"],w:["see","teich","kanal"],m:"001233333100",tz:"t",temp:"16–26",size:"15–35 cm",reg:"Rotfeder",
+ tipp:"Oberflächennah an Schilf und Kraut im Sommer.",
+ b:[["brot",3,"Schwimmbrot"],["made",3,"Flache Pose"],["mais",2,"Pose"],["heuschrecke",1,"Insekten"]]},
+{id:"doebel",n:"Döbel / Aitel",lat:"Squalius cephalus",g:"Friedfisch",r:["eu"],w:["fluss","bach","strom","kanal"],m:"222333333332",tz:"dt",temp:"10–22",size:"30–60 cm",reg:"Döbel",
+ tipp:"Allesfresser und vorsichtig. Unter überhängenden Bäumen. Im Sommer Insekten und Früchte, im Winter Brot und Käse.",
+ b:[["brot",3,"Brotflocke an freier Leine"],["heuschrecke",3,"Sommer, Oberfläche"],["spinner",2,"Kleine Spinner"],["wobbler_flach",2,"Kleine Crankbaits"],["krabbe",1,"Krebsimitat"],["leber_kaese",2,"Käse im Winter"],["trockenfliege",2,"Fliege"],["creature",2,"Kleine Krebsimitate"]]},
+{id:"aland",n:"Aland / Nerfling",lat:"Leuciscus idus",g:"Friedfisch",r:["eu","nord"],w:["strom","fluss","kanal","lagune"],m:"112333333221",tz:"dt",temp:"10–22",size:"30–55 cm",reg:"Aland",
+ tipp:"In der Elbe und in Boddengewässern häufig. Nimmt auch kleine Kunstköder.",
+ b:[["made",3,"Pose in der Strömung"],["rotwurm",2,"Grund"],["spinner",2,"Klein"],["trockenfliege",2,"Steigende Fische"],["brot",2,"Brotflocke"]]},
+{id:"barbe",n:"Barbe",lat:"Barbus barbus",g:"Friedfisch",r:["eu"],w:["fluss","strom"],m:"001223333210",tz:"dn",temp:"14–24",size:"40–75 cm",reg:"Barbe",
+ tipp:"Grundfisch starker Strömung (Kies). Kräftige Feeder-Rute, Futter mit Hanf und Pellets.",
+ b:[["pellet",3,"Feeder, Halibut-Pellet"],["made",3,"Feeder"],["leber_kaese",2,"Käse/Frühstücksfleisch"],["tauwurm",2,"Nach Hochwasser"],["mais",1,"Grund"]]},
+{id:"karausche",n:"Karausche / Giebel",lat:"Carassius spp.",g:"Friedfisch",r:["eu","as"],w:["teich","see","kanal"],m:"001233332100",tz:"t",temp:"16–26",size:"15–35 cm",reg:"Karausche",
+ tipp:"In kleinen, verkrauteten Teichen.",
+ b:[["made",3,"Feine Pose"],["mais",2,"Pose"],["brot",2,"Teig"],["rotwurm",2,"Pose"]]},
+{id:"graskarpfen",n:"Graskarpfen (Amur)",lat:"Ctenopharyngodon idella",g:"Friedfisch",r:["eu","as","na"],w:["teich","see","kanal"],m:"000123333100",tz:"t",temp:"20–28",size:"60–120 cm",
+ tipp:"Pflanzenfresser, bei Hitze an der Oberfläche.",
+ b:[["brot",3,"Schwimmbrot"],["mais",2,"Grund"],["frucht",1,"Gras-/Obstköder"],["boilie",2,"Grün, Pop-up"]]},
+{id:"stoer",n:"Stör",lat:"Acipenser spp.",g:"Friedfisch",r:["eu","na","as"],w:["teich","strom"],m:"001233332100",tz:"t",temp:"14–24",size:"80–200 cm",reg:"Stör",
+ tipp:"Wildstöre sind geschützt. Angelbar nur in Forellen-/Störteichen und z. B. Weißer Stör in Kanada (Catch & Release).",
+ b:[["pellet",3,"Heilbutt-Pellets"],["tauwurm",2,"Bündel"],["fetzen",2,"Fischfetzen"]]},
+// ================= Meer Europa: Ostsee / Nordsee / Atlantik =================
+{id:"dorsch",n:"Dorsch / Kabeljau",lat:"Gadus morhua",g:"Meer",r:["eu","nord","na"],w:["hochsee","brandung","fels","fjord","hafen"],m:"333210011233",tz:"dtn",temp:"2–12",size:"40–100 cm",reg:"Dorsch",
+ tipp:"Westliche Ostsee: Für Angler gilt seit 2024 ein EU-Entnahmeverbot (aktuelle EU-Regeln prüfen). Nordsee/Norwegen: Pilken über Wracks und Kanten.",
+ b:[["pilker",3,"Mit Beifänger"],["gummi_salz",3,"Jigkopf, Twister"],["wattwurm",3,"Brandung, Nacht"],["seeringler",2,"Brandung"],["koederfisch_tot_meer",2,"Grund vom Boot"],["buckeltail",2,"Jig"]]},
+{id:"koehler",n:"Köhler / Seelachs",lat:"Pollachius virens",g:"Meer",r:["nord","eu"],w:["hochsee","fjord","fels"],m:"222233333322",tz:"dt",temp:"6–12",size:"40–100 cm",
+ tipp:"Norwegen: Schwärme an Strömungskanten. Bissig auf schnell geführte Köder.",
+ b:[["pilker",3,"Schnell pilken"],["gummi_salz",3,"Großer Shad im Mittelwasser"],["jig_metall",2,"Speed-Jig"],["sabiki",2,"Kleine Köhler"]]},
+{id:"pollack",n:"Pollack",lat:"Pollachius pollachius",g:"Meer",r:["eu","nord"],w:["fels","hochsee","fjord"],m:"222333333322",tz:"dt",temp:"8–14",size:"40–80 cm",
+ tipp:"Kelpwälder und Felsriffe (Irland, Norwegen, Bretagne).",
+ b:[["gummi_salz",3,"Am Jigkopf durchs Kelp"],["pilker",2,"Wracks"],["wobbler_flach",2,"Ufer"],["koederfisch_tot_meer",2,"Fischstreifen"]]},
+{id:"leng",n:"Leng",lat:"Molva molva",g:"Meer",r:["nord","eu"],w:["hochsee","fjord"],m:"333333333333",tz:"dt",temp:"6–10",size:"80–150 cm",
+ tipp:"Tiefe Kanten ab 100 m, Naturköder-Montage.",
+ b:[["koederfisch_tot_meer",3,"Makrelenhälfte am Naturködersystem"],["pilker",2,"Schwerer Pilker mit Fetzen"],["gummi_salz",2,"Großer Shad"]]},
+{id:"heilbutt",n:"Heilbutt",lat:"Hippoglossus hippoglossus",g:"Meer",r:["nord","na"],w:["hochsee","fjord"],m:"112333333211",tz:"dt",temp:"3–10",size:"80–250 cm",
+ tipp:"Norwegen, Island, Alaska. Flache Bereiche 20–80 m mit Strömung.",
+ b:[["gummi_salz",3,"Große Shads 20–30 cm, langsam über Grund"],["koederfisch_tot_meer",3,"Ganzer Hering/Köhler"],["pilker",2,"Schwerer Pilker"]]},
+{id:"hering",n:"Hering",lat:"Clupea harengus",g:"Meer",r:["eu","nord","na"],w:["hafen","fjord","lagune","hochsee"],m:"113331000233",tz:"dt",temp:"4–12",size:"20–35 cm",
+ tipp:"Ostsee: Heringsschwärme im März–Mai in Häfen und Bodden (Rostock, Rügen, Kiel).",
+ b:[["sabiki",3,"Heringsvorfach mit kleinem Blei"]]},
+{id:"makrele",n:"Makrele",lat:"Scomber scombrus",g:"Meer",r:["eu","nord","med","na"],w:["hochsee","fels","hafen","fjord","brandung"],m:"000013333200",tz:"dt",temp:"10–18",size:"25–45 cm",
+ tipp:"Sommer an Molen, Felsküsten und vom Boot. Oft im Schwarm.",
+ b:[["sabiki",3,"Paternoster mit Federn"],["blinker",2,"Kleine Blinker"],["jigspinner",2,"Weitwurf"],["fetzen",2,"Fischstreifen"]]},
+{id:"hornhecht",n:"Hornhecht",lat:"Belone belone",g:"Meer",r:["eu","nord","med"],w:["brandung","fels","lagune","hafen"],m:"000233100000",tz:"t",temp:"10–18",size:"60–90 cm",
+ tipp:"Ostsee: Ende April bis Juni zur Rapsblüte. Harte Schnäbel – Seidenfäden oder Fetzen an Pose.",
+ b:[["blinker",3,"Schlanke Blinker mit Einzelhaken"],["kuestenblinker",3,"Mit Seidenfaden"],["fetzen",2,"Heringsfetzen an Pose"]]},
+{id:"plattfisch",n:"Plattfisch (Scholle, Flunder, Kliesche)",lat:"Pleuronectidae",g:"Meer",r:["eu","nord"],w:["brandung","hafen","lagune","hochsee"],m:"333221123333",tz:"dtn",temp:"4–16",size:"25–45 cm",reg:"Scholle",
+ tipp:"Brandung und Bodden. Lockperlen und Spinnerblätter am Vorfach erhöhen Bisse.",
+ b:[["wattwurm",3,"Brandungsvorfach"],["seeringler",3,"Grund, leicht schleppen"],["muschel",2,"Muschel/Sandaal"],["fetzen",1,"Kleine Fetzen"]]},
+{id:"steinbutt",n:"Steinbutt",lat:"Scophthalmus maximus",g:"Meer",r:["eu","med"],w:["brandung","hochsee","lagune"],m:"000123332100",tz:"dt",temp:"10–18",size:"30–60 cm",reg:"Steinbutt",
+ tipp:"Sandbänke, Sommer. Raubfisch unter den Plattfischen.",
+ b:[["koederfisch_tot_meer",3,"Sandaal/Heringsstreifen"],["gummi_salz",2,"Langsam über Sand"],["seeringler",2,"Brandung"]]},
+{id:"wolfsbarsch",n:"Wolfsbarsch (Loup de Mer)",lat:"Dicentrarchus labrax",g:"Meer",r:["eu","med"],w:["brandung","fels","lagune","hafen"],m:"112233333321",tz:"dn",temp:"12–22",size:"40–80 cm",
+ tipp:"Atlantikküste (Frankreich, Irland, Holland), Mittelmeer. Weißwasser an Felsen, steigende Flut. EU-Regeln: Mindestmaß 42 cm, Tageslimit – prüfen.",
+ b:[["topwater_stick",3,"Morgens im Weißwasser"],["wobbler_flach",3,"Schlanke Minnows"],["gummi_salz",3,"Weedless Slug"],["meeresfliege",2,"Clouser"],["koederfisch_tot_meer",2,"Sardine nachts"],["seeringler",2,"Brandung"],["krabbe",2,"Grund"]]},
+{id:"meerbrasse",n:"Meerbrassen (Dorade, Sargo)",lat:"Sparidae",g:"Meer",r:["med","eu","af"],w:["fels","hafen","brandung","lagune"],m:"112233333321",tz:"dt",temp:"14–24",size:"20–50 cm",
+ tipp:"Mittelmeer und Atlantik: Häfen, Felsen, Lagunen. Feines Vorfach, Futter (Brot/Sardine).",
+ b:[["garnele",3,"Pose/Grund"],["seeringler",3,"Grund"],["muschel",2,"Muschel"],["brot",2,"Lockfutter + Brot"],["krabbe",2,"Kleine Krabben"]]},
+{id:"hai_klein",n:"Kleine Haie (Dornhai, Katzenhai, Hundshai)",lat:"Squalidae / Scyliorhinidae",g:"Meer",r:["eu","nord","med"],w:["hochsee","brandung","fjord"],m:"112233333221",tz:"dn",temp:"8–18",size:"60–150 cm",
+ tipp:"Viele Arten geschützt oder Release-Pflicht. Immer Stahlvorfach.",
+ b:[["koederfisch_tot_meer",3,"Makrelenfetzen am Grund"],["tintenfisch",2,"Streifen"]]},
+{id:"blauhai",n:"Blauhai",lat:"Prionace glauca",g:"Meer",r:["eu","na","med","au","af"],w:["hochsee"],m:"000013333200",tz:"t",temp:"14–22",size:"150–300 cm",
+ tipp:"Irland, Cornwall, Azoren: Driften mit Lockfutterschleppe. Catch & Release.",
+ b:[["koederfisch_tot_meer",3,"Makrele an Ballon-Pose"],["livebait_meer",2,"Wo erlaubt"]]},
+// ================= Mittelmeer / Atlantik warm =================
+{id:"bluefin",n:"Roter Thun (Bluefin)",lat:"Thunnus thynnus",g:"Meer",r:["eu","med","na","nord"],w:["hochsee"],m:"000012333320",tz:"dt",temp:"14–24",size:"100–300 cm",
+ tipp:"Mittelmeer, Biskaya, Norwegen, Kanada. Strenge Quoten, meist nur Catch & Release mit Lizenz.",
+ b:[["topwater_stick",3,"Große Stickbaits bei Jagd"],["jig_metall",3,"Speed-Jig"],["trolling",2,"Schleppen"],["koederfisch_tot_meer",2,"Sardinen-Chumming"]]},
+{id:"bonito",n:"Bonito / Kleine Thune",lat:"Sarda / Euthynnus",g:"Meer",r:["med","eu","trop","af","na","au"],w:["hochsee","fels"],m:"000123333321",tz:"dt",temp:"16–26",size:"40–80 cm",
+ tipp:"Jagende Schwärme an der Oberfläche, Vögel zeigen sie an.",
+ b:[["jigspinner",3,"Casting-Jigs 20–40 g"],["topwater_stick",2,"Kleine Stickbaits"],["trolling",2,"Federn/Kleine Plugs"],["blinker",2,"Schnell"]]},
+{id:"leerfisch",n:"Leerfisch (Lichia)",lat:"Lichia amia",g:"Meer",r:["med","af"],w:["brandung","fels","lagune"],m:"000123333310",tz:"dt",temp:"18–26",size:"60–120 cm",
+ tipp:"Mittelmeer und Südafrika, jagt Meeräschen in Flussmündungen.",
+ b:[["topwater_stick",3,"Walk-the-Dog"],["livebait_meer",3,"Meeräsche (wo erlaubt)"],["swimbait",2,"Schnell"]]},
+{id:"barrakuda",n:"Barrakuda",lat:"Sphyraena spp.",g:"Meer",r:["trop","med"],w:["riff","flats","hochsee","lagune"],m:"333333333333",tz:"dt",temp:"20–30",size:"60–150 cm",
+ tipp:"Scharfe Zähne: Stahlvorfach. Mag schnelle, glänzende Köder.",
+ b:[["topwater_stick",3,"Schnell"],["blinker",3,"Glänzend"],["trolling",2,"Schleppen"],["wobbler_flach",2,"Schnell"]]},
+{id:"amberjack",n:"Amberjack / Bernsteinmakrele",lat:"Seriola dumerili",g:"Meer",r:["med","trop","na","au","af","as"],w:["hochsee","riff"],m:"112233333321",tz:"dt",temp:"18–28",size:"60–150 cm",
+ tipp:"Wracks und Unterwasserberge. Sofort vom Grund wegdrillen.",
+ b:[["jig_metall",3,"Vertical/Slow-Jig"],["livebait_meer",3,"Wo erlaubt"],["topwater_popper",2,"Popper"]]},
+{id:"zackenbarsch",n:"Zackenbarsch (Grouper)",lat:"Epinephelinae",g:"Meer",r:["med","trop","af","au","as","na","sa"],w:["riff","hochsee","fels"],m:"222333333332",tz:"dt",temp:"18–30",size:"40–150 cm",
+ tipp:"Riffe und Steine. Viele Arten geschützt oder mit Schonzeit.",
+ b:[["jig_metall",3,"Slow-Jig"],["koederfisch_tot_meer",3,"Grund"],["tintenfisch",2,"Grund"],["gummi_salz",2,"Schwer jiggen"]]},
+// ================= Tropen / Lagunen / Flats =================
+{id:"tarpon",n:"Tarpon",lat:"Megalops atlanticus",g:"Meer",r:["trop","na","sa","af"],w:["flats","lagune","flussm","fluss","hafen"],m:"001233333210",tz:"dn",temp:"24–30",size:"100–220 cm",
+ tipp:"Florida Keys, Mexiko, Costa Rica, Westafrika. Silberkönig: spektakuläre Sprünge, Catch & Release.",
+ b:[["livebait_meer",3,"Krabbe/Meeräsche (wo erlaubt)"],["meeresfliege",3,"Tarponfliege #10–12"],["swimbait",3,"Weiche Swimbaits"],["topwater_stick",2,"Dämmerung"],["garnele",2,"Brücken, Nacht"]]},
+{id:"snook",n:"Snook (Robalo)",lat:"Centropomus undecimalis",g:"Meer",r:["trop","na","sa"],w:["lagune","flats","brandung","hafen","fluss"],m:"222333333322",tz:"dn",temp:"22–30",size:"50–100 cm",
+ tipp:"Mangroven, Brücken, Strände. Nachts an Lichtkegeln von Stegen.",
+ b:[["gummi_salz",3,"Paddeltail"],["topwater_stick",3,"Morgens"],["garnele",3,"Freileine"],["livebait_meer",3,"Pilchards (wo erlaubt)"],["meeresfliege",2,"Fliege"]]},
+{id:"bonefish",n:"Bonefish",lat:"Albula vulpes",g:"Meer",r:["trop"],w:["flats","lagune"],m:"333333333333",tz:"t",temp:"22–30",size:"40–75 cm",
+ tipp:"Bahamas, Belize, Seychellen, Kuba. Sichtfischen im knietiefen Wasser bei steigender Flut, Polbrille Pflicht.",
+ b:[["meeresfliege",3,"Gotcha, Crazy Charlie #4–8"],["garnele",3,"Shrimp am leichten Jig"],["buckeltail",2,"Kleiner Bonefish-Jig"]]},
+{id:"permit",n:"Permit",lat:"Trachinotus falcatus",g:"Meer",r:["trop","na"],w:["flats","riff"],m:"222333333322",tz:"t",temp:"22–30",size:"50–110 cm",
+ tipp:"Der schwierigste Flatsfisch. Krabbenmuster vor die Nase werfen.",
+ b:[["krabbe",3,"Lebende kleine Krabbe"],["meeresfliege",3,"Krabbenfliege"],["buckeltail",2,"Jig"]]},
+{id:"gt",n:"Giant Trevally (GT)",lat:"Caranx ignobilis",g:"Meer",r:["trop","au","af","as"],w:["riff","flats","hochsee"],m:"333333333333",tz:"dt",temp:"24–30",size:"60–170 cm",
+ tipp:"Seychellen, Malediven, Oman, Australien. Popper an Riffkanten, extrem kräftiges Gerät.",
+ b:[["topwater_popper",3,"Große Popper 150–250 mm"],["topwater_stick",3,"Große Stickbaits"],["jig_metall",2,"Jigging an Kanten"],["meeresfliege",2,"Flats mit #12"]]},
+{id:"barramundi",n:"Barramundi",lat:"Lates calcarifer",g:"Meer",r:["au","as","trop"],w:["lagune","fluss","flats","hafen"],m:"333322223333",tz:"dn",temp:"24–32",size:"60–120 cm",
+ tipp:"Nordaustralien, Papua, Thailand. Mangroven, Flussmündungen, Abflüsse nach Regen. Krokodile beachten!",
+ b:[["wobbler_flach",3,"Suspender an Mangroven"],["gummi_salz",3,"Paddeltail"],["topwater_popper",2,"Dämmerung"],["livebait_meer",3,"Mullet (wo erlaubt)"],["garnele",2,"Freileine"]]},
+{id:"mangrove_jack",n:"Mangrove Jack / Snapper",lat:"Lutjanus spp.",g:"Meer",r:["trop","au","as","af","na","sa"],w:["lagune","riff","hafen","hochsee"],m:"333333333333",tz:"dn",temp:"22–30",size:"30–80 cm",
+ tipp:"Rote Schnapper an Riffen und Mangroven. Reißen sofort in die Deckung.",
+ b:[["gummi_salz",3,"Zwischen Wurzeln"],["koederfisch_tot_meer",3,"Grund"],["garnele",3,"Grund"],["jig_metall",2,"Riffe"],["wobbler_flach",2,"Suspender"]]},
+{id:"mahi",n:"Goldmakrele (Mahi-Mahi)",lat:"Coryphaena hippurus",g:"Meer",r:["trop","med","na","au","af","as","sa"],w:["hochsee"],m:"112333333321",tz:"t",temp:"22–30",size:"60–150 cm",
+ tipp:"Unter Treibgut und Seegrasteppichen. Wenn einer am Haken ist, kommen oft weitere.",
+ b:[["trolling",3,"Schleppen 7–9 Knoten"],["topwater_popper",2,"An Treibgut"],["koederfisch_tot_meer",2,"Ballyhoo"],["jigspinner",2,"Werfen"]]},
+{id:"wahoo",n:"Wahoo",lat:"Acanthocybium solandri",g:"Meer",r:["trop"],w:["hochsee"],m:"333222222333",tz:"t",temp:"22–28",size:"100–200 cm",
+ tipp:"Schnellster Fisch: High-Speed-Trolling bis 15 Knoten, Stahlvorfach.",
+ b:[["trolling",3,"High-Speed-Lures"],["jig_metall",2,"Speed-Jig"]]},
+{id:"yellowfin",n:"Gelbflossenthun (Yellowfin)",lat:"Thunnus albacares",g:"Meer",r:["trop","au","af","na","sa","as"],w:["hochsee"],m:"222333333332",tz:"dt",temp:"20–28",size:"80–200 cm",
+ tipp:"Delfinschulen und Vogelschwärme zeigen Thune an.",
+ b:[["trolling",3,"Skirts, Cedar Plugs"],["topwater_stick",3,"Stickbaits bei Jagd"],["jig_metall",3,"Speed-Jig"],["koederfisch_tot_meer",2,"Chunking"]]},
+{id:"marlin",n:"Marlin / Segelfisch",lat:"Istiophoridae",g:"Meer",r:["trop","au","af","na","sa"],w:["hochsee"],m:"222333333322",tz:"t",temp:"22–30",size:"150–400 cm",
+ tipp:"Big-Game: Kenia, Mauritius, Kap Verde, Costa Rica, Australien. Catch & Release Standard.",
+ b:[["trolling",3,"Lure-Spread"],["koederfisch_tot_meer",3,"Ballyhoo/Bonito schleppen"],["livebait_meer",2,"Wo erlaubt"]]},
+{id:"roosterfish",n:"Roosterfish",lat:"Nematistius pectoralis",g:"Meer",r:["sa","na","trop"],w:["brandung","fels"],m:"222333333322",tz:"dt",temp:"22–30",size:"50–120 cm",
+ tipp:"Pazifikküste Mexiko bis Peru, am Strand und an Felsspitzen.",
+ b:[["topwater_popper",3,"Popper"],["topwater_stick",3,"Stickbait"],["livebait_meer",3,"Wo erlaubt"]]},
+{id:"redfish",n:"Redfish (Red Drum)",lat:"Sciaenops ocellatus",g:"Meer",r:["na"],w:["lagune","flats","brandung"],m:"222233333332",tz:"dt",temp:"16–28",size:"50–110 cm",
+ tipp:"Golfküste USA, Marschen und Austernbänke. Schwanzflosse zeigt fressende Fische im Flachen.",
+ b:[["gummi_salz",3,"Paddeltail"],["garnele",3,"Pose (Popping Cork)"],["krabbe",2,"Grund"],["spinnerbait",2,"Spoon/Spinnerbait"],["meeresfliege",2,"Fliege"]]},
+{id:"striper",n:"Streifenbarsch (Striped Bass)",lat:"Morone saxatilis",g:"Meer",r:["na"],w:["brandung","fels","lagune","fluss","hochsee"],m:"001233322331",tz:"dn",temp:"12–22",size:"50–120 cm",
+ tipp:"US-Ostküste, Herbstwanderung entlang der Strände.",
+ b:[["topwater_stick",3,"Pencil Popper"],["gummi_salz",3,"Bucktail+Trailer"],["koederfisch_tot_meer",3,"Bunker"],["wobbler_flach",2,"Swimmer"]]},
+// ================= Süßwasser Tropen / Exoten =================
+{id:"pfauenbarsch",n:"Pfauenaugenbarsch (Peacock Bass)",lat:"Cichla spp.",g:"Raubfisch",r:["sa","na"],w:["fluss","see","lagune"],m:"333222233333",tz:"t",temp:"25–32",size:"40–80 cm",
+ tipp:"Amazonas (Rio Negro), Florida-Kanäle. Saison in Brasilien in der Trockenzeit (Sept–März).",
+ b:[["propbait",3,"Woodchopper/Propeller"],["topwater_stick",2,"Stickbait"],["jerkbait",2,"Jerkbait"],["streamer",2,"Große Streamer"],["spinnerbait",2,"Trübes Wasser"]]},
+{id:"piranha",n:"Piranha",lat:"Serrasalmidae",g:"Raubfisch",r:["sa"],w:["fluss","see","lagune"],m:"333333333333",tz:"t",temp:"24–32",size:"20–40 cm",
+ tipp:"Amazonas, Pantanal. Immer Stahlvorfach.",
+ b:[["fetzen",3,"Fleisch oder Fisch"],["koederfisch",2,"Ganz"]]},
+{id:"arapaima",n:"Arapaima / Pirarucu",lat:"Arapaima gigas",g:"Raubfisch",r:["sa","as"],w:["see","fluss","teich"],m:"333333333333",tz:"t",temp:"25–32",size:"150–300 cm",
+ tipp:"Wild in Brasilien/Guyana, in Thailand in Angelseen. Atmet Luft, an der Oberfläche beobachten.",
+ b:[["koederfisch",3,"Ganzer Fisch"],["swimbait",2,"Große Swimbaits"],["streamer",1,"Fliege"]]},
+{id:"dorado_fluss",n:"Dorado (Goldener Salmler)",lat:"Salminus brasiliensis",g:"Raubfisch",r:["sa"],w:["fluss"],m:"333200002333",tz:"dt",temp:"20–28",size:"50–100 cm",
+ tipp:"Argentinien, Paraguay, Bolivien. Stromschnellen, Stahlvorfach.",
+ b:[["wobbler_flach",3,"Große Minnows"],["streamer",3,"Große Fliegen"],["spinner",2,"Große Spinner"]]},
+{id:"tigerfisch",n:"Tigerfisch",lat:"Hydrocynus spp.",g:"Raubfisch",r:["af"],w:["fluss","see"],m:"332100023333",tz:"dt",temp:"22–30",size:"40–100 cm",
+ tipp:"Sambesi, Kariba-See, Kongo. Harte Kiefer – scharfe Haken, Stahlvorfach.",
+ b:[["spinner",3,"Große Spinner"],["wobbler_flach",3,"Schnell"],["koederfisch",2,"Fetzen/Driften"],["streamer",2,"Fliege"]]},
+{id:"nilbarsch",n:"Nilbarsch",lat:"Lates niloticus",g:"Raubfisch",r:["af"],w:["see","fluss"],m:"333333333333",tz:"dt",temp:"24–30",size:"80–180 cm",
+ tipp:"Victoriasee, Nassersee, Murchison Falls. Schleppen mit großen Wobblern.",
+ b:[["wobbler_tief",3,"Schleppen"],["koederfisch",3,"Ganzer Fisch"],["swimbait",2,"Groß"]]},
+{id:"mahseer",n:"Mahseer",lat:"Tor spp.",g:"Friedfisch",r:["as"],w:["fluss"],m:"333200002333",tz:"dt",temp:"18–28",size:"50–150 cm",
+ tipp:"Indien, Nepal, Bhutan. Kraftvoll in Stromschnellen.",
+ b:[["wobbler_flach",3,"Starke Minnows"],["blinker",3,"Spoons"],["pellet",2,"Ragi-Teig"]]},
+{id:"catfish_us",n:"Catfish (Channel, Blue, Flathead)",lat:"Ictaluridae",g:"Raubfisch",r:["na"],w:["fluss","see","talsperre","teich"],m:"001233333210",tz:"n",temp:"18–28",size:"40–120 cm",
+ tipp:"USA: Grundmontagen in Strömungskanten und Löchern.",
+ b:[["leber_kaese",3,"Hühnerleber, Stinkköder"],["koederfisch",3,"Fetzen/Shad"],["tauwurm",2,"Grund"]]},
+{id:"smallmouth",n:"Schwarzbarsch (Smallmouth Bass)",lat:"Micropterus dolomieu",g:"Raubfisch",r:["na"],w:["fluss","see"],m:"001233333210",tz:"t",temp:"16–26",size:"30–55 cm",
+ tipp:"Steinige Flüsse und Seen, liebt Krebse.",
+ b:[["creature",3,"Ned-Rig, Tube"],["wobbler_flach",3,"Crankbait"],["topwater_popper",2,"Sommer"],["streamer",2,"Fliege"]]},
+{id:"crappie",n:"Crappie / Sonnenbarsch",lat:"Pomoxis / Lepomis",g:"Friedfisch",r:["na","eu"],w:["see","teich","talsperre"],m:"112333332211",tz:"t",temp:"16–26",size:"15–35 cm",
+ tipp:"Kleine Jigs an Totholz und Stegen. Sonnenbarsch auch in Europa eingeschleppt.",
+ b:[["twister",3,"Mini-Jig 2–5 cm"],["rotwurm",3,"Pose"],["made",2,"Pose"],["spinner",2,"Klein"]]},
+{id:"tilapia",n:"Tilapia / Buntbarsche",lat:"Cichlidae",g:"Friedfisch",r:["af","trop","as","sa"],w:["see","teich","fluss","lagune"],m:"333333333333",tz:"t",temp:"22–32",size:"15–45 cm",
+ tipp:"In vielen Tropenländern, oft in Seen und Kanälen.",
+ b:[["tauwurm",3,"Pose"],["brot",3,"Teig"],["mais",2,"Pose"],["made",2,"Pose"]]},
+{id:"murray_cod",n:"Murray Cod",lat:"Maccullochella peelii",g:"Raubfisch",r:["au"],w:["fluss","see","talsperre"],m:"333333000233",tz:"dn",temp:"16–26",size:"60–120 cm",
+ tipp:"Australien (Murray-Darling). Schonzeit Sept–Nov beachten (Südhalbkugel).",
+ b:[["spinnerbait",3,"Große Spinnerbaits"],["swimbait",3,"Groß"],["wobbler_tief",2,"Schleppen"],["propbait",2,"Nachts Topwater"]]},
+{id:"golden_perch",n:"Golden Perch",lat:"Macquaria ambigua",g:"Raubfisch",r:["au"],w:["fluss","see","talsperre"],m:"333200002333",tz:"dt",temp:"18–28",size:"30–60 cm",
+ tipp:"Australien, Totholz in Stauseen.",
+ b:[["lipless",3,"Vibe"],["creature",2,"Krebsimitat"],["tauwurm",2,"Grund"]]}
+];
+// Gewässerverzeichnis. typ = Gewässertyp-ID, land = Bundesland/Staat, bl = Schonzeit-Tabelle (nur DE), f = Fisch-IDs, t = Tipp
+window.WATERS = [
+// ===== Prignitz & Umgebung Wittenberge =====
+{n:"Elbe bei Wittenberge",typ:"strom",land:"Brandenburg",bl:"brandenburg",ort:"Wittenberge",f:["zander","rapfen","wels","aland","barsch","hecht","brasse","aal","quappe","barbe","doebel","rotauge"],t:"Buhnenköpfe und Buhnenfelder: Zander in der Dämmerung an der Strömungskante, Rapfen tagsüber am Ausströmer, Wels im Sommer nachts im Flachen. Elbe-Gewässerkarte des Landesanglerverbands nötig."},
+{n:"Elbe bei Lenzen / Gorleben",typ:"strom",land:"Brandenburg",bl:"brandenburg",ort:"Lenzen",f:["zander","rapfen","wels","aland","hecht","barsch","quappe"],t:"Ruhigere Abschnitte mit Altarmen. Hechte in den Altwassern im Herbst."},
+{n:"Elbe-Altarme (Rühstädt, Abbendorf)",typ:"see",land:"Brandenburg",bl:"brandenburg",ort:"Rühstädt",f:["hecht","schleie","karpfen","rotfeder","barsch","karausche"],t:"Stark verkrautet, klassisch für Hecht und Schleie. Im Sommer weedless angeln."},
+{n:"Stepenitz",typ:"fluss",land:"Brandenburg",bl:"brandenburg",ort:"Perleberg / Wittenberge",f:["bachforelle","meerforelle","doebel","hecht","barsch","aesche"],t:"Eines der wenigen Meerforellen-Gewässer Brandenburgs (Wiederansiedlung). Regeln des Pächters prüfen, Meerforelle ggf. geschützt."},
+{n:"Karthane",typ:"fluss",land:"Brandenburg",bl:"brandenburg",ort:"Bad Wilsnack",f:["hecht","barsch","doebel","aland","rotauge"],t:"Kleiner Fluss, Spinnfischen vom Ufer mit leichten Ködern."},
+{n:"Löcknitz (Prignitz)",typ:"fluss",land:"Brandenburg",bl:"brandenburg",ort:"Lenzen",f:["hecht","doebel","barsch","aland"],t:"Naturnaher Flachlandfluss, Kunstköder an Unterständen."},
+{n:"Rudower See",typ:"see",land:"Brandenburg",bl:"brandenburg",ort:"Lenzen",f:["hecht","zander","barsch","schleie","karpfen","brasse","aal"],t:"Größter See der Prignitz. Hechte an der Schilfkante, Zander am Abhang."},
+{n:"Havel (Havelberg)",typ:"fluss",land:"Sachsen-Anhalt",bl:"sachsen-anhalt",ort:"Havelberg",f:["zander","hecht","barsch","wels","brasse","aal","aland"],t:"Mündungsbereich in die Elbe. Zander an Steinschüttungen."},
+{n:"Gülper See",typ:"see",land:"Brandenburg",bl:"brandenburg",ort:"Gülpe",f:["hecht","zander","barsch","brasse","aal"],t:"Flacher Havelsee, Vogelschutzgebiet: Uferbereiche teils gesperrt."},
+{n:"Müritz",typ:"see",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-binnen",ort:"Waren",f:["hecht","zander","barsch","aal","renke","schleie","wels"],t:"Größter Binnensee Deutschlands. Vertikalangeln auf Zander, Schleppen auf Hecht."},
+{n:"Schweriner See",typ:"see",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-binnen",ort:"Schwerin",f:["hecht","zander","barsch","renke","brasse","aal"],t:"Tiefe Kanten für Barsch, Kraut an der Nordspitze für Hecht."},
+{n:"Plauer See",typ:"see",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-binnen",ort:"Plau am See",f:["hecht","zander","barsch","renke","wels"],t:"Großhechte im Spätherbst beim Schleppen."},
+{n:"Elde / Müritz-Elde-Wasserstraße",typ:"kanal",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-binnen",ort:"Dömitz – Parchim",f:["hecht","zander","barsch","brasse","rotauge","aal"],t:"Schleusenbereiche und Wehre sind Hotspots."},
+// ===== Große deutsche Flüsse =====
+{n:"Elbe (Mittelelbe Magdeburg)",typ:"strom",land:"Sachsen-Anhalt",bl:"sachsen-anhalt",ort:"Magdeburg",f:["zander","rapfen","wels","aland","barbe","hecht","barsch","brasse","aal"],t:"Buhnen und Hafenbecken, Rapfen an Wehren."},
+{n:"Elbe (Hamburg, Tideelbe)",typ:"strom",land:"Hamburg",bl:"hamburg",ort:"Hamburg",f:["zander","barsch","aland","brasse","aal"],t:"Tidenabhängig: ablaufendes Wasser an Hafeneinfahrten bringt Zander und Barsch."},
+{n:"Elbe (Dresden)",typ:"strom",land:"Sachsen",bl:"sachsen",ort:"Dresden",f:["rapfen","barbe","zander","wels","doebel","aland"],t:"Steinbuhnen und Kiesbänke, Barbe mit Feeder."},
+{n:"Oder",typ:"strom",land:"Brandenburg",bl:"brandenburg",ort:"Frankfurt (Oder) / Schwedt",f:["zander","wels","rapfen","hecht","barsch","aland","brasse","quappe"],t:"Wilder Fluss mit vielen Buhnen. Unteres Odertal: Altarme mit Großhechten."},
+{n:"Havel (Berlin/Potsdam)",typ:"fluss",land:"Berlin",bl:"berlin",ort:"Berlin / Potsdam",f:["hecht","zander","barsch","wels","brasse","aal"],t:"Seenkette: Barsch an Spundwänden, Zander an Brücken und Kanten."},
+{n:"Spree",typ:"fluss",land:"Brandenburg",bl:"brandenburg",ort:"Spreewald / Berlin",f:["hecht","barsch","zander","schleie","aal","wels"],t:"Spreewald: Fließe vom Kahn aus, viel Deckung für Hecht."},
+{n:"Rhein (Niederrhein)",typ:"strom",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Düsseldorf – Emmerich",f:["zander","rapfen","wels","barsch","barbe","brasse","aal","doebel","hecht"],t:"Buhnenfelder bei Wassertemperatur unter 12 °C auf Zander. Starker Schiffsverkehr – Sog beachten."},
+{n:"Rhein (Mittelrhein/Oberrhein)",typ:"strom",land:"Rheinland-Pfalz",bl:"rheinland-pfalz",ort:"Koblenz – Mainz",f:["zander","rapfen","wels","barbe","barsch","doebel","aal"],t:"Hafenbecken im Winter, Rapfen an Mündungen."},
+{n:"Main",typ:"fluss",land:"Bayern",bl:"bayern",ort:"Würzburg – Frankfurt",f:["zander","wels","barbe","barsch","hecht","doebel","brasse"],t:"Staustufen: Zander unterhalb der Wehre."},
+{n:"Mosel",typ:"fluss",land:"Rheinland-Pfalz",bl:"rheinland-pfalz",ort:"Trier – Koblenz",f:["zander","wels","barsch","hecht","brasse","barbe"],t:"Gestaute Mosel: Kanten an der Fahrrinne."},
+{n:"Donau (Bayern)",typ:"strom",land:"Bayern",bl:"bayern",ort:"Regensburg – Passau",f:["zander","wels","huchen","hecht","barsch","barbe","doebel","aesche"],t:"Wels an Steinpackungen, Huchen in Zuflüssen (Ilz, Inn)."},
+{n:"Weser",typ:"fluss",land:"Niedersachsen",bl:"niedersachsen-binnen",ort:"Hameln – Bremen",f:["zander","rapfen","barbe","wels","barsch","doebel"],t:"Unterweser: Freizeitfischerei auf Aal seit 2025 verboten (Weser/Hunte)."},
+{n:"Ems",typ:"fluss",land:"Niedersachsen",bl:"niedersachsen-binnen",ort:"Lingen – Papenburg",f:["zander","hecht","barsch","brasse","aland"],t:"Ruhiger Tieflandfluss."},
+{n:"Neckar",typ:"fluss",land:"Baden-Württemberg",bl:"baden-wuerttemberg",ort:"Heilbronn – Heidelberg",f:["zander","wels","barbe","barsch","doebel"],t:"Schleusenbereiche, Barben mit Feeder."},
+{n:"Saale",typ:"fluss",land:"Sachsen-Anhalt",bl:"sachsen-anhalt",ort:"Halle",f:["zander","wels","barbe","rapfen","doebel","barsch"],t:"Wehre und Mündungen."},
+{n:"Mulde",typ:"fluss",land:"Sachsen",bl:"sachsen",ort:"Grimma – Dessau",f:["barbe","doebel","rapfen","bachforelle","aesche","hecht"],t:"Naturnah, gute Barbenstrecken."},
+{n:"Lahn",typ:"fluss",land:"Hessen",bl:"hessen",ort:"Limburg – Gießen",f:["hecht","barbe","doebel","barsch","zander","aal"],t:"Gestaute Abschnitte, Hecht in Kraut."},
+{n:"Ruhr",typ:"fluss",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Essen – Mülheim",f:["barbe","doebel","zander","hecht","barsch","aesche"],t:"Stauseen der Ruhr (Baldeneysee) mit Zander und Barsch."},
+{n:"Isar",typ:"fluss",land:"Bayern",bl:"bayern",ort:"München – Landshut",f:["bachforelle","aesche","huchen","doebel","regenbogen"],t:"Fliegenfischerstrecken, Äsche streng geschützt."},
+{n:"Inn",typ:"fluss",land:"Bayern",bl:"bayern",ort:"Rosenheim – Passau",f:["huchen","regenbogen","bachforelle","aesche","doebel","barbe"],t:"Gletschertrüb, große Köder im Winter auf Huchen."},
+{n:"Treene",typ:"fluss",land:"Schleswig-Holstein",bl:"schleswig-holstein-binnen",ort:"Friedrichstadt",f:["hecht","barsch","meerforelle","aland","brasse"],t:"Meerforellen-Aufstieg im Herbst."},
+{n:"Stör (Fluss)",typ:"fluss",land:"Schleswig-Holstein",bl:"schleswig-holstein-binnen",ort:"Itzehoe",f:["meerforelle","lachs","hecht","zander","barsch"],t:"Meerforellen- und Lachsprogramm, Regeln beachten."},
+// ===== Seen / Talsperren DE =====
+{n:"Bodensee",typ:"see",land:"Baden-Württemberg",bl:"baden-wuerttemberg",ort:"Konstanz / Friedrichshafen",f:["renke","seeforelle","barsch","hecht","saibling"],t:"Renken mit Hegene, Seeforellen beim Schleppen; eigenes Patent (Bodensee-Fischereiordnung)."},
+{n:"Chiemsee",typ:"see",land:"Bayern",bl:"bayern",ort:"Prien",f:["renke","hecht","zander","barsch","seeforelle","wels"],t:"Renkenfischen vom Boot, Hecht im Schilf."},
+{n:"Ammersee",typ:"see",land:"Bayern",bl:"bayern",ort:"Herrsching",f:["renke","hecht","barsch","seeforelle","zander"],t:"Kilch ganzjährig geschützt."},
+{n:"Starnberger See",typ:"see",land:"Bayern",bl:"bayern",ort:"Starnberg",f:["renke","seeforelle","saibling","hecht","barsch"],t:"Sehr klar und tief: feine Schnüre, natürliche Farben."},
+{n:"Edersee",typ:"talsperre",land:"Hessen",bl:"hessen",ort:"Waldeck",f:["zander","hecht","barsch","wels","regenbogen"],t:"Wasserstand schwankt stark, Kanten am Wasserstand ausrichten."},
+{n:"Möhnesee",typ:"talsperre",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Möhnesee",f:["zander","hecht","barsch","renke","aal"],t:"Barsche an Unterwasserkanten, Zander abends."},
+{n:"Rursee",typ:"talsperre",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Eifel",f:["zander","hecht","barsch","wels","seeforelle"],t:"Bekannt für Großhechte und Welse."},
+{n:"Bigge-/Sorpesee",typ:"talsperre",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Sauerland",f:["zander","hecht","barsch","renke"],t:"Tiefe Talsperren, Echolot hilft."},
+{n:"Steinhuder Meer",typ:"see",land:"Niedersachsen",bl:"niedersachsen-binnen",ort:"Wunstorf",f:["hecht","zander","barsch","aal","karpfen","schleie"],t:"Flach (max. 3 m). Gewässerordnung: Zander-Entnahmefenster 50–75 cm."},
+{n:"Dümmer",typ:"see",land:"Niedersachsen",bl:"niedersachsen-binnen",ort:"Lembruch",f:["hecht","barsch","brasse","aal"],t:"Laut Gewässerordnung 2026 Zander ganzjährig geschont."},
+{n:"Plöner See",typ:"see",land:"Schleswig-Holstein",bl:"schleswig-holstein-binnen",ort:"Plön",f:["hecht","zander","barsch","renke","aal","wels"],t:"Größter See Schleswig-Holsteins, Kleine Maräne."},
+{n:"Scharmützelsee",typ:"see",land:"Brandenburg",bl:"brandenburg",ort:"Bad Saarow",f:["hecht","zander","barsch","aal","wels"],t:"Märkisches Meer: Zander an den tiefen Kanten."},
+{n:"Stechlinsee",typ:"see",land:"Brandenburg",bl:"brandenburg",ort:"Neuglobsow",f:["hecht","barsch","renke"],t:"Sehr klares Wasser, Naturschutz: Regeln vor Ort prüfen."},
+{n:"Talsperre Bleiloch",typ:"talsperre",land:"Thüringen",bl:"thueringen",ort:"Saalburg",f:["zander","hecht","wels","barsch","regenbogen","karpfen"],t:"Thüringer Meer, Wels und Zander."},
+{n:"Talsperre Pöhl",typ:"talsperre",land:"Sachsen",bl:"sachsen",ort:"Vogtland",f:["zander","hecht","barsch","karpfen","regenbogen"],t:"Klar, Barsch im Freiwasser."},
+{n:"Bostalsee",typ:"see",land:"Saarland",bl:"saarland",ort:"Nohfelden",f:["hecht","zander","barsch","karpfen"],t:"Kleiner Stausee, Karpfen und Raubfisch."},
+{n:"Großer Brombachsee",typ:"see",land:"Bayern",bl:"bayern",ort:"Fränkisches Seenland",f:["zander","hecht","barsch","wels","karpfen"],t:"Zander im Freiwasser."},
+{n:"Geiseltalsee",typ:"see",land:"Sachsen-Anhalt",bl:"sachsen-anhalt",ort:"Merseburg",f:["hecht","barsch","zander","renke"],t:"Tagebausee, sehr klar."},
+{n:"Mittellandkanal",typ:"kanal",land:"Niedersachsen",bl:"niedersachsen-binnen",ort:"Hannover – Wolfsburg",f:["zander","barsch","hecht","brasse","aal","rotauge"],t:"Steinpackungen: Barsch und Zander mit Dropshot und Faulenzen."},
+{n:"Nord-Ostsee-Kanal",typ:"kanal",land:"Schleswig-Holstein",bl:"schleswig-holstein-binnen",ort:"Kiel – Brunsbüttel",f:["zander","barsch","dorsch","hering","aal","hornhecht"],t:"Brackwasser: Süß- und Salzwasserfische, Hering im Frühjahr."},
+{n:"Elbe-Havel-Kanal",typ:"kanal",land:"Sachsen-Anhalt",bl:"sachsen-anhalt",ort:"Genthin",f:["zander","barsch","hecht","brasse"],t:"Spundwände und Brücken."},
+{n:"Dortmund-Ems-Kanal",typ:"kanal",land:"Nordrhein-Westfalen",bl:"nordrhein-westfalen",ort:"Münster",f:["zander","barsch","hecht","brasse"],t:"Häfen und Abzweige."},
+{n:"Forellensee / Angelpark",typ:"teich",land:"Deutschland",bl:null,ort:"überall",f:["regenbogen","saibling","stoer","karpfen"],t:"Tageskarte, kein Fischereischein nötig (je nach Land). Tiefe und Farbe oft wechseln."},
+{n:"Baggersee / Kiesgrube",typ:"teich",land:"Deutschland",bl:null,ort:"überall",f:["karpfen","hecht","barsch","zander","schleie","wels"],t:"Steile Kanten, Plateaus: Echolot oder Lotblei nutzen."},
+// ===== Küste DE =====
+{n:"Ostsee Fehmarn",typ:"brandung",land:"Schleswig-Holstein",bl:"schleswig-holstein-kueste",ort:"Fehmarn",f:["meerforelle","dorsch","plattfisch","hornhecht","hering","makrele"],t:"Brandung im Herbst/Winter, Meerforelle an Steinfeldern (Westküste)."},
+{n:"Ostsee Kieler Bucht",typ:"brandung",land:"Schleswig-Holstein",bl:"schleswig-holstein-kueste",ort:"Kiel",f:["meerforelle","dorsch","plattfisch","hornhecht","hering"],t:"Kutter ab Heiligenhafen/Laboe, Heringe in der Förde im Frühjahr."},
+{n:"Ostsee Rügen",typ:"brandung",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-kueste",ort:"Rügen",f:["meerforelle","hecht","hering","hornhecht","plattfisch","dorsch"],t:"Boddenhecht (Entnahmefenster und Tageslimit beachten), Hering im Frühjahr."},
+{n:"Bodden (Darß, Rügen)",typ:"lagune",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-kueste",ort:"Darß / Rügen",f:["hecht","zander","barsch","aland","hering"],t:"Brackwasser-Lagunen mit Großhechten. Neue Regeln: Entnahmefenster 60–90 cm, 1 Hecht/Tag (prüfen)."},
+{n:"Stettiner Haff",typ:"lagune",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-kueste",ort:"Ueckermünde",f:["zander","hecht","barsch","brasse","aal"],t:"Flaches Haff, Zander vom Boot."},
+{n:"Warnemünde Mole",typ:"fels",land:"Mecklenburg-Vorpommern",bl:"mecklenburg-vorpommern-kueste",ort:"Rostock",f:["hering","dorsch","plattfisch","hornhecht","meerforelle"],t:"Heringsangeln im März/April."},
+{n:"Nordsee Sylt / Amrum",typ:"brandung",land:"Schleswig-Holstein",bl:"schleswig-holstein-kueste",ort:"Sylt",f:["plattfisch","wolfsbarsch","dorsch","makrele"],t:"Wolfsbarsch an Buhnen bei steigender Flut im Sommer."},
+{n:"Nordsee Helgoland",typ:"hochsee",land:"Schleswig-Holstein",bl:"schleswig-holstein-kueste",ort:"Helgoland",f:["dorsch","makrele","pollack","koehler","hai_klein"],t:"Kutter und Molen, Felsgrund."},
+{n:"Nordsee Cuxhaven / Wattenmeer",typ:"brandung",land:"Niedersachsen",bl:"niedersachsen-kueste",ort:"Cuxhaven",f:["plattfisch","wolfsbarsch","dorsch"],t:"Wattenmeer ist Nationalpark: Zonen beachten."},
+// ===== Europa =====
+{n:"Norwegen Fjorde (z. B. Hitra, Senja)",typ:"fjord",land:"Norwegen",bl:null,ort:"Westküste/Nordnorwegen",f:["dorsch","koehler","pollack","leng","heilbutt","makrele"],t:"Meeresangeln ohne Lizenz, Ausfuhrgrenze für Fischfilets beachten."},
+{n:"Norwegen Lachsflüsse (Gaula, Alta)",typ:"fluss",land:"Norwegen",bl:null,ort:"Mittel-/Nordnorwegen",f:["lachs","meerforelle"],t:"Lizenzpflichtig, Saison meist Juni–August."},
+{n:"Lofoten",typ:"fjord",land:"Norwegen",bl:null,ort:"Lofoten",f:["dorsch","koehler","heilbutt","leng"],t:"Skrei-Saison Februar–April."},
+{n:"Schweden Schären (Stockholm)",typ:"lagune",land:"Schweden",bl:null,ort:"Stockholm",f:["hecht","barsch","zander","meerforelle"],t:"Brackwasser-Hechte, Jedermannsrecht: Handangeln an der Küste frei."},
+{n:"Schweden Seen (Vänern, Vättern)",typ:"see",land:"Schweden",bl:null,ort:"Südschweden",f:["hecht","zander","seeforelle","lachs","barsch","saibling"],t:"Schleppen auf Seeforelle und Lachs."},
+{n:"Dänemark Fünen (Meerforelle)",typ:"brandung",land:"Dänemark",bl:null,ort:"Fünen",f:["meerforelle","hornhecht","dorsch","plattfisch"],t:"Meerforellen-Mekka, Angelschein (Fisketegn) online."},
+{n:"Dänemark Limfjord",typ:"fjord",land:"Dänemark",bl:null,ort:"Nordjütland",f:["meerforelle","hornhecht","plattfisch"],t:"Ruhige Fjordküste."},
+{n:"Niederlande Polder/Kanäle",typ:"kanal",land:"Niederlande",bl:null,ort:"überall",f:["hecht","zander","barsch","karpfen","brasse"],t:"VISpas (Angelpass) nötig, viele Gewässer mit Raubfisch-Schonzeit März–Mai."},
+{n:"Niederlande Zeeland",typ:"lagune",land:"Niederlande",bl:null,ort:"Oosterschelde",f:["wolfsbarsch","plattfisch","dorsch","hornhecht"],t:"Tidengewässer, Wolfsbarsch an Deichen."},
+{n:"Ebro (Mequinenza)",typ:"strom",land:"Spanien",bl:null,ort:"Katalonien/Aragón",f:["wels","karpfen","zander","schwarzbarsch"],t:"Welshochburg Europas, Lizenz der Region nötig."},
+{n:"Po-Delta",typ:"strom",land:"Italien",bl:null,ort:"Venetien/Emilia",f:["wels","zander","karpfen","wolfsbarsch","leerfisch"],t:"Riesenwelse, Bootsguiding üblich."},
+{n:"Lagune von Venedig",typ:"lagune",land:"Italien",bl:null,ort:"Venedig",f:["wolfsbarsch","meerbrasse","barrakuda","plattfisch"],t:"Brackwasser, Kanalkanten."},
+{n:"Mittelmeer Mallorca",typ:"fels",land:"Spanien",bl:null,ort:"Balearen",f:["meerbrasse","amberjack","zackenbarsch","barrakuda","bonito","mahi"],t:"Ufer-Lizenz der Balearen, Spinnfischen an Felsen."},
+{n:"Kanaren",typ:"hochsee",land:"Spanien",bl:null,ort:"Gran Canaria/Teneriffa",f:["marlin","yellowfin","bonito","amberjack","zackenbarsch","meerbrasse","mahi"],t:"Big Game Juli–Oktober."},
+{n:"Madeira / Azoren",typ:"hochsee",land:"Portugal",bl:null,ort:"Atlantik",f:["marlin","bluefin","blauhai","amberjack","bonito"],t:"Blue Marlin Mai–Oktober."},
+{n:"Irland Westküste",typ:"fels",land:"Irland",bl:null,ort:"Kerry/Galway",f:["wolfsbarsch","pollack","makrele","blauhai","hai_klein","lachs"],t:"Wolfsbarsch: Mindestmaß und Tageslimit (EU)."},
+{n:"Irland Loughs (Corrib, Mask)",typ:"see",land:"Irland",bl:null,ort:"Westirland",f:["hecht","bachforelle","saibling"],t:"Wildforellen mit Nassfliege (Mayfly im Mai)."},
+{n:"Schottland Lachsflüsse (Tay, Spey)",typ:"fluss",land:"Großbritannien",bl:null,ort:"Schottland",f:["lachs","meerforelle","bachforelle"],t:"Beats und Tageskarten buchen."},
+{n:"Bretagne",typ:"fels",land:"Frankreich",bl:null,ort:"Brest/Quiberon",f:["wolfsbarsch","pollack","meerbrasse","makrele"],t:"Wolfsbarsch mit Topwater im Weißwasser."},
+{n:"Lac du Der / Lac d'Orient",typ:"see",land:"Frankreich",bl:null,ort:"Champagne",f:["karpfen","hecht","zander","wels"],t:"Karpfen-Großgewässer, Nachtangeln in Zonen."},
+{n:"Rhône / Saône",typ:"strom",land:"Frankreich",bl:null,ort:"Lyon",f:["wels","zander","karpfen","hecht"],t:"Wels und Zander."},
+{n:"Bodden Polen (Stettiner Haff Ost)",typ:"lagune",land:"Polen",bl:null,ort:"Świnoujście",f:["zander","hecht","barsch","dorsch"],t:"Polnische Lizenz nötig."},
+{n:"Masuren",typ:"see",land:"Polen",bl:null,ort:"Masuren",f:["hecht","zander","barsch","schleie","wels"],t:"Seenplatte, Bootstouren."},
+{n:"Bodensee Österreich / Alpenseen",typ:"see",land:"Österreich",bl:null,ort:"Salzkammergut",f:["seeforelle","saibling","renke","hecht"],t:"Tageskarten über Fischereiberechtigte."},
+{n:"Island Seen und Flüsse",typ:"fluss",land:"Island",bl:null,ort:"überall",f:["lachs","saibling","bachforelle","meerforelle"],t:"Teure Lachsflüsse, günstigere Saiblingsseen (Veiðikortið)."},
+{n:"Finnland Lappland",typ:"see",land:"Finnland",bl:null,ort:"Lappland",f:["hecht","barsch","aesche","saibling","lachs"],t:"Eisangeln März/April."},
+// ===== Nordamerika =====
+{n:"Florida Keys",typ:"flats",land:"USA",bl:null,ort:"Florida",f:["tarpon","bonefish","permit","snook","barrakuda","mangrove_jack","mahi"],t:"Tarpon Mai–Juni, Flats mit Guide."},
+{n:"Everglades / Florida-Kanäle",typ:"lagune",land:"USA",bl:null,ort:"Florida",f:["snook","tarpon","redfish","pfauenbarsch","schwarzbarsch"],t:"Mangroven, Peacock Bass in Miamis Kanälen."},
+{n:"Louisiana Marschen",typ:"lagune",land:"USA",bl:null,ort:"Louisiana",f:["redfish","striper","catfish_us"],t:"Bull Reds im Herbst."},
+{n:"Große Seen (Erie, Michigan)",typ:"see",land:"USA/Kanada",bl:null,ort:"Great Lakes",f:["walleye","smallmouth","pazifiklachs","musky","barsch"],t:"Walleye und Smallmouth im Erie-See."},
+{n:"Lake of the Woods",typ:"see",land:"Kanada/USA",bl:null,ort:"Ontario/Minnesota",f:["musky","walleye","hecht","smallmouth"],t:"Musky-Hotspot."},
+{n:"Fraser River",typ:"fluss",land:"Kanada",bl:null,ort:"British Columbia",f:["stoer","pazifiklachs","steelhead"],t:"Weißer Stör, nur Catch & Release."},
+{n:"Alaska (Kenai, Bristol Bay)",typ:"fluss",land:"USA",bl:null,ort:"Alaska",f:["pazifiklachs","regenbogen","heilbutt","saibling"],t:"Königslachs Juni/Juli, Heilbutt vom Boot."},
+{n:"Lake Okeechobee",typ:"see",land:"USA",bl:null,ort:"Florida",f:["schwarzbarsch","crappie","catfish_us"],t:"Bass-Paradies, Schilf und Seerosen."},
+{n:"Montauk / Cape Cod",typ:"brandung",land:"USA",bl:null,ort:"Ostküste",f:["striper","bluefin","bonito"],t:"Striper-Wanderung im Herbst."},
+{n:"Baja California / Cabo",typ:"hochsee",land:"Mexiko",bl:null,ort:"Cabo San Lucas",f:["marlin","yellowfin","roosterfish","mahi","amberjack"],t:"Roosterfish vom Strand."},
+{n:"Yucatán / Holbox",typ:"flats",land:"Mexiko",bl:null,ort:"Quintana Roo",f:["tarpon","bonefish","permit","snook","barrakuda"],t:"Baby-Tarpon in Lagunen."},
+// ===== Mittel-/Südamerika =====
+{n:"Belize Flats",typ:"flats",land:"Belize",bl:null,ort:"Ambergris Caye",f:["bonefish","permit","tarpon","barrakuda"],t:"Grand Slam an einem Tag möglich."},
+{n:"Bahamas (Andros)",typ:"flats",land:"Bahamas",bl:null,ort:"Andros",f:["bonefish","permit","barrakuda","mahi"],t:"Große Bonefish, Lizenz online."},
+{n:"Kuba (Jardines de la Reina)",typ:"flats",land:"Kuba",bl:null,ort:"Südküste",f:["bonefish","permit","tarpon","snook","zackenbarsch"],t:"Geschützte Inselwelt, nur mit Lodge."},
+{n:"Costa Rica Pazifik",typ:"hochsee",land:"Costa Rica",bl:null,ort:"Guanacaste",f:["marlin","roosterfish","yellowfin","mahi","snook"],t:"Segelfisch Dezember–April."},
+{n:"Costa Rica Karibik (Río Colorado)",typ:"lagune",land:"Costa Rica",bl:null,ort:"Barra del Colorado",f:["tarpon","snook"],t:"Tarpon in Flussmündungen."},
+{n:"Amazonas / Rio Negro",typ:"fluss",land:"Brasilien",bl:null,ort:"Amazonas",f:["pfauenbarsch","piranha","arapaima","catfish_us"],t:"Saison Trockenzeit September–März."},
+{n:"Pantanal",typ:"lagune",land:"Brasilien",bl:null,ort:"Mato Grosso",f:["piranha","dorado_fluss","pfauenbarsch"],t:"Schonzeit (Piracema) November–Februar."},
+{n:"Paraná / Corrientes",typ:"strom",land:"Argentinien",bl:null,ort:"Corrientes",f:["dorado_fluss","pfauenbarsch","piranha"],t:"Dorado-Saison August–April."},
+{n:"Patagonien",typ:"fluss",land:"Argentinien/Chile",bl:null,ort:"Patagonien",f:["regenbogen","bachforelle","meerforelle","pazifiklachs"],t:"Südhalbkugel: Saison November–April. Rio Grande (Feuerland) für Meerforellen."},
+// ===== Afrika / Asien / Ozeanien =====
+{n:"Seychellen (Alphonse, Farquhar)",typ:"flats",land:"Seychellen",bl:null,ort:"Äußere Inseln",f:["gt","bonefish","permit","barrakuda","zackenbarsch"],t:"GT auf Flats, Fliegenfischen."},
+{n:"Malediven",typ:"riff",land:"Malediven",bl:null,ort:"Atolle",f:["gt","yellowfin","zackenbarsch","barrakuda","mahi","mangrove_jack"],t:"Popper an Riffkanten, oft nur Catch & Release."},
+{n:"Oman / Musandam",typ:"riff",land:"Oman",bl:null,ort:"Musandam",f:["gt","amberjack","zackenbarsch","yellowfin","barrakuda"],t:"Popping und Jigging."},
+{n:"Rotes Meer (Ägypten)",typ:"riff",land:"Ägypten",bl:null,ort:"Hurghada/Marsa Alam",f:["gt","barrakuda","zackenbarsch","yellowfin","amberjack"],t:"Nationalparks: Angeln oft verboten oder eingeschränkt."},
+{n:"Nassersee",typ:"see",land:"Ägypten",bl:null,ort:"Assuan",f:["nilbarsch","tigerfisch","tilapia"],t:"Riesige Nilbarsche, Schleppen und Werfen."},
+{n:"Kenia (Watamu, Malindi)",typ:"hochsee",land:"Kenia",bl:null,ort:"Küste",f:["marlin","yellowfin","gt","wahoo","mahi"],t:"Segelfisch November–März."},
+{n:"Sambesi / Kariba",typ:"fluss",land:"Sambia/Simbabwe",bl:null,ort:"Lower Zambezi",f:["tigerfisch","tilapia","catfish_us"],t:"Tigerfisch September–November."},
+{n:"Südafrika (Ostkap)",typ:"brandung",land:"Südafrika",bl:null,ort:"Port Alfred",f:["leerfisch","hai_klein","meerbrasse","zackenbarsch","schwarzbarsch"],t:"Südhalbkugel: Leerfisch im Südsommer."},
+{n:"Gambia / Senegal",typ:"lagune",land:"Westafrika",bl:null,ort:"Küste",f:["tarpon","barrakuda","leerfisch","zackenbarsch"],t:"Riesentarpon in Mündungen."},
+{n:"Thailand Angelseen (Bungsamran)",typ:"teich",land:"Thailand",bl:null,ort:"Bangkok",f:["arapaima","catfish_us","karpfen","barramundi"],t:"Gepflegte Angelseen mit Riesenfischen."},
+{n:"Indien (Kaveri, Ramganga)",typ:"fluss",land:"Indien",bl:null,ort:"Karnataka/Uttarakhand",f:["mahseer"],t:"Catch & Release, Lizenz der Reservate."},
+{n:"Nordaustralien (Kimberley, Arnhem Land)",typ:"lagune",land:"Australien",bl:null,ort:"Northern Territory",f:["barramundi","mangrove_jack","gt","tarpon"],t:"Barra-Saison nach der Regenzeit (März–Mai). Krokodile!"},
+{n:"Great Barrier Reef",typ:"riff",land:"Australien",bl:null,ort:"Queensland",f:["gt","zackenbarsch","mangrove_jack","marlin","mahi","barrakuda"],t:"Schutzzonen (Green Zones) beachten."},
+{n:"Murray River",typ:"fluss",land:"Australien",bl:null,ort:"New South Wales/Victoria",f:["murray_cod","golden_perch","karpfen"],t:"Murray-Cod-Schonzeit 1.9.–30.11."},
+{n:"Neuseeland Seen (Taupo)",typ:"see",land:"Neuseeland",bl:null,ort:"Nordinsel",f:["regenbogen","bachforelle"],t:"Weltklasse-Forellen, Lizenz von Fish & Game."},
+{n:"Japan (Tokyo Bay)",typ:"hafen",land:"Japan",bl:null,ort:"Tokio",f:["wolfsbarsch","meerbrasse","makrele"],t:"Seabass-Angeln an Hafenanlagen nachts."}
+];
+// Gewässertypen
+window.WTYPES = [
+{id:"strom",n:"Großer Strom",d:"Elbe, Rhein, Oder, Donau – Buhnen, Häfen"},
+{id:"fluss",n:"Fluss",d:"Mittelgroße Flüsse mit Strömung"},
+{id:"bach",n:"Bach",d:"Kleine Fließgewässer, Forellenregion"},
+{id:"kanal",n:"Kanal",d:"Schifffahrtskanäle, Gräben, Polder"},
+{id:"see",n:"See",d:"Natürliche Seen"},
+{id:"talsperre",n:"Talsperre",d:"Stauseen, tiefes Freiwasser"},
+{id:"teich",n:"Teich / Baggersee",d:"Vereinsgewässer, Kiesgruben, Angelparks"},
+{id:"hafen",n:"Hafen / Mole",d:"Hafenbecken, Molen, Stege am Meer"},
+{id:"brandung",n:"Strand / Brandung",d:"Sandstrand, Brandungsangeln"},
+{id:"fels",n:"Felsküste",d:"Steilküste, Klippen, Wellenbrecher"},
+{id:"lagune",n:"Lagune / Bodden / Mündung",d:"Brackwasser, Haffe, Mangroven, Ästuare"},
+{id:"flats",n:"Flats",d:"Tropische Flachwasserebenen"},
+{id:"riff",n:"Riff",d:"Korallen- und Felsriffe"},
+{id:"fjord",n:"Fjord / Schären",d:"Kalte Felsküsten im Norden"},
+{id:"hochsee",n:"Hochsee / Boot",d:"Offshore, Kutter, Big Game"}
+];
+window.REGIONS = [
+{id:"eu",n:"Mitteleuropa"},{id:"nord",n:"Nordeuropa"},{id:"med",n:"Mittelmeer"},{id:"na",n:"Nordamerika"},
+{id:"sa",n:"Südamerika"},{id:"af",n:"Afrika"},{id:"as",n:"Asien"},{id:"au",n:"Australien / Ozeanien"},{id:"trop",n:"Tropen weltweit"}
+];
+(function(){
+"use strict";
+var FISH=window.FISH,BAITS=window.BAITS,WATERS=window.WATERS,WTYPES=window.WTYPES,REGIONS=window.REGIONS,REGS=window.REGS;
+var F={},B={},WT={};FISH.forEach(function(f){F[f.id]=f});BAITS.forEach(function(b){B[b.id]=b});WTYPES.forEach(function(w){WT[w.id]=w});
+var MON=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+var MONL=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+var SOUTH=["Australien","Neuseeland","Argentinien/Chile","Argentinien","Südafrika","Brasilien","Sambia/Simbabwe"];
+// Namen in den Schonzeit-Tabellen je Fisch
+var ALIAS={hecht:["Hecht"],zander:["Zander"],barsch:["Barsch","Flussbarsch"],wels:["Wels"],rapfen:["Rapfen","Schied, Rapfen"],aal:["Aal"],
+ quappe:["Quappe","Rutte"],huchen:["Huchen"],bachforelle:["Bachforelle"],regenbogen:["Regenbogenforelle"],seeforelle:["Seeforelle"],
+ saibling:["Seesaibling","Bachsaibling"],aesche:["Äsche"],lachs:["Lachs","Atlantischer Lachs"],meerforelle:["Meerforelle"],
+ renke:["Große Maräne","Maräne","Renken","Felchen","Blaufelchen","Kleine Maräne"],karpfen:["Karpfen"],schleie:["Schleie"],rotauge:["Rotauge","Plötze"],
+ rotfeder:["Rotfeder"],doebel:["Döbel"],aland:["Aland","Nerfling"],barbe:["Barbe"],karausche:["Karausche"],stoer:["Stör","Atlantischer Stör","Sterlet"],
+ dorsch:["Dorsch"],hering:["Hering"],makrele:["Makrele"],plattfisch:["Scholle","Flunder","Kliesche","Scharbe","Seezunge","Glattbutt"],steinbutt:["Steinbutt"],wolfsbarsch:["Wolfsbarsch"]};
+var BLS=Object.keys(REGS);
+// Bekannte Änderungen nach dem Tabellenstand (aus Recherche 11/2026, unbestätigt gegen den Gesetzestext)
+var BLNOTE={
+ "bayern":"Laut Gesetzblatt 2024 (AVBayFiG) geändert: Hecht und Zander 15.02.–30.04., je 50 cm; Bachforelle 01.10.–15.03.; Huchen 15.02.–30.06., 90 cm.",
+ "mecklenburg-vorpommern-kueste":"Neuere Küstenregeln: Hecht nur 60–90 cm und 1 Fisch pro Tag, Barsch höchstens 15 pro Tag, Meerforelle 48 cm. Dorsch: EU-Fangbeschränkungen für Angler in der westlichen Ostsee prüfen.",
+ "mecklenburg-vorpommern-binnen":"Gesetzlich keine Hecht-/Zander-Schonzeit im Binnenland. Auf Gewässern des Landesanglerverbands gelten eigene Regeln (Hecht 01.03.–30.04., 50 cm; Zander 15.04.–01.06., 45 cm).",
+ "schleswig-holstein-kueste":"Dorsch und Lachs: jährliche EU-Fangbeschränkungen für Angler in der Ostsee prüfen.",
+ "niedersachsen-binnen":"Weser und Hunte: Freizeitfischerei auf Aal seit 2025 verboten. Viele Gewässer haben strengere Verbandsregeln (z. B. Steinhuder Meer, Dümmer).",
+ "nordrhein-westfalen":"Die Landesfischereiverordnung wurde 2025/2026 geändert (u. a. Aal 50 cm). Werte unbedingt mit recht.nrw.de abgleichen.",
+ "sachsen":"Laut Übersicht 2022 (SächsFischVO): Hecht 01.02.–30.04., 50 cm; Zander 01.02.–31.05., 50 cm; Bachforelle ganzjährig geschont.",
+ "thueringen":"Neue Thüringer Verordnung von 2020: Aal 01.11.–28.02., 50 cm; Äsche 01.02.–31.05., 35 cm."
+};
+var store={get:function(k,d){try{var v=localStorage.getItem("ag_"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem("ag_"+k,JSON.stringify(v))}catch(e){}}};
+var now=new Date();
+function tzNow(){var h=now.getHours();return h<5?"n":h<9?"mo":h<17?"t":h<21?"ab":"n"}
+function tempFor(m){return [0,0,0,1,1,2,2,2,1,1,0,0][m]}
+var S={tab:"finden",view:null,bl:store.get("bl","brandenburg"),own:store.get("own",[]),
+ wiz:{step:0,wt:null,fish:null,water:null,month:now.getMonth(),tz:tzNow(),wetter:"wolken",wasser:"mittel",temp:tempFor(now.getMonth()),sued:false,art:"alle",region:"alle"},
+ q:{fische:"",koeder:"",gew:"",regeln:""},fg:"alle",kt:"alle",gl:"alle",form:null,more:false};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function allWaters(){return S.own.map(function(w,i){var c={};for(var k in w)c[k]=w[k];c.own=i;return c}).concat(WATERS)}
+function fishAct(f,m,sued){var i=sued?(m+6)%12:m;return +f.m.charAt(i)}
+function dots(n){var h='<span class="dots" aria-label="Eignung '+n+' von 3">';for(var i=1;i<=3;i++)h+='<i class="'+(i<=n?"f":"")+'"></i>';return h+"</span>"}
+function months(f,sued,cur){var h='<div class="months">';for(var i=0;i<12;i++){var a=fishAct(f,i,sued);h+='<i class="a'+a+(i===cur?" now":"")+'">'+MON[i].charAt(0)+"</i>"}return h+"</div>"}
+var ACTL=["Kaum Bisse zu erwarten","Mäßige Zeit","Gute Zeit","Beste Zeit"];
+var TZL={mo:"Morgen",t:"Tag",ab:"Abend",n:"Nacht"};
+function tzCode(t){return t==="mo"||t==="ab"?"d":t}
+function tzText(f){var m={d:"Dämmerung",t:"Tag",n:"Nacht"};return f.tz.split("").map(function(c){return m[c]}).join(", ")}
+
+// ---------- Regeln ----------
+function parseD(s){var m=/^(\d\d)\.(\d\d)\.?$/.exec(s);return m?(+m[2])*100+(+m[1]):null}
+function rowStatus(r,d){
+  d=d||now;var t=(d.getMonth()+1)*100+d.getDate();
+  if(/ganzj/.test(r.von))return{c:"stop",l:"Ganzjährig geschont"};
+  if(r.von==="-")return{c:"warn",l:"Sonderregel, siehe Fußnote"};
+  var a=parseD(r.von),b=parseD(r.bis);
+  if(a==null||b==null)return{c:"ok",l:"Keine Schonzeit"};
+  var inn=a<=b?(t>=a&&t<=b):(t>=a||t<=b);
+  return inn?{c:"stop",l:"Schonzeit bis "+r.bis}:{c:"ok",l:"Frei (Schonzeit "+r.von+"–"+r.bis+")"};
+}
+function rulesFor(fid,bl){
+  var al=ALIAS[fid];if(!al||!REGS[bl])return[];
+  return REGS[bl].rows.filter(function(r){var n=r.art.split(" (")[0].trim();
+    return al.some(function(a){return n===a||n.indexOf(a+",")===0||n.indexOf(a+"/")===0||n.indexOf(", "+a)>0||(a==="Karpfen"&&n.indexOf("Karpfen")===0)})});
+}
+function ruleBox(fid,bl){
+  var reg=REGS[bl];if(!reg)return"";
+  var rows=rulesFor(fid,bl);var h='<div class="card"><div class="row"><span class="label grow">Regeln · '+esc(reg.name)+'</span><button class="chip" data-a="tab" data-v="regeln">Alle Regeln</button></div>';
+  if(!rows.length)h+='<p class="small muted">Für diese Art steht nichts in der Tabelle dieses Landes. Das heißt nicht automatisch „frei“: Gewässerordnung und Erlaubnisschein prüfen.</p>';
+  rows.forEach(function(r){var st=rowStatus(r);
+    h+='<div class="rule"><span class="pill '+st.c+'">'+esc(st.l)+'</span><span class="small">'+esc(r.art.split(" (")[0])+' · Mindestmaß '+(r.mass==="-"||!r.mass?"keins":esc(r.mass)+" cm")+(r.fn&&reg.notes[r.fn]?' · <span class="muted">'+esc(reg.notes[r.fn])+"</span>":"")+"</span></div>"});
+  if(BLNOTE[bl])h+='<p class="notice">'+esc(BLNOTE[bl])+"</p>";
+  h+='<p class="small muted">Tabellenstand '+esc(reg.stand)+', ohne Gewähr. Es gilt immer der aktuelle Gesetzestext und dein Erlaubnisschein.</p></div>';
+  return h;
+}
+
+// ---------- Empfehlung ----------
+function recommend(w){
+  var f=F[w.fish],cold=w.temp===0,warm=w.temp===2,tz=tzCode(w.tz),out=[];
+  f.b.forEach(function(e){
+    var b=B[e[0]];if(!b)return;
+    if(w.art!=="alle"&&b.t!==w.art)return;
+    var s=e[1]*10,why=[];
+    var top=b.tiefe==="o"&&b.t==="K";
+    if(cold){ if(b.tempo===1){s+=4;why.push("langsam, passt zu kaltem Wasser")} if(b.tempo===3)s-=4; if(top)s-=7; if(b.tiefe==="g")s+=2 }
+    if(warm){ if(top){s+=4;why.push("warmes Wasser: Fische jagen oben")} if(b.tempo===3)s+=2 }
+    if(w.wasser==="trueb"){ if(b.laut>=2){s+=3;why.push("viel Druck/Reiz für trübes Wasser")} if(b.t==="N"){s+=3;why.push("Duft wirkt im Trüben")} if(b.t==="K"&&b.laut===0)s-=3 }
+    if(w.wasser==="klar"){ if(b.laut<=1&&b.t==="K"){s+=2;why.push("dezent, gut bei klarem Wasser")} if(b.laut===3)s-=2 }
+    if(tz==="n"){ if(b.t==="N"){s+=3;why.push("nachts fängt Naturköder am sichersten")} if(b.laut>=2)s+=1; if(b.t==="K"&&b.laut===0)s-=2 }
+    if(tz==="d"&&top&&!cold){s+=3;why.push("Dämmerung ist Oberflächenzeit")}
+    if(w.wetter==="sonne"){ if(top&&tz==="t")s-=3; if(b.tiefe==="g"){s+=1} }
+    if(w.wetter==="regen"){ if(b.id==="tauwurm"||b.id==="rotwurm"){s+=3;why.push("Regen spült Würmer ins Wasser")} if(b.laut>=2)s+=1 }
+    if(w.wetter==="wind"){ if(b.laut>=2)s+=1; if(b.kat==="Fliege")s-=3; if(top)s-=1 }
+    out.push({b:b,e:e,s:s,why:why});
+  });
+  out.sort(function(a,b){return b.s-a.s});
+  return out;
+}
+function colorTip(w,b){
+  var tz=tzCode(w.tz);
+  if(b.t==="N")return w.wasser==="trueb"?"Größere Portion, zusätzlich Lockstoff oder Futter":"Frischer Köder, feines Vorfach";
+  if(tz==="n")return "Dunkel (Schwarz, Violett) für die Silhouette oder UV/Glow";
+  if(w.wasser==="trueb")return "Schockfarben: Chartreuse, Orange, Weiß, Firetiger";
+  if(w.wasser==="klar")return w.wetter==="sonne"?"Natürlich: Braun, Grün, Silber, transparent mit Glitter":"Natürlich mit etwas Kontrast: Weißfisch-Dekor, Perlmutt";
+  return tz==="d"?"Kontrastreich: Weiß, Motoroil, zweifarbig":"Zwischen Natur und Schock: Motoroil, Perlweiß, Ayu";
+}
+function tempoTip(w,b){
+  if(b.t==="N")return null;
+  if(w.temp===0)return "Kaltes Wasser: sehr langsam, lange Pausen, eher kleinere Köder dicht am Grund.";
+  if(w.temp===2)return "Warmes Wasser: zügiger führen, flache und obere Wasserschichten absuchen.";
+  return null;
+}
+
+// ---------- Ansichten ----------
+function head(title,back,sub){return '<div class="head">'+(back?'<button class="btn back" data-a="'+back+'">‹ Zurück</button>':'<span class="float" aria-hidden="true"></span>')+'<h1>'+esc(title)+"</h1></div>"+(sub?'<p class="muted">'+sub+"</p>":"")}
+function steps(n){var h='<div class="steps" aria-label="Schritt '+(n+1)+' von 3">';for(var i=0;i<3;i++)h+='<i class="'+(i<=n?"f":"")+'"></i>';return h+"</div>"}
+function blSelect(){var h='<div class="field"><label class="label" for="blsel">Dein Bundesland für die Regeln</label><select id="blsel" data-c="bl">';BLS.forEach(function(k){h+='<option value="'+k+'"'+(k===S.bl?" selected":"")+">"+esc(REGS[k].name)+"</option>"});return h+"</select></div>"}
+
+function vFinden(){
+  var w=S.wiz,h="";
+  if(w.step===0){
+    h+=head("Köder-Guide",null,"Sag mir, wo und worauf du angelst. Ich nenne dir die passenden Köder mit Farbe, Führung und Montage.");
+    h+=steps(0)+'<h2>1. Wo angelst du?</h2><div class="grid g3">';
+    WTYPES.forEach(function(t){h+='<button class="tile" data-a="wt" data-v="'+t.id+'"><b>'+esc(t.n)+"</b><span>"+esc(t.d)+"</span></button>"});
+    h+="</div>"+'<button class="btn water" data-a="tab" data-v="gewaesser">Oder ein Gewässer aus dem Verzeichnis wählen</button>'+blSelect();
+    return h;
+  }
+  if(w.step===1){
+    var wat=w.water!=null?allWaters()[w.water]:null;
+    h+=head("Zielfisch","wizback")+steps(1)+'<h2>2. Worauf angelst du?</h2><p class="muted">'+esc(wat?wat.n:WT[w.wt].n)+" · sortiert nach Beißzeit im "+MONL[w.month]+"</p>";
+    var list;
+    if(wat){list=wat.f.map(function(id){return F[id]}).filter(Boolean)}
+    else{
+      h+='<div class="chips"><button class="chip'+(w.region==="alle"?" on":"")+'" data-a="region" data-v="alle">Alle Regionen</button>';
+      REGIONS.forEach(function(r){h+='<button class="chip'+(w.region===r.id?" on":"")+'" data-a="region" data-v="'+r.id+'">'+esc(r.n)+"</button>"});h+="</div>";
+      list=FISH.filter(function(f){return f.w.indexOf(w.wt)>=0&&(w.region==="alle"||f.r.indexOf(w.region)>=0)});
+    }
+    list=list.slice().sort(function(a,b){return fishAct(b,w.month,w.sued)-fishAct(a,w.month,w.sued)});
+    if(!list.length)h+='<p class="card">Für diese Auswahl ist kein Fisch hinterlegt. Wähle eine andere Region.</p>';
+    h+='<div class="list">';
+    list.forEach(function(f){var a=fishAct(f,w.month,w.sued);h+='<button class="item" data-a="fish" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(ACTL[a])+" · "+esc(f.g)+"</span></span>"+dots(a)+"</button>"});
+    return h+"</div>";
+  }
+  if(w.step===2){
+    var f=F[w.fish];
+    h+=head("Bedingungen","wizback")+steps(2)+'<h2>3. Wie sind die Bedingungen?</h2><p class="muted">'+esc(f.n)+" · alles ist auf heute und jetzt voreingestellt.</p>";
+    function grp(lab,key,opts){var x='<div class="field"><span class="label">'+lab+'</span><div class="chips">';opts.forEach(function(o){x+='<button class="chip'+(String(w[key])===String(o[0])?" on":"")+'" data-a="set" data-k="'+key+'" data-v="'+o[0]+'">'+o[1]+"</button>"});return x+"</div></div>"}
+    h+=grp("Monat","month",MON.map(function(m,i){return[i,m]}));
+    h+=grp("Tageszeit","tz",[["mo","Morgen"],["t","Tag"],["ab","Abend"],["n","Nacht"]]);
+    h+=grp("Wetter","wetter",[["sonne","Sonnig"],["wolken","Bewölkt"],["regen","Regen"],["wind","Windig"]]);
+    h+=grp("Wasser","wasser",[["klar","Klar"],["mittel","Leicht trüb"],["trueb","Trüb"]]);
+    h+=grp("Wassertemperatur","temp",[[0,"Kalt (unter 8 °C)"],[1,"Mittel"],[2,"Warm (über 18 °C)"]]);
+    h+=grp("Köderart","art",[["alle","Alle"],["K","Nur Kunstköder"],["N","Nur Naturköder"]]);
+    h+=grp("Erdhalbkugel","sued",[[false,"Nord"],[true,"Süd (Saison um 6 Monate verschoben)"]]);
+    h+='<button class="btn primary" data-a="result">Köder anzeigen</button>';
+    return h;
+  }
+  // Ergebnis
+  var fi=F[w.fish],a=fishAct(fi,w.month,w.sued),rec=recommend(w),tzm=fi.tz.indexOf(tzCode(w.tz))>=0;
+  h+=head(fi.n,"wizback");
+  h+='<div class="card sunk"><div class="row"><span class="pill '+(a>=2?"ok":a===1?"warn":"stop")+'">'+ACTL[a]+" im "+MONL[w.month]+'</span><span class="pill '+(tzm?"ok":"warn")+'">'+(tzm?TZL[w.tz]+" passt":"Besser: "+tzText(fi))+"</span></div>"+months(fi,w.sued,w.month)+'<p class="small">'+esc(fi.tipp)+"</p></div>";
+  if(!w.sued)h+=ruleBox(fi.id,S.bl);
+  h+='<h2>Deine Köder</h2>';
+  if(!rec.length)h+='<p class="card">Mit diesem Filter ist kein Köder hinterlegt. Stelle die Köderart auf „Alle“.</p>';
+  var n=S.more?rec.length:Math.min(5,rec.length);
+  for(var i=0;i<n;i++){var r=rec[i],b=r.b,tt=tempoTip(w,b);
+    h+='<div class="card"><div class="row"><h3 class="grow">'+(i+1)+". "+esc(b.n)+'</h3><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+"</span>"+dots(r.e[1])+"</div>"+
+      '<p><b>'+esc(r.e[2])+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
+      '<dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>"+(b.t==="K"?"Farbe":"Anbieten")+"</dt><dd>"+esc(colorTip(w,b))+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+(tt?" "+esc(tt):"")+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd></dl></div>"}
+  if(rec.length>n)h+='<button class="btn" data-a="more">Weitere '+(rec.length-n)+" Köder zeigen</button>";
+  h+='<div class="row"><button class="btn grow" data-a="wizstep" data-v="2">Bedingungen ändern</button><button class="btn grow" data-a="wizreset">Neu starten</button></div>';
+  return h;
+}
+
+function search(key,ph){return '<div class="field"><input id="q_'+key+'" type="search" placeholder="'+ph+'" value="'+esc(S.q[key])+'" data-i="'+key+'" aria-label="'+ph+'"></div>'}
+function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
+
+function vFische(){
+  if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>";
+    h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+esc(f.tipp)+"</p></div>";
+    h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
+    f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'"><span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
+    return h+"</div>"}
+  var groups=["alle","Raubfisch","Friedfisch","Salmonide","Meer"],h2=head("Fische",null,FISH.length+" Arten weltweit, mit Beißzeiten und Ködern.")+search("fische","Fisch suchen")+'<div class="chips">';
+  groups.forEach(function(g){h2+='<button class="chip'+(S.fg===g?" on":"")+'" data-a="fg" data-v="'+g+'">'+(g==="alle"?"Alle":g)+"</button>"});
+  h2+='</div><div class="list" id="res">'+fishList()+"</div>";return h2;
+}
+function fishList(){var m=now.getMonth(),h="";FISH.filter(function(f){return(S.fg==="alle"||f.g===S.fg)&&match(S.q.fische,f.n+" "+f.lat)}).sort(function(a,b){return a.n.localeCompare(b.n,"de")}).forEach(function(f){
+  h+='<button class="item" data-a="fishview" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="lat">'+esc(f.lat)+"</span></span>"+dots(fishAct(f,m,false))+"</button>"});return h||'<p class="card">Nichts gefunden.</p>'}
+
+function vKoeder(){
+  if(S.view&&S.view.t==="bait"){var b=B[S.view.id],h=head(b.n,"closeview")+'<div class="row"><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+'</span><span class="muted small">'+esc(b.kat)+"</span></div>";
+    h+='<div class="card"><p>'+esc(b.info)+'</p><dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd><dt>Tiefe</dt><dd>"+({o:"Oberfläche / flach",m:"Mittelwasser",g:"Grund"}[b.tiefe])+"</dd></dl></div><h2>Fängt diese Fische</h2><div class=\"list\">";
+    FISH.forEach(function(f){f.b.forEach(function(e){if(e[0]===b.id)h+='<button class="item" data-a="fishview" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"})});
+    return h+"</div>"}
+  var h2=head("Köder",null,BAITS.length+" Kunst- und Naturköder mit Führung und Montage.")+search("koeder","Köder suchen")+'<div class="chips">';
+  [["alle","Alle"],["K","Kunstköder"],["N","Naturköder"]].forEach(function(o){h2+='<button class="chip'+(S.kt===o[0]?" on":"")+'" data-a="kt" data-v="'+o[0]+'">'+o[1]+"</button>"});
+  return h2+'</div><div class="list" id="res">'+baitList()+"</div>";
+}
+function baitList(){var h="";BAITS.filter(function(b){return(S.kt==="alle"||b.t===S.kt)&&match(S.q.koeder,b.n+" "+b.kat)}).forEach(function(b){
+  h+='<button class="item" data-a="bait" data-v="'+b.id+'"><span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+" · "+esc(b.groesse)+'</span></span><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunst":"Natur")+"</span></button>"});return h||'<p class="card">Nichts gefunden.</p>'}
+
+function vGew(){
+  var all=allWaters(),h;
+  if(S.form){var fm=S.form;h=head(fm.idx==null?"Eigenes Gewässer":"Gewässer bearbeiten","closeform");
+    h+='<div class="field"><label class="label" for="f_n">Name</label><input id="f_n" data-f="n" value="'+esc(fm.n)+'" placeholder="z. B. Vereinsteich Breese"></div>';
+    h+='<div class="field"><label class="label" for="f_typ">Gewässertyp</label><select id="f_typ" data-f="typ">'+WTYPES.map(function(t){return'<option value="'+t.id+'"'+(fm.typ===t.id?" selected":"")+">"+esc(t.n)+"</option>"}).join("")+"</select></div>";
+    h+='<div class="field"><label class="label" for="f_ort">Ort / Land</label><input id="f_ort" data-f="ort" value="'+esc(fm.ort)+'" placeholder="z. B. Wittenberge"></div>';
+    h+='<div class="field"><label class="label" for="f_t">Deine Tipps (Stellen, Köder, Zeiten)</label><textarea id="f_t" data-f="t" rows="3">'+esc(fm.t)+"</textarea></div>";
+    h+='<div class="field"><span class="label">Fische dort (antippen)</span><div class="chips">'+FISH.slice().sort(function(a,b){return a.n.localeCompare(b.n,"de")}).map(function(f){return'<button class="chip'+(fm.f.indexOf(f.id)>=0?" on":"")+'" data-a="ffish" data-v="'+f.id+'">'+esc(f.n)+"</button>"}).join("")+"</div></div>";
+    h+='<p class="small muted" id="formmsg" role="status"></p><button class="btn primary" data-a="saveform">Speichern</button>'+(fm.idx!=null?(fm.del?'<div class="row"><button class="btn grow" data-a="delno">Behalten</button><button class="btn grow" data-a="delyes" style="color:var(--stop)">Wirklich löschen</button></div>':'<button class="btn" data-a="delask" style="color:var(--stop)">Gewässer löschen</button>'):"");
+    return h}
+  if(S.view&&S.view.t==="water"){var w=all[S.view.id];if(!w){S.view=null;return vGew()}
+    h=head(w.n,"closeview")+'<p class="muted">'+esc(WT[w.typ]?WT[w.typ].n:"")+(w.ort?" · "+esc(w.ort):"")+(w.land?" · "+esc(w.land):"")+(w.own!=null?' · <span class="pill k">Eigenes</span>':"")+"</p>";
+    if(w.t)h+='<div class="card"><span class="label">Tipp</span><p>'+esc(w.t)+"</p></div>";
+    h+='<h2>Fische hier</h2><p class="muted small">Fisch antippen, dann bekommst du die Köder für heute.</p><div class="list">';
+    var m=now.getMonth(),sd=SOUTH.indexOf(w.land)>=0;
+    w.f.map(function(id){return F[id]}).filter(Boolean).sort(function(a,b){return fishAct(b,m,sd)-fishAct(a,m,sd)}).forEach(function(f){var a=fishAct(f,m,sd);
+      h+='<button class="item" data-a="waterfish" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+ACTL[a]+" im "+MONL[m]+"</span></span>"+dots(a)+"</button>"});
+    h+="</div>";
+    if(w.bl&&REGS[w.bl])h+='<button class="btn" data-a="showbl" data-v="'+w.bl+'">Regeln für '+esc(REGS[w.bl].name)+" ansehen</button>";
+    if(w.own!=null)h+='<button class="btn" data-a="editown" data-v="'+w.own+'">Bearbeiten</button>';
+    return h}
+  var lands=[];WATERS.forEach(function(w){if(lands.indexOf(w.land)<0)lands.push(w.land)});
+  h=head("Gewässer",null,all.length+" Gewässer: Prignitz, Deutschland, Angelziele weltweit und deine eigenen.");
+  h+='<button class="btn water" data-a="newown">+ Eigenes Gewässer eintragen</button>'+search("gew","Gewässer, Ort oder Fisch suchen");
+  h+='<div class="field"><label class="label" for="glsel">Land / Bundesland</label><select id="glsel" data-c="gl"><option value="alle">Alle</option><option value="eigene"'+(S.gl==="eigene"?" selected":"")+">Nur eigene</option>"+lands.map(function(l){return'<option value="'+esc(l)+'"'+(S.gl===l?" selected":"")+">"+esc(l)+"</option>"}).join("")+"</select></div>";
+  return h+'<div class="list" id="res">'+waterList()+"</div>";
+}
+function waterList(){var h="",q=S.q.gew;allWaters().forEach(function(w,i){
+  if(S.gl==="eigene"?w.own==null:(S.gl!=="alle"&&w.land!==S.gl))return;
+  var names=w.f.map(function(id){return F[id]?F[id].n:""}).join(" ");
+  if(!match(q,w.n+" "+(w.ort||"")+" "+(w.land||"")+" "+names))return;
+  h+='<button class="item" data-a="water" data-v="'+i+'"><span class="grow"><b>'+esc(w.n)+'</b><span class="small muted">'+esc(WT[w.typ]?WT[w.typ].n:"")+(w.land?" · "+esc(w.land):"")+" · "+w.f.length+" Fischarten</span></span>"+(w.own!=null?'<span class="pill k">Eigenes</span>':'<span class="chev">›</span>')+"</button>"});
+  return h||'<p class="card">Nichts gefunden. Du kannst das Gewässer oben selbst eintragen.</p>'}
+
+function vRegeln(){
+  var reg=REGS[S.bl],h=head("Schonzeiten",null,"Schonzeiten und Mindestmaße aller 16 Bundesländer, Küste und Binnen getrennt.")+blSelect();
+  h+='<p class="notice stop"><b>Ohne Gewähr.</b> Tabellenstand '+esc(reg.stand)+" (Quelle: fischlexikon.eu). Seitdem wurden Verordnungen geändert. Verbindlich sind der aktuelle Gesetzestext deines Landes und dein Erlaubnisschein, der strenger sein darf.</p>";
+  if(BLNOTE[S.bl])h+='<p class="notice"><b>Bekannte Änderungen:</b> '+esc(BLNOTE[S.bl])+"</p>";
+  h+=search("regeln","Fischart suchen")+'<div id="res">'+ruleTable()+"</div>";
+  var keys=Object.keys(reg.notes);if(keys.length){h+='<div class="card"><span class="label">Fußnoten</span>';keys.forEach(function(k){h+='<p class="small">('+k+") "+esc(reg.notes[k])+"</p>"});h+="</div>"}
+  return h;
+}
+function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead><tr><th>Fischart</th><th>Schonzeit</th><th>Maß</th><th>Heute</th></tr></thead><tbody>',n=0;
+  reg.rows.forEach(function(r){if(!match(S.q.regeln,r.art))return;n++;var st=rowStatus(r),gz=/ganzj/.test(r.von),ks=parseD(r.von)==null&&!gz;
+    h+="<tr><td>"+esc(r.art.split(" (")[0])+(r.fn?" <span class=\"muted\">("+r.fn+")</span>":"")+"</td><td>"+(gz?"ganzjährig":r.von==="-"?"siehe Fußnote":ks?"keine":esc(r.von)+"–"+esc(r.bis))+"</td><td>"+(r.mass==="-"||!r.mass?"–":esc(r.mass)+" cm")+'</td><td><span class="pill '+st.c+'">'+(st.c==="stop"?"Geschont":st.c==="warn"?"Fußnote":"Frei")+"</span></td></tr>"});
+  return n?h+"</tbody></table></div>":'<p class="card">Diese Art steht nicht in der Tabelle. Das heißt nicht automatisch „frei“.</p>'}
+
+var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["gewaesser","Gewässer"],["regeln","Regeln"]];
+function render(keepScroll){
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,gewaesser:vGew,regeln:vRegeln}[S.tab]();
+  document.getElementById("app").innerHTML=v;
+  document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(S.tab===t[0]?"on":"")+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
+  if(!keepScroll)window.scrollTo(0,0);
+}
+function go(tab){S.tab=tab;S.view=null;S.form=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
+function startWiz(fid,waterIdx){var w=S.wiz,wat=waterIdx!=null?allWaters()[waterIdx]:null;w.fish=fid;w.water=waterIdx;w.wt=wat?wat.typ:(w.wt&&F[fid].w.indexOf(w.wt)>=0?w.wt:F[fid].w[0]);
+  w.sued=wat?SOUTH.indexOf(wat.land)>=0:false;w.temp=tempFor(w.sued?(w.month+6)%12:w.month);if(wat&&wat.bl){}w.step=2;S.more=false;S.tab="finden";S.view=null;try{location.hash="finden"}catch(e){}render()}
+
+document.addEventListener("click",function(ev){
+  var el=ev.target.closest("[data-a]");if(!el)return;var a=el.getAttribute("data-a"),v=el.getAttribute("data-v"),w=S.wiz;
+  switch(a){
+    case"tab":go(v);break;
+    case"wt":w.wt=v;w.water=null;w.step=1;render();break;
+    case"region":w.region=v;render(true);break;
+    case"fish":w.fish=v;w.step=2;render();break;
+    case"set":var k=el.getAttribute("data-k");w[k]=k==="month"||k==="temp"?+v:k==="sued"?v==="true":v;if(k==="month"||k==="sued")w.temp=tempFor(w.sued?(w.month+6)%12:w.month);render(true);break;
+    case"result":w.step=3;S.more=false;render();break;
+    case"more":S.more=true;render(true);break;
+    case"wizback":if(w.step===2&&w.water!=null&&S.wizFrom==="water"){S.tab="gewaesser";S.view={t:"water",id:w.water};w.step=0;render();break}w.step=Math.max(0,w.step-1);render();break;
+    case"wizstep":w.step=+v;render();break;
+    case"wizreset":w.step=0;w.water=null;w.fish=null;S.wizFrom=null;render();break;
+    case"fg":S.fg=v;render(true);break;
+    case"kt":S.kt=v;render(true);break;
+    case"fishview":S.tab="fische";S.view={t:"fish",id:v};render();break;
+    case"bait":S.tab="koeder";S.view={t:"bait",id:v};render();break;
+    case"closeview":S.view=null;render();break;
+    case"startfish":S.wizFrom=null;startWiz(v,null);break;
+    case"water":S.view={t:"water",id:+v};render();break;
+    case"waterfish":S.wizFrom="water";startWiz(v,S.view.id);break;
+    case"showbl":S.bl=v;store.set("bl",v);go("regeln");break;
+    case"newown":S.form={idx:null,n:"",typ:"see",ort:"",t:"",f:[]};render();break;
+    case"editown":var o=S.own[+v];S.form={idx:+v,n:o.n,typ:o.typ,ort:o.ort||"",t:o.t||"",f:o.f.slice()};S.view=null;render();break;
+    case"ffish":var i=S.form.f.indexOf(v);if(i>=0)S.form.f.splice(i,1);else S.form.f.push(v);el.classList.toggle("on");break;
+    case"closeform":S.form=null;render();break;
+    case"saveform":var fm=S.form;if(!fm.n.trim()){document.getElementById("formmsg").textContent="Bitte einen Namen eintragen.";break}
+      var rec={n:fm.n.trim(),typ:fm.typ,ort:fm.ort.trim(),land:"Eigene",bl:null,t:fm.t.trim(),f:fm.f.slice()};
+      if(fm.idx==null)S.own.unshift(rec);else S.own[fm.idx]=rec;store.set("own",S.own);S.form=null;S.gl="alle";render();break;
+    case"delask":S.form.del=true;render(true);break;
+    case"delno":S.form.del=false;render(true);break;
+    case"delyes":S.own.splice(S.form.idx,1);store.set("own",S.own);S.form=null;render();break;
+  }
+});
+document.addEventListener("input",function(ev){
+  var t=ev.target,k=t.getAttribute("data-i");
+  if(k){S.q[k]=t.value;var r=document.getElementById("res");if(r)r.innerHTML={fische:fishList,koeder:baitList,gew:waterList,regeln:ruleTable}[k]();return}
+  var f=t.getAttribute("data-f");if(f&&S.form)S.form[f]=t.value;
+});
+document.addEventListener("change",function(ev){
+  var c=ev.target.getAttribute("data-c");
+  if(c==="bl"){S.bl=ev.target.value;store.set("bl",S.bl);render(true)}
+  if(c==="gl"){S.gl=ev.target.value;render(true)}
+});
+window.addEventListener("hashchange",function(){var t=location.hash.replace("#","");if(t&&t!==S.tab&&TABS.some(function(x){return x[0]===t})){S.tab=t;S.view=null;S.form=null;render()}});
+(function(){var t=location.hash.replace("#","");if(TABS.some(function(x){return x[0]===t}))S.tab=t;render()})();
+})();
+
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}
+</script></body></html>
