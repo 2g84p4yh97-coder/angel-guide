@@ -1,4 +1,31 @@
 {
+"b_creature": {
+"ki": 1
+},
+"b_dropshot": {
+"ki": 1
+},
+"b_gummifisch": {
+"ki": 1
+},
+"b_jerkbait_gummi": {
+"ki": 1
+},
+"b_krautkoeder": {
+"ki": 1
+},
+"b_pintail": {
+"ki": 1
+},
+"b_swimbait": {
+"ki": 1
+},
+"b_twister": {
+"ki": 1
+},
+"b_wurm_gummi": {
+"ki": 1
+},
 "f_aal": {
 "a": "GerardM",
 "l": "CC BY-SA 3.0",
