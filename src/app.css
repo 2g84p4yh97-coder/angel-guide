@@ -121,7 +121,8 @@ details summary{cursor:pointer;min-height:32px}
 .stepsl li::before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--water);color:var(--on-water);font-weight:750;font-size:.86rem;display:flex;align-items:center;justify-content:center}
 .photo.fit img{aspect-ratio:auto;object-fit:contain;background:#fff}
 a.btn{display:block;text-decoration:none;color:inherit}
-nav.tabs button{font-size:.66rem}
+nav.tabs button{font-size:.62rem;padding-left:0;padding-right:0}
+nav.tabs svg{width:22px;height:22px}
 .anim{display:flex;flex-direction:column;gap:10px}
 .stage{position:relative;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface);aspect-ratio:4/5;max-height:70vh}
 .stage svg{position:absolute;inset:0;width:100%;height:100%;transition:opacity .5s}

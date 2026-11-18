@@ -247,7 +247,7 @@ function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead>
     h+="<tr><td>"+esc(r.art.split(" (")[0])+(r.fn?" <span class=\"muted\">("+r.fn+")</span>":"")+"</td><td>"+(gz?"ganzjährig":r.von==="-"?"siehe Fußnote":ks?"keine":esc(r.von)+"–"+esc(r.bis))+"</td><td>"+(r.mass==="-"||!r.mass?"–":esc(r.mass)+" cm")+'</td><td><span class="pill '+st.c+'">'+(st.c==="stop"?"Geschont":st.c==="warn"?"Fußnote":"Frei")+"</span></td></tr>"});
   return n?h+"</tbody></table></div>":'<p class="card">Diese Art steht nicht in der Tabelle. Das heißt nicht automatisch „frei“.</p>'}
 
-var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
+var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',knoten:'<path d="M2 14h5c6 0 4-8 8-8s4 8 0 8-3-8 3-8h4"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
 var RIGS=window.RIGS||[],KNOTS=window.KNOTS||[],RIGKATS=window.RIGKATS||[],R={},KN={};RIGS.forEach(function(r){R[r.id]=r});KNOTS.forEach(function(k){KN[k.id]=k});
 var LN='<path class="ln" d="M24 0v48"/>';
 var PART={
@@ -316,15 +316,19 @@ function waterSvg(r){var mv=MOVE[r.id]||"bottom",w=pick(r,WEIGHTS),e=pick(r,ENDS
 function buildSvg(r){var n=r.teile.length,sp=Math.min(46,400/n),y0=(450-sp*n)/2+sp/2,h='<svg class="build part" viewBox="0 0 360 450" role="img" aria-label="Aufbau: '+esc(r.n)+'"><path class="ln guide" d="M70 0v450"/>';
   r.teile.forEach(function(t,i){var y=y0+i*sp;h+='<g class="bp" data-p="'+i+'"><g transform="translate(70 '+y+") scale("+(sp/48)+') translate(-24 -24)">'+(PART[t[0]]||LN)+'</g><g transform="translate(104 '+y+')"><rect class="tag" x="0" y="-13" width="'+Math.min(240,t[1].length*7.2+22)+'" height="26" rx="13"/><text x="11" y="4.5">'+esc(t[1].length>31?t[1].slice(0,30)+"…":t[1])+"</text></g></g>"});
   return h+"</svg>"}
-var AN={r:null,i:0,st:[],t:null};
-function animBox(r){AN.r=r;AN.i=0;AN.st=animSteps(r);return '<div class="anim" id="anim" data-k="intro"><div class="stage">'+buildSvg(r)+waterSvg(r)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(r.info)+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div></div>'}
+var AN={r:null,i:0,st:[],t:null,voice:store.get("voice",false)};var SY=window.speechSynthesis||null;
+function sayText(c){return c.replace(/(\d),(\d)/g,"$1 Komma $2").replace(/–/g," bis ").replace(/\bmm\b/g,"Millimeter").replace(/\bcm\b/g,"Zentimeter").replace(/(\d) ?g\b/g,"$1 Gramm").replace(/(\d) ?m\b/g,"$1 Meter").replace(/(\d) ?lb\b/g,"$1 Pfund").replace(/(\d)\/0/g,"$1 Null").replace(/·/g,",")}
+function say(c,done){if(!SY||!AN.voice)return false;try{SY.cancel();var u=new SpeechSynthesisUtterance(sayText(c));u.lang="de-DE";u.rate=1;if(done){u.onend=done;u.onerror=done}SY.speak(u);return true}catch(e){return false}}
+function animBox(r){AN.r=r;AN.i=0;AN.st=animSteps(r);return '<div class="anim" id="anim" data-k="intro"><div class="stage">'+buildSvg(r)+waterSvg(r)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(r.info)+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div>'+(SY?'<button class="chip'+(AN.voice?" on":"")+'" data-a="avoice" id="avoice" aria-pressed="'+AN.voice+'">🔊 Stimme '+(AN.voice?"an":"aus")+"</button>":"")+"</div>"}
 function animShow(){var el=document.getElementById("anim");if(!el)return animStop();var s=AN.st[AN.i];el.setAttribute("data-k",s.k==="bite"?"water":s.k==="part"?"intro":s.k);el.classList.toggle("bite",s.k==="bite");el.classList.toggle("started",AN.i>0||!!AN.t);
   var shown=s.k==="intro"?-1:s.k==="part"?s.p:99;[].forEach.call(el.querySelectorAll(".bp"),function(g){var p=+g.getAttribute("data-p");g.classList.toggle("on",p<=shown);g.classList.toggle("cur",p===shown)});
   document.getElementById("acap").textContent=s.c;var mt=el.querySelector(".mtag text");if(mt){if(!mt.getAttribute("data-t"))mt.setAttribute("data-t",mt.textContent);mt.textContent=s.k==="bite"?"Biss!":mt.getAttribute("data-t")}document.getElementById("abar").style.width=(100*(AN.i+1)/AN.st.length)+"%";
   document.getElementById("aplay").textContent=AN.t?"❚❚ Pause":AN.i>=AN.st.length-1?"↺ Nochmal":"▶ Weiter abspielen"}
-function animStop(){if(AN.t){clearInterval(AN.t);AN.t=null}}
-function animPlay(){if(AN.t){animStop();return animShow()}if(AN.i>=AN.st.length-1)AN.i=0;else if(AN.i===0)AN.i=1;AN.t=setInterval(function(){if(!document.getElementById("anim"))return animStop();if(AN.i>=AN.st.length-1){animStop();return animShow()}AN.i++;animShow()},3400);animShow()}
-function animGo(d){animStop();AN.i=Math.max(0,Math.min(AN.st.length-1,AN.i+d));animShow()}
+function animStop(){if(AN.t){clearInterval(AN.t);clearTimeout(AN.t);AN.t=null}if(SY)try{SY.cancel()}catch(e){}}
+function animTick(){if(!document.getElementById("anim"))return animStop();if(AN.i>=AN.st.length-1){AN.t=null;return animShow()}AN.i++;animShow();animQueue()}
+function animQueue(){var tok={};AN.tok=tok;var done=false,next=function(){if(done||AN.tok!==tok||!AN.t)return;done=true;AN.t=setTimeout(animTick,500)};AN.t=1;if(say(AN.st[AN.i].c,next))setTimeout(next,2500+AN.st[AN.i].c.length*95);else AN.t=setTimeout(animTick,3400)}
+function animPlay(){if(AN.t){animStop();return animShow()}if(AN.i>=AN.st.length-1)AN.i=0;else if(AN.i===0)AN.i=1;AN.t=1;animShow();animQueue()}
+function animGo(d){animStop();AN.i=Math.max(0,Math.min(AN.st.length-1,AN.i+d));animShow();say(AN.st[AN.i].c)}
 
 function videoBtn(o,q){return '<a class="btn" href="'+esc(o.yt||("https://www.youtube.com/results?search_query="+encodeURIComponent(q)))+'" target="_blank" rel="noopener">Videos auf YouTube suchen</a><p class="small muted">Öffnet YouTube, braucht Internet.</p>'}
 function vRigs(){
@@ -336,6 +340,12 @@ function vRigs(){
     if(r.k.length){h+='<h2>Knoten dafür</h2><div class="list">';r.k.forEach(function(id){h+=knotItem(KN[id])});h+="</div>"}
     if(r.b.length){h+='<h2>Passende Köder</h2><div class="list">';r.b.forEach(function(id){var b=B[id];if(b)h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+"</span></span></button>"});h+="</div>"}
     return h}
+  h=head("Rigs",null,RIGS.length+" Montagen mit Erklärfilm, Aufbau und Führung.");
+  h+=search("rigs","Montage, Fisch oder Köder suchen")+'<div class="chips"><button class="chip'+(S.rk==="alle"?" on":"")+'" data-a="rk" data-v="alle">Alle</button>';
+  RIGKATS.forEach(function(c){h+='<button class="chip'+(S.rk===c?" on":"")+'" data-a="rk" data-v="'+esc(c)+'">'+esc(c)+"</button>"});
+  return h+'</div><div class="list" id="res">'+rigList()+"</div>";
+}
+function vKnoten(){var v=S.view,h;
   if(v&&v.t==="knot"){var k=KN[v.id];h=head(k.n,"closeview")+'<div class="card"><dl class="kv"><dt>Wofür</dt><dd>'+esc(k.fuer)+"</dd><dt>Schnur</dt><dd>"+esc(k.schnur)+"</dd><dt>Schwierigkeit</dt><dd>"+esc(k.lvl)+"</dd><dt>Tragkraft</dt><dd>"+esc(k.kraft)+"</dd></dl></div>"+knotPics(k);
     h+='<h2>Schritt für Schritt</h2><div class="card">'+stepList(k.s)+"</div>"+(k.tipp?'<div class="card"><span class="label">Tipp</span><p>'+esc(k.tipp)+"</p></div>":"");
     h+='<p class="notice">Jeden Knoten vor dem Festziehen anfeuchten, langsam zuziehen und danach einmal kräftig auf Zug prüfen.</p>';
@@ -343,18 +353,14 @@ function vRigs(){
     if(k.url)h+='<a class="btn" href="'+esc(k.url)+'" target="_blank" rel="noopener">Fotoserie ansehen (englisch, braucht Internet)</a>';
     var rr=RIGS.filter(function(r){return r.k.indexOf(k.id)>=0});if(rr.length){h+='<h2>Wird gebraucht für</h2><div class="list">';rr.forEach(function(r){h+=rigItem(r)});h+="</div>"}
     return h}
-  h=head("Rigs & Knoten",null,RIGS.length+" Montagen und "+KNOTS.length+" Knoten, Schritt für Schritt.")+'<div class="row"><button class="btn grow'+(S.rm==="rigs"?" water":"")+'" data-a="rm" data-v="rigs">Montagen</button><button class="btn grow'+(S.rm==="knoten"?" water":"")+'" data-a="rm" data-v="knoten">Knoten</button></div>';
-  if(S.rm==="knoten")return h+'<p class="card sunk small">Mit vier Knoten kommst du überall durch: Clinch (Mono an Wirbel), Palomar (Geflecht an Wirbel), Doppelter Uni (Geflecht an Vorfach) und Stopperknoten (Pose).</p><div class="list">'+KNOTS.map(knotItem).join("")+"</div>";
-  h+=search("rigs","Montage, Fisch oder Köder suchen")+'<div class="chips"><button class="chip'+(S.rk==="alle"?" on":"")+'" data-a="rk" data-v="alle">Alle</button>';
-  RIGKATS.forEach(function(c){h+='<button class="chip'+(S.rk===c?" on":"")+'" data-a="rk" data-v="'+esc(c)+'">'+esc(c)+"</button>"});
-  return h+'</div><div class="list" id="res">'+rigList()+"</div>";
+  return head("Knoten",null,KNOTS.length+" Knoten, Schritt für Schritt.")+'<p class="card sunk small">Mit vier Knoten kommst du überall durch: Clinch (Mono an Wirbel), Palomar (Geflecht an Wirbel), Doppelter Uni (Geflecht an Vorfach) und Stopperknoten (Pose).</p><div class="list">'+KNOTS.map(knotItem).join("")+"</div>";
 }
 function rigList(){var h="";RIGS.filter(function(r){return(S.rk==="alle"||r.kat===S.rk)&&match(S.q.rigs,r.n+" "+r.fuer+" "+r.kat+" "+r.b.map(function(x){return B[x]?B[x].n:""}).join(" "))}).forEach(function(r){h+=rigItem(r)});return h||'<p class="card">Nichts gefunden.</p>'}
 
 
-var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["gewaesser","Gewässer"],["regeln","Regeln"]];
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["gewaesser","Gewässer"],["regeln","Regeln"]];
 function render(keepScroll){animStop();
-  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,gewaesser:vGew,regeln:vRegeln}[S.tab]();
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(S.tab===t[0]?"on":"")+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
@@ -381,8 +387,9 @@ document.addEventListener("click",function(ev){
     case"fishview":S.tab="fische";S.view={t:"fish",id:v};render();break;
     case"bait":S.tab="koeder";S.view={t:"bait",id:v};render();break;
     case"rig":S.tab="rigs";S.view={t:"rig",id:v};try{location.hash="rigs"}catch(e){}render();break;
-    case"knot":S.tab="rigs";S.view={t:"knot",id:v};render();break;
+    case"knot":S.tab="knoten";try{location.hash="knoten"}catch(e){}S.view={t:"knot",id:v};render();break;
     case"aplay":animPlay();break;
+    case"avoice":AN.voice=!AN.voice;store.set("voice",AN.voice);if(!AN.voice&&SY)SY.cancel();el.classList.toggle("on",AN.voice);el.textContent="🔊 Stimme "+(AN.voice?"an":"aus");el.setAttribute("aria-pressed",AN.voice);if(AN.voice)say(AN.st[AN.i].c);break;
     case"aprev":animGo(-1);break;
     case"anext":animGo(1);break;
     case"rm":S.rm=v;render();break;
