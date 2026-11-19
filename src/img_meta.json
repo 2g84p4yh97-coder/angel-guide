@@ -17,6 +17,12 @@
 "b_dropshot": {
 "ki": 1
 },
+"b_fetzen": {
+"ki": 1
+},
+"b_garnele": {
+"ki": 1
+},
 "b_glidebait": {
 "ki": 1
 },
@@ -44,6 +50,15 @@
 "b_jigspinner": {
 "ki": 1
 },
+"b_koederfisch": {
+"ki": 1
+},
+"b_koederfisch_tot_meer": {
+"ki": 1
+},
+"b_krabbe": {
+"ki": 1
+},
 "b_krautkoeder": {
 "ki": 1
 },
@@ -51,6 +66,9 @@
 "ki": 1
 },
 "b_lipless": {
+"ki": 1
+},
+"b_livebait_meer": {
 "ki": 1
 },
 "b_made": {
@@ -62,7 +80,13 @@
 "b_meeresfliege": {
 "ki": 1
 },
+"b_muschel": {
+"ki": 1
+},
 "b_nymphe": {
+"ki": 1
+},
+"b_pellet": {
 "ki": 1
 },
 "b_pilker": {
@@ -99,6 +123,9 @@
 "ki": 1
 },
 "b_tauwurm": {
+"ki": 1
+},
+"b_tintenfisch": {
 "ki": 1
 },
 "b_tintenfisch_koeder": {
