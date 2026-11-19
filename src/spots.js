@@ -10,7 +10,7 @@ window.SPOTS=[
  "Zu weit draußen fischen und zu laut auftreten. Am Ufer leise sein, im Boot Abstand halten und lieber einen Wurf mehr an die Kante setzen."],
  b:["gummifisch","spinnerbait","topwater_popper","krautkoeder","tauwurm"],r:["texas","weightless","hechtpose","feststellpose"]},
 {id:"kante",n:"Scharkante",a:["Scharkante","Abbruchkante","Kante"],w:["see","talsperre","teich","strom","fluss","kanal","fjord"],f:["zander","barsch","hecht","aal","quappe","wels"],
- bot:[[0,60],[40,84],[60,100],[150,130],[185,150],[225,300],[250,330],[360,345]],deco:[],ang:["bank",20],to:300,path:[[300,326],[240,314],[196,166]],fish:[[236,296,-1],[268,320,-1],[200,150,-1]],mt:"die Kante hochzupfen",
+ bot:[[0,82],[20,84],[30,118],[82,136],[157,145],[189,149],[201,162],[209,221],[222,306],[235,329],[294,333],[360,337]],deco:[],ang:["bank",14,82],to:300,path:[[300,324],[244,320],[212,158]],fish:[[254,296,-1],[296,316,-1],[238,174,-1]],mt:"die Kante hochzupfen",
  st:["Scharkante: Hier fällt der Grund vom flachen Uferbereich steil ins Tiefe ab. An dieser Stufe sammelt sich Futterfisch, und die Räuber patrouillieren daran entlang.",
  "Zander und große Barsche stehen tagsüber am Fuß der Kante im Tiefen. In der Dämmerung und nachts ziehen sie die Kante hoch ins Flache zum Jagen.",
  "Wirf über die Kante hinaus ins Tiefe und lass den Köder an gespannter Schnur bis zum Grund sinken. Erschlafft die Schnur, ist er unten.",

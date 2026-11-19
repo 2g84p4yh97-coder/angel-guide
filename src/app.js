@@ -423,7 +423,7 @@ function spotSvg(sp){var b=sp.bot,i,d=sp.to,gp="M0 450L"+b.map(function(p){retur
   var p=sp.path;
   h+='<g class="lure" data-s="3,4" style="--x1:'+p[0][0]+"px;--y1:"+p[0][1]+"px;--x2:"+p[1][0]+"px;--y2:"+p[1][1]+"px;--x3:"+p[2][0]+"px;--y3:"+p[2][1]+'px"><path class="lpath" d="M-9 0c5-6 13-6 18 0c-5 6-13 6-18 0zM9 0l6-5v10z"/><circle cx="-4" cy="-1" r="1.3"/></g>';
   h+='<path class="trail" data-s="3,4" d="M'+p[0][0]+" "+p[0][1]+"L"+p[1][0]+" "+p[1][1]+"L"+p[2][0]+" "+p[2][1]+'"/>';
-  var ty=sp.deco.some(function(x){return x[0]==="pillar"})?34:8;
+  var ty=412;
   [[1,"Hier stehen die Fische"],[2,"Hier hinwerfen"],[3,sp.mt],[4,"Tipp"],[5,"Fehler vermeiden"]].forEach(function(t){h+='<g class="mtag stag'+(t[0]===5?" bad":"")+'" data-s="'+t[0]+'"><rect x="10" y="'+ty+'" width="'+Math.min(340,t[1].length*7.5+26)+'" height="28" rx="14"/><text x="23" y="'+(ty+19)+'">'+esc(t[1])+"</text></g>"});
   return h+"</svg>"}
 function spotBox(sp){AN.r=sp;AN.spot=true;AN.i=0;AN.st=sp.st.map(function(c,i){return{k:"s",c:(i===5?"Häufiger Fehler: ":"")+c}});
