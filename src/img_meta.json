@@ -20,6 +20,9 @@
 "b_fetzen": {
 "ki": 1
 },
+"b_frucht": {
+"ki": 1
+},
 "b_garnele": {
 "ki": 1
 },
@@ -33,6 +36,9 @@
 "ki": 1
 },
 "b_hechtfliege": {
+"ki": 1
+},
+"b_heuschrecke": {
 "ki": 1
 },
 "b_inline_spoon": {
@@ -65,6 +71,9 @@
 "b_kuestenblinker": {
 "ki": 1
 },
+"b_leber_kaese": {
+"ki": 1
+},
 "b_lipless": {
 "ki": 1
 },
@@ -87,6 +96,9 @@
 "ki": 1
 },
 "b_pellet": {
+"ki": 1
+},
+"b_pellet_wels": {
 "ki": 1
 },
 "b_pilker": {
@@ -123,6 +135,9 @@
 "ki": 1
 },
 "b_tauwurm": {
+"ki": 1
+},
+"b_teig_forelle": {
 "ki": 1
 },
 "b_tintenfisch": {
