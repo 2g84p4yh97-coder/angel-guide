@@ -268,7 +268,7 @@ var LK={},LKRE=null,HIST=[];
   LKRE=new RegExp("(^|[^A-Za-zÄÖÜäöüß0-9])("+terms.join("|")+")(?![A-Za-zÄÖÜäöüß0-9])","g");
 })();
 function lk(text,self){if(text==null||text==="")return"";return esc(text).replace(LKRE,function(m,pre,t){var raw=t.replace(/&amp;/g,"&").replace(/&#39;/g,"'"),e=LK[raw];if(!e||e[0]+":"+e[1]===self)return m;return pre+'<button class="lk" data-a="'+e[0]+'" data-v="'+e[1]+'" data-h="1">'+t+"</button>"})}
-function pushHist(){if(S.view||(S.tab==="finden"&&S.wiz.step===3))HIST.push({tab:S.tab,view:S.view,y:window.scrollY});if(HIST.length>30)HIST.shift()}
+function pushHist(){if(S.view||S.tab==="profil"||(S.tab==="finden"&&S.wiz.step===3))HIST.push({tab:S.tab,view:S.view,y:window.scrollY});if(HIST.length>30)HIST.shift()}
 function popHist(){var p=HIST.pop();if(!p)return false;S.tab=p.tab;S.view=p.view;try{location.hash=p.tab}catch(e){}render(true);window.scrollTo(0,p.y||0);return true}
 
 var LN='<path class="ln" d="M24 0v48"/>';
@@ -477,18 +477,40 @@ function vFang(){
   else{var sp3={},mo=[0,0,0,0,0,0,0,0,0,0,0,0],rel=0,big=null;CATCH.forEach(function(c){sp3[c.fish]=1;mo[+c.d.slice(5,7)-1]++;if(c.rel)rel++;if(c.len&&(!big||+c.len>+big.len))big=c});var mx=Math.max.apply(null,mo);
     l='<div class="card"><dl class="kv"><dt>Fänge</dt><dd>'+CATCH.length+"</dd><dt>Arten</dt><dd>"+Object.keys(sp3).length+"</dd><dt>Zurückgesetzt</dt><dd>"+rel+"</dd><dt>Längster</dt><dd>"+(big?esc(cTitle(big)):"–")+"</dd><dt>Häufigster Fisch</dt><dd>"+esc(topOf("fish",F))+"</dd><dt>Bester Köder</dt><dd>"+esc(topOf("bait",B))+"</dd><dt>Bestes Rig</dt><dd>"+esc(topOf("rig",R))+"</dd><dt>Bestes Gewässer</dt><dd>"+esc(topOf("water"))+'</dd></dl></div><div class="card"><span class="label">Fänge je Monat</span><div class="mbars" role="img" aria-label="Fänge je Monat">'+mo.map(function(n,i){return'<span><i style="height:'+(mx?Math.round(n/mx*100):0)+'%"></i><b>'+(n||"")+"</b><em>"+MON[i].charAt(0)+"</em></span>"}).join("")+"</div></div>"}
   return h+l+'<p class="small muted">Das Fangbuch liegt nur auf diesem Gerät.</p>'}
-function vMehr(){return head("Mehr",null,"Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
+// ---------- Profil (liegt nur auf diesem Gerät) ----------
+var PROF=store.get("profil",{name:"",ort:"",bio:"",lieb:"",av:""});
+function abz(){var sp={},rel=0,ku=0,ph=0;CATCH.forEach(function(c){sp[c.fish]=1;if(c.rel)rel++;if(c.kur)ku++;if(c.th)ph++});var n=CATCH.length,a=Object.keys(sp).length;
+  return[["Erster Fang","Den ersten Fang eingetragen",n>=1],["10 Fänge","Zehn Fänge im Fangbuch",n>=10],["50 Fänge","Fünfzig Fänge im Fangbuch",n>=50],["3 Arten","Drei verschiedene Fischarten",a>=3],["10 Arten","Zehn verschiedene Fischarten",a>=10],["Schonend","Fünf Fische zurückgesetzt",rel>=5],["Kurios","Eine Kuriosität gefangen",ku>=1],["Fotograf","Zehn Fänge mit Foto",ph>=10],["Meterfisch","Ein Fisch ab 100 cm",CATCH.some(function(c){return c.len>=100})]]}
+function avatar(big){return PROF.av?'<img class="av'+(big?" big":"")+'" src="'+PROF.av+'" alt="Profilbild">':'<span class="av none'+(big?" big":"")+'" aria-hidden="true">'+esc((PROF.name||"?").charAt(0).toUpperCase())+"</span>"}
+function vProfil(){var h;
+  if(S.pf){var f=S.pf;h=head("Profil bearbeiten","closepf")+'<div class="pcenter" id="pprev">'+(f.av?'<img class="av big" src="'+f.av+'" alt="Profilbild">':'<span class="av none big" aria-hidden="true">?</span>')+'</div><label class="btn water" for="pphoto">Profilbild auswählen</label><input class="vh" id="pphoto" type="file" accept="image/*" data-c="pphoto">';
+    h+='<div class="field"><label class="label" for="p_n">Anglername</label><input id="p_n" data-p="name" maxlength="30" value="'+esc(f.name)+'" placeholder="So sehen dich später andere"></div>';
+    h+='<div class="field"><label class="label" for="p_o">Heimatrevier</label><input id="p_o" data-p="ort" maxlength="40" value="'+esc(f.ort)+'" placeholder="z. B. Elbe, Prignitz"></div>';
+    h+='<div class="field"><label class="label" for="p_l">Lieblingsfisch</label><select id="p_l" data-p="lieb"><option value="">Keiner</option>'+FISH.slice().sort(function(a,b){return a.n.localeCompare(b.n,"de")}).map(function(x){return opt(x.id,x.n,f.lieb)}).join("")+"</select></div>";
+    h+='<div class="field"><label class="label" for="p_b">Über mich</label><textarea id="p_b" data-p="bio" rows="3" maxlength="200">'+esc(f.bio)+"</textarea></div>";
+    return h+'<button class="btn primary" data-a="psave">Profil speichern</button>'}
+  var sp={},big=null;CATCH.forEach(function(c){sp[c.fish]=1;if(c.len&&(!big||+c.len>+big.len))big=c});var a=abz(),got=a.filter(function(x){return x[2]}).length,lf=F[PROF.lieb];
+  h=head("Mein Profil","mehr")+'<div class="pcenter">'+avatar(true)+"<h2>"+esc(PROF.name||"Noch ohne Namen")+"</h2>"+(PROF.ort?'<p class="muted">'+esc(PROF.ort)+"</p>":"")+(PROF.bio?"<p>"+esc(PROF.bio)+"</p>":"")+"</div>";
+  h+='<div class="pstats"><span><b>'+CATCH.length+"</b>Fänge</span><span><b>"+Object.keys(sp).length+"</b>Arten</span><span><b>"+got+"</b>Abzeichen</span></div>";
+  h+='<button class="btn" data-a="pedit">Profil bearbeiten</button>';
+  if(lf)h+='<div class="list"><button class="item" data-a="fishview" data-v="'+lf.id+'">'+photo("f_"+lf.id)+'<span class="grow"><b>'+esc(lf.n)+'</b><span class="small muted">Lieblingsfisch</span></span><span class="chev" aria-hidden="true">›</span></button></div>';
+  if(big)h+='<h2>Größter Fang</h2><div class="list">'+cItem(big)+"</div>";
+  h+='<h2>Abzeichen</h2><div class="badges">'+a.map(function(x){return'<div class="badge'+(x[2]?" on":"")+'"><b>'+x[0]+'</b><span class="small">'+x[1]+"</span></div>"}).join("")+"</div>";
+  var ph=cSorted(CATCH.filter(function(c){return c.th})).slice(0,9);
+  if(ph.length)h+='<h2>Meine Fänge</h2><div class="pgrid">'+ph.map(function(c){return'<button data-a="catch" data-v="'+c.id+'" aria-label="'+esc(cTitle(c))+'"><img src="'+c.th+'" alt=""></button>'}).join("")+"</div>";
+  return h+'<p class="small muted">Dein Profil liegt nur auf diesem Gerät, bis der Austausch mit Freunden angeschlossen ist.</p>'}
+function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="profil">'+avatar()+'<span class="grow"><b>Mein Profil</b><span class="small muted">'+esc(PROF.name||"Name, Bild, Abzeichen")+'</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
 
-var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln"];
-function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"))}
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil"];
+function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"))}
 
 function render(keepScroll){animStop();
-  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr}[S.tab]();
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(tabOn(t[0])?"on":"")+'"'+(tabOn(t[0])?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
 }
-function go(tab){HIST=[];S.tab=tab;S.view=null;S.form=null;S.cf=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
+function go(tab){HIST=[];S.tab=tab;S.view=null;S.form=null;S.cf=null;S.pf=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
 function startWiz(fid,waterIdx){var w=S.wiz,wat=waterIdx!=null?allWaters()[waterIdx]:null;w.fish=fid;w.water=waterIdx;w.wt=wat?wat.typ:(w.wt&&F[fid].w.indexOf(w.wt)>=0?w.wt:F[fid].w[0]);
   w.sued=wat?SOUTH.indexOf(wat.land)>=0:false;w.temp=tempFor(w.sued?(w.month+6)%12:w.month);if(wat&&wat.bl){}w.step=2;S.more=false;S.tab="finden";S.view=null;try{location.hash="finden"}catch(e){}render()}
 
@@ -530,8 +552,11 @@ document.addEventListener("click",function(ev){
       var rec={n:fm.n.trim(),typ:fm.typ,ort:fm.ort.trim(),land:"Eigene",bl:null,t:fm.t.trim(),f:fm.f.slice()};
       if(fm.idx==null)S.own.unshift(rec);else S.own[fm.idx]=rec;store.set("own",S.own);S.form=null;S.gl="alle";render();break;
     case"mehr":go("mehr");break;
+    case"pedit":S.pf={name:PROF.name,ort:PROF.ort,bio:PROF.bio,lieb:PROF.lieb,av:PROF.av};render();break;
+    case"closepf":S.pf=null;render();break;
+    case"psave":PROF={name:S.pf.name.trim(),ort:S.pf.ort.trim(),bio:S.pf.bio.trim(),lieb:S.pf.lieb,av:S.pf.av};store.set("profil",PROF);S.pf=null;render();break;
     case"newcatch":HIST=[];S.tab="faenge";S.view=null;S.cf=newCf(v);try{location.hash="faenge"}catch(e){}render();break;
-    case"catch":pushHist();S.view={t:"catch",id:v};render();dbPhoto(v,function(ph){var im=document.getElementById("cfull");if(ph&&im&&S.view&&S.view.id===v)im.src=ph});break;
+    case"catch":pushHist();S.tab="faenge";S.view={t:"catch",id:v};render();dbPhoto(v,function(ph){var im=document.getElementById("cfull");if(ph&&im&&S.view&&S.view.id===v)im.src=ph});break;
     case"fr":S.fr=v;render(true);break;
     case"closecf":var back=S.cf&&S.cf.id;S.cf=null;if(back)S.view={t:"catch",id:back};render();break;
     case"ctog":S.cf[v]=!S.cf[v];el.classList.toggle("on",S.cf[v]);el.setAttribute("aria-pressed",S.cf[v]);break;
@@ -556,15 +581,18 @@ document.addEventListener("input",function(ev){
   var t=ev.target,k=t.getAttribute("data-i");
   if(k){S.q[k]=t.value;var r=document.getElementById("res");if(r)r.innerHTML={fische:fishList,koeder:baitList,gew:waterList,regeln:ruleTable,rigs:rigList}[k]();return}
   var f=t.getAttribute("data-f");if(f&&S.form)S.form[f]=t.value;
+  var pp=t.getAttribute("data-p");if(pp&&S.pf)S.pf[pp]=t.value;
   var g=t.getAttribute("data-g");if(g&&S.cf){S.cf[g]=t.value;var cw=document.getElementById("cwarn");if(cw)cw.innerHTML=warnBox(S.cf)}
 });
 document.addEventListener("change",function(ev){
   var c=ev.target.getAttribute("data-c");
   if(c==="bl"){S.bl=ev.target.value;store.set("bl",S.bl);render(true)}
   if(c==="gl"){S.gl=ev.target.value;render(true)}
+  var pp=ev.target.getAttribute("data-p");if(pp&&S.pf)S.pf[pp]=ev.target.value;
+  if(c==="pphoto"&&S.pf&&ev.target.files&&ev.target.files[0]){var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){if(!S.pf)return;var k=Math.min(im.naturalWidth,im.naturalHeight),cv=document.createElement("canvas");cv.width=cv.height=240;cv.getContext("2d").drawImage(im,(im.naturalWidth-k)/2,(im.naturalHeight-k)/2,k,k,0,0,240,240);S.pf.av=cv.toDataURL("image/jpeg",.8);var pv=document.getElementById("pprev");if(pv)pv.innerHTML='<img class="av big" src="'+S.pf.av+'" alt="Profilbild">'};im.src=rd.result};rd.readAsDataURL(ev.target.files[0])}
   if(c==="cphoto"&&S.cf&&ev.target.files&&ev.target.files[0])readPhoto(ev.target.files[0]);
   var g=ev.target.getAttribute("data-g");if(g&&S.cf){S.cf[g]=ev.target.value;if(g==="fish"||g==="bait")render(true);else{var cw=document.getElementById("cwarn");if(cw)cw.innerHTML=warnBox(S.cf)}}
 });
 window.addEventListener("hashchange",function(){var t=location.hash.replace("#","");if(t&&t!==S.tab&&ROUTES.indexOf(t)>=0){S.tab=t;S.view=null;S.form=null;S.cf=null;render()}});
-(function(){var t=location.hash.replace("#","");if(ROUTES.indexOf(t)>=0)S.tab=t;render();dbOpen(function(){dbLoad(function(){if(S.tab==="faenge")render(true)})})})();
+(function(){var t=location.hash.replace("#","");if(ROUTES.indexOf(t)>=0)S.tab=t;render();dbOpen(function(){dbLoad(function(){if(S.tab==="faenge"||S.tab==="profil")render(true)})})})();
 })();

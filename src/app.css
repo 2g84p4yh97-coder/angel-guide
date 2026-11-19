@@ -186,3 +186,14 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 .mbars span{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:2px;min-width:0}
 .mbars i{display:block;width:100%;background:var(--water);border-radius:4px 4px 0 0;min-height:2px}
 .mbars b{font-size:.68rem;order:-1;font-weight:600;min-height:1em}.mbars em{font-style:normal;font-size:.68rem;color:var(--muted)}
+/* Profil */
+.av{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;display:inline-flex;align-items:center;justify-content:center;background:var(--sunk);color:var(--water);font-weight:700;border:1px solid var(--line)}
+.av.big{width:112px;height:112px;font-size:2.4rem}
+.pcenter{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px}.pcenter h2,.pcenter p{margin:0}
+.pstats{display:flex;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.pstats span{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px;font-size:.78rem;color:var(--muted)}.pstats b{font-size:1.3rem;color:var(--ink,inherit)}
+.badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.badge b{font-size:.86rem}
+.badge{border:1px dashed var(--line);border-radius:var(--r);padding:10px 8px;text-align:center;display:flex;flex-direction:column;gap:2px;opacity:.55;overflow-wrap:anywhere}
+.badge.on{opacity:1;border-style:solid;border-color:var(--pose);background:var(--surface)}.badge.on b{color:var(--pose)}
+.pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.pgrid button{border:0;padding:0;background:none;aspect-ratio:1}.pgrid img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block}
