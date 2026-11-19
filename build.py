@@ -4,7 +4,7 @@ here=os.path.dirname(os.path.abspath(__file__)); s=lambda n:open(os.path.join(he
 regs=json.dumps(json.load(open(os.path.join(here,'src','regs.json'),encoding='utf-8')),ensure_ascii=False,separators=(',',':'))
 imgs=json.load(open(os.path.join(here,'src','img_meta.json'),encoding='utf-8'))
 imgs={k:v for k,v in imgs.items() if os.path.exists(os.path.join(here,'img',k+'.jpg'))}
-js='window.REGS='+regs+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('app.js')
+js='window.REGS='+regs+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('methods.js')+s('app.js')
 css=s('app.css')
 body='<div id="app"></div>\n<nav class="tabs" id="tabs" aria-label="Bereiche"></nav>\n'
 open(os.path.join(here,'artifact.html'),'w',encoding='utf-8').write(

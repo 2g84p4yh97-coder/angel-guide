@@ -230,3 +230,4 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 @keyframes castd{0%{stroke-dashoffset:100}55%,100%{stroke-dashoffset:0}}
 @keyframes lurem{0%,8%{transform:translate(var(--x1),var(--y1))}50%,56%{transform:translate(var(--x2),var(--y2))}92%,100%{transform:translate(var(--x3),var(--y3))}}
 @keyframes flowm{0%{opacity:.25}50%{opacity:.9}100%{opacity:.25}}
+.plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px}

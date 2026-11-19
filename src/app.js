@@ -120,7 +120,7 @@ function vFinden(){
     h+=head("Köder-Guide",null,"Sag mir, wo und worauf du angelst. Ich nenne dir die passenden Köder mit Farbe, Führung und Montage.");
     h+=steps(0)+'<h2>1. Wo angelst du?</h2><div class="grid g3">';
     WTYPES.forEach(function(t){h+='<button class="tile" data-a="wt" data-v="'+t.id+'"><b>'+esc(t.n)+"</b><span>"+esc(t.d)+"</span></button>"});
-    h+="</div>"+'<button class="btn water" data-a="tab" data-v="gewaesser">Oder ein Gewässer aus dem Verzeichnis wählen</button><button class="btn" data-a="tab" data-v="stellen">Angelstellen lesen lernen (mit Erklärfilm)</button>'+blSelect();
+    h+="</div>"+'<button class="btn water" data-a="tab" data-v="gewaesser">Oder ein Gewässer aus dem Verzeichnis wählen</button><button class="btn" data-a="tab" data-v="stellen">Angelstellen lesen lernen (mit Erklärfilm)</button><button class="btn" data-a="tab" data-v="arten">Angelarten lernen: Fliegenfischen, Spinnfischen und mehr</button>'+blSelect();
     return h;
   }
   if(w.step===1){
@@ -177,7 +177,7 @@ function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
 function vFische(){
   if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>"+photo("f_"+f.id,f.n,true);
     h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+lk(f.tipp,"fishview:"+f.id)+"</p></div>";
-    h+=spotChips(f.id)+ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><button class="btn" data-a="newcatch" data-v="'+f.id+'">Fang eintragen</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
+    h+=methChips(f.id)+spotChips(f.id)+ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><button class="btn" data-a="newcatch" data-v="'+f.id+'">Fang eintragen</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
     f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
     return h+"</div>"}
   var groups=["alle","Raubfisch","Friedfisch","Salmonide","Meer"],h2=head("Fische",null,FISH.length+" Arten weltweit, mit Beißzeiten und Ködern.")+search("fische","Fisch suchen")+'<div class="chips">';
@@ -252,7 +252,7 @@ var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fisch
 var RIGS=window.RIGS||[],KNOTS=window.KNOTS||[],RIGKATS=window.RIGKATS||[],R={},KN={};RIGS.forEach(function(r){R[r.id]=r});KNOTS.forEach(function(k){KN[k.id]=k});
 // ---------- Verlinkung: erwähnte Köder, Fische, Rigs und Knoten werden antippbar ----------
 var SPOTS=window.SPOTS||[],SP={};SPOTS.forEach(function(x){SP[x.id]=x});
-var LK={},LKRE=null,HIST=[];
+var LK={},LKRE=null,HIST=[],MEIDS={};
 (function(){
   var SKIP={"wo erlaubt":1,Amazonas:1,tot:1,Wels:1,Blei:1,Meer:1,ganz:1,King:1,Silver:1,Area:1,Holz:1,Wels:0,Finesse:1,realistisch:1,Hartplastik:1,Amur:1,Vibration:1,Schritt:1,Stahlvorfach:1,Pose:1,Grund:1,Fliege:1,Jighead:1,Partikel:1,Hanf:1,Krebs:1};
   function add(term,act,id,force){term=term.trim();if(term.length<3||(!force&&SKIP[term])||LK[term])return;LK[term]=[act,id]}
@@ -267,7 +267,8 @@ var LK={},LKRE=null,HIST=[];
   al(FA,"fishview");FISH.forEach(function(f){add(f.n,"fishview",f.id);parts(f.n).forEach(function(p){add(p,"fishview",f.id)})});
   al(BA,"bait");BAITS.forEach(function(b){add(b.n,"bait",b.id);parts(b.n).forEach(function(p){add(p,"bait",b.id)})});
   SPOTS.forEach(function(x){(x.a||[]).forEach(function(t){add(t,"spot",x.id)})});
-  var terms=Object.keys(LK).filter(function(t){return (SP[LK[t][1]]||R[LK[t][1]]||KN[LK[t][1]]||F[LK[t][1]]||B[LK[t][1]])}).sort(function(a,b){return b.length-a.length}).map(function(t){return esc(t).replace(/[.*+?^${}()|[\]\\\/-]/g,"\\$&")});
+  (window.METHODS||[]).forEach(function(x){add(x.n,"meth",x.id)});MEIDS={};(window.METHODS||[]).forEach(function(x){MEIDS[x.id]=1});
+  var terms=Object.keys(LK).filter(function(t){return (MEIDS[LK[t][1]]||SP[LK[t][1]]||R[LK[t][1]]||KN[LK[t][1]]||F[LK[t][1]]||B[LK[t][1]])}).sort(function(a,b){return b.length-a.length}).map(function(t){return esc(t).replace(/[.*+?^${}()|[\]\\\/-]/g,"\\$&")});
   LKRE=new RegExp("(^|[^A-Za-zÄÖÜäöüß0-9])("+terms.join("|")+")(?![A-Za-zÄÖÜäöüß0-9])","g");
 })();
 function lk(text,self){if(text==null||text==="")return"";return esc(text).replace(LKRE,function(m,pre,t){var raw=t.replace(/&amp;/g,"&").replace(/&#39;/g,"'"),e=LK[raw];if(!e||e[0]+":"+e[1]===self)return m;return pre+'<button class="lk" data-a="'+e[0]+'" data-v="'+e[1]+'" data-h="1">'+t+"</button>"})}
@@ -437,6 +438,23 @@ function vStellen(){var v=S.view,h;
   h=head("Angelstellen","mehr",SPOTS.length+" Stellen mit Erklärfilm: wo die Fische stehen, wohin du wirfst und wie du führst.")+'<div class="list">';
   SPOTS.forEach(function(sp){h+=spotItem(sp)});return h+"</div>"}
 
+// ---------- Angelarten ----------
+var METHODS=window.METHODS||[],ME={};METHODS.forEach(function(x){ME[x.id]=x});
+function methItem(m){return'<button class="item" data-a="meth" data-v="'+m.id+'"><span class="grow"><b>'+esc(m.n)+'</b><span class="small muted">'+esc(m.kurz)+'</span></span><span class="chev" aria-hidden="true">›</span></button>'}
+function methChips(fid){var a=METHODS.filter(function(m){return m.f.indexOf(fid)>=0});if(!a.length)return"";return'<div class="card"><span class="label">So wird er gefangen</span><div class="chips">'+a.map(function(m){return'<button class="chip" data-a="meth" data-v="'+m.id+'">'+esc(m.n)+"</button>"}).join("")+"</div></div>"}
+function vArten(){var v=S.view,h;
+  if(v&&v.t==="meth"&&ME[v.id]){var m=ME[v.id],self="meth:"+m.id;h=head(m.n,"closeview")+'<p class="muted">'+esc(m.kurz)+'</p><div class="card"><p>'+lk(m.info,self)+"</p></div>";
+    h+='<h2>Ausrüstung</h2><div class="card"><dl class="kv">'+m.geraet.map(function(g){return"<dt>"+esc(g[0])+"</dt><dd>"+lk(g[1],self)+"</dd>"}).join("")+"</dl></div>";
+    m.sek.forEach(function(x){h+="<h2>"+esc(x[0])+'</h2><div class="card">'+stepList(x[1],self)+"</div>"});
+    h+='<h2>Häufige Fehler</h2><div class="card"><ul class="plain">'+m.fehler.map(function(x){return"<li>"+lk(x,self)+"</li>"}).join("")+"</ul></div>";
+    h+='<h2>Zielfische</h2><div class="chips">'+m.f.map(function(x){return F[x]?'<button class="chip" data-a="fishview" data-v="'+x+'">'+esc(F[x].n)+"</button>":""}).join("")+"</div>";
+    if(m.r.length){h+='<h2>Montagen dazu</h2><div class="list">';m.r.forEach(function(id){if(R[id])h+=rigItem(R[id])});h+="</div>"}
+    if(m.k.length){h+='<h2>Knoten dazu</h2><div class="list">';m.k.forEach(function(id){if(KN[id])h+=knotItem(KN[id])});h+="</div>"}
+    if(m.b.length){h+='<h2>Köder dazu</h2><div class="list">';m.b.forEach(function(id){var b=B[id];if(b)h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+"</span></span></button>"});h+="</div>"}
+    if(m.s.length){h+='<h2>Gute Stellen dafür</h2><div class="list">';m.s.forEach(function(id){if(SP[id])h+=spotItem(SP[id])});h+="</div>"}
+    return h}
+  h=head("Angelarten","mehr",METHODS.length+" Anleitungen von der Ausrüstung bis zur Technik.")+'<div class="list">';METHODS.forEach(function(m){h+=methItem(m)});return h+"</div>"}
+
 // ---------- Fangbuch (liegt nur auf diesem Gerät) ----------
 var CATCH=[],DB=null,CPH={};window.agCatches=function(){return CATCH};
 function dbOpen(cb){try{var rq=indexedDB.open("ag_fang",1);rq.onupgradeneeded=function(){var d=rq.result;if(!d.objectStoreNames.contains("c"))d.createObjectStore("c",{keyPath:"id"});if(!d.objectStoreNames.contains("p"))d.createObjectStore("p")};rq.onsuccess=function(){DB=rq.result;cb()};rq.onerror=function(){cb()};rq.onblocked=function(){cb()}}catch(e){cb()}}
@@ -556,13 +574,13 @@ function vProfil(){var h;
   var ph=cSorted(CATCH.filter(function(c){return c.th})).slice(0,9);
   if(ph.length)h+='<h2>Meine Fänge</h2><div class="pgrid">'+ph.map(function(c){return'<button data-a="catch" data-v="'+c.id+'" aria-label="'+esc(cTitle(c))+'"><img src="'+c.th+'" alt=""></button>'}).join("")+"</div>";
   return h+'<p class="small muted">Dein Profil liegt nur auf diesem Gerät, bis der Austausch mit Freunden angeschlossen ist.</p>'}
-function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="profil">'+avatar()+'<span class="grow"><b>Mein Profil</b><span class="small muted">'+esc(PROF.name||"Name, Bild, Abzeichen")+'</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="stellen"><span class="grow"><b>Angelstellen</b><span class="small muted">Schilf, Kante, Buhne und mehr, mit Erklärfilm</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
+function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="profil">'+avatar()+'<span class="grow"><b>Mein Profil</b><span class="small muted">'+esc(PROF.name||"Name, Bild, Abzeichen")+'</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="arten"><span class="grow"><b>Angelarten</b><span class="small muted">Fliegenfischen, Spinnfischen, Feedern und mehr</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="stellen"><span class="grow"><b>Angelstellen</b><span class="small muted">Schilf, Kante, Buhne und mehr, mit Erklärfilm</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
 
-var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil","stellen"];
-function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"||S.tab==="stellen"))}
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil","stellen","arten"];
+function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"||S.tab==="stellen"||S.tab==="arten"))}
 
 function render(keepScroll){animStop();
-  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil,stellen:vStellen}[S.tab]();
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil,stellen:vStellen,arten:vArten}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(tabOn(t[0])?"on":"")+'"'+(tabOn(t[0])?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
@@ -609,6 +627,7 @@ document.addEventListener("click",function(ev){
       var rec={n:fm.n.trim(),typ:fm.typ,ort:fm.ort.trim(),land:"Eigene",bl:null,t:fm.t.trim(),f:fm.f.slice()};
       if(fm.idx==null)S.own.unshift(rec);else S.own[fm.idx]=rec;store.set("own",S.own);S.form=null;S.gl="alle";render();break;
     case"mehr":go("mehr");break;
+    case"meth":pushHist();S.tab="arten";try{location.hash="arten"}catch(e){}S.view={t:"meth",id:v};render();break;
     case"spot":pushHist();S.tab="stellen";try{location.hash="stellen"}catch(e){}S.view={t:"spot",id:v};render();break;
     case"pedit":S.pf={name:PROF.name,ort:PROF.ort,bio:PROF.bio,lieb:PROF.lieb,av:PROF.av};render();break;
     case"closepf":S.pf=null;render();break;
