@@ -1,7 +1,7 @@
 // Angelstellen: wo stehen die Fische, wohin werfen, wie führen. Szene: Wasseroberfläche bei y=90, Breite 360.
 window.SPOTS=[
 {id:"schilf",n:"Schilfkante",a:["Schilfkante","Schilf","Schilfgürtel"],w:["see","teich","fluss","kanal","lagune"],f:["hecht","barsch","schleie","karpfen","rotfeder","aal"],
- bot:[[0,62],[45,78],[70,96],[130,150],[210,230],[360,290]],deco:[["reed",52,128]],ang:["boat",300],to:142,path:[[146,112],[205,160],[262,125]],fish:[[150,140,1],[178,185,1],[100,112,1]],mt:"langsam an der Kante entlang",
+ bot:[[0,84],[28,100],[46,168],[82,198],[131,217],[183,237],[248,257],[314,275],[360,282]],deco:[["reed",52,128]],ang:["boat",300],to:146,path:[[146,112],[205,160],[262,125]],fish:[[150,140,1],[178,185,1],[100,112,1]],mt:"langsam an der Kante entlang",
  st:["Schilfkante: Das Schilf ist Kinderstube und Speisekammer. Kleinfisch versteckt sich zwischen den Halmen, die Räuber warten direkt davor.",
  "Hecht und Barsch stehen an der Außenkante, an Lücken, Buchten und Ecken im Schilf. Schleie und Karpfen ziehen morgens und abends dicht an den Halmen entlang.",
  "Wirf parallel zur Kante oder schräg in die Lücken, so dicht ans Schilf wie möglich. Der Köder soll leise landen, höchstens einen halben Meter vor den Halmen.",
