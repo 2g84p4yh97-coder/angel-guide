@@ -4,7 +4,12 @@ here=os.path.dirname(os.path.abspath(__file__)); s=lambda n:open(os.path.join(he
 regs=json.dumps(json.load(open(os.path.join(here,'src','regs.json'),encoding='utf-8')),ensure_ascii=False,separators=(',',':'))
 imgs=json.load(open(os.path.join(here,'src','img_meta.json'),encoding='utf-8'))
 imgs={k:v for k,v in imgs.items() if os.path.exists(os.path.join(here,'img',k+'.jpg'))}
-js='window.REGS='+regs+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('methods.js')+s('app.js')
+spr={}
+for f in sorted(os.listdir(os.path.join(here,'img'))):
+    if f.startswith('k_') and f.endswith('.webp'):
+        from PIL import Image
+        w,h=Image.open(os.path.join(here,'img',f)).size; spr[f[2:-5]]=round(h/w,3)
+js='window.REGS='+regs+';\nwindow.SPR='+json.dumps(spr)+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('methods.js')+s('app.js')
 css=s('app.css')
 body='<div id="app"></div>\n<nav class="tabs" id="tabs" aria-label="Bereiche"></nav>\n'
 open(os.path.join(here,'artifact.html'),'w',encoding='utf-8').write(
@@ -34,5 +39,5 @@ open(os.path.join(d,'sw.js'),'w',encoding='utf-8').write('''const C="koeder-guid
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(A)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r}).catch(()=>caches.match(e.request,{ignoreSearch:true}).then(r=>r||caches.match("index.html"))))});
-'''%(ver,json.dumps(['img/'+k+'.jpg' for k in imgs])))
+'''%(ver,json.dumps(['img/'+k+'.jpg' for k in imgs]+['img/k_'+k+'.webp' for k in spr])))
 print('ok',ver,len(js))

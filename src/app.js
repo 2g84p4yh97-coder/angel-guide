@@ -415,7 +415,8 @@ function spotSvg(sp){var b=sp.bot,i,d=sp.to,gp="M0 450L"+b.map(function(p){retur
   if(a[0]==="boat"){tip=[ax+dir*30,44];h+='<path class="boat" d="M'+(ax-36)+" 84h72l-11 13h-50z\"/><circle class=\"man\" cx=\""+ax+'" cy="62" r="5.5"/><path class="manl" d="M'+ax+" 68v16M"+ax+" 73l"+(dir*9)+" 3\"/><path class=\"rod\" d=\"M"+(ax+dir*8)+" 77L"+tip[0]+" "+tip[1]+'"/>'}
   else{var ay=a[2]||gY(b,ax);tip=[ax+dir*32,ay-60];h+='<circle class="man" cx="'+ax+'" cy="'+(ay-38)+'" r="5.5"/><path class="manl" d="M'+ax+" "+(ay-32)+"v18l-5 14M"+ax+" "+(ay-14)+"l5 14M"+ax+" "+(ay-27)+"l"+(dir*9)+' 5"/><path class="rod" d="M'+(ax+dir*8)+" "+(ay-21)+"L"+tip[0]+" "+tip[1]+'"/>'}
   // Fische
-  sp.fish.forEach(function(f){h+='<g data-s="1,3,4,5" transform="translate('+f[0]+" "+f[1]+") scale("+(f[2]*-1)+' 1)"><path class="sfish" d="M-17 0c9-8 22-8 30 0c-8 8-21 8-30 0zM13 0l9-7v14z"/><circle class="sfe" cx="-10" cy="-1.5" r="1.4"/></g><circle class="ring" data-s="1" cx="'+f[0]+'" cy="'+f[1]+'" r="24"/>'});
+  var sf=sp.f.filter(function(x){return SPR[x]}),SW={hecht:58,wels:62,aal:54,zander:48,karpfen:46,rapfen:46,doebel:42,barsch:36};
+  sp.fish.forEach(function(f,i){var id=sf.length?sf[i%sf.length]:"",w=SW[id]||44;h+='<g data-s="1,3,4,5" transform="translate('+f[0]+" "+f[1]+") scale("+(f[2]*-1)+' 1)">'+(id?'<image class="spr" href="img/k_'+id+'.webp" x="'+(-w/2)+'" y="'+(-w*SPR[id]/2).toFixed(1)+'" width="'+w+'" height="'+(w*SPR[id]).toFixed(1)+'"/>':'<path class="sfish" d="M-17 0c9-8 22-8 30 0c-8 8-21 8-30 0zM13 0l9-7v14z"/><circle class="sfe" cx="-10" cy="-1.5" r="1.4"/>')+'</g><circle class="ring" data-s="1" cx="'+f[0]+'" cy="'+f[1]+'" r="24"/>'});
   // Wurf
   var cy=Math.max(6,Math.min(tip[1],90)-74);
   h+='<path class="arc" data-s="2" pathLength="100" d="M'+tip[0]+" "+tip[1]+"Q"+((tip[0]+d)/2)+" "+cy+" "+d+' 90"/><g data-s="2"><circle class="tgt" cx="'+d+'" cy="90" r="6"/><circle class="ring" cx="'+d+'" cy="90" r="14"/></g>';
