@@ -172,3 +172,17 @@ nav.tabs svg{width:22px;height:22px}
 .lk{display:inline;border:0;background:none;padding:0;margin:0;font:inherit;color:var(--water);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;text-align:inherit;cursor:pointer}
 h3 .lk{color:inherit}
 .stepsl li>span{flex:1;min-width:0}
+/* Fangbuch */
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cth{width:56px;height:56px;flex:none;border-radius:10px;object-fit:cover;background:var(--sunk);display:block}
+.cth.none{border:1px dashed var(--line)}
+.cbad{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.cbad:empty{display:none}.cbad .pill{font-size:.68rem;padding:2px 8px}
+.cprev img{width:100%;max-height:60vh;object-fit:contain;border-radius:var(--r);background:var(--sunk);display:block}
+.cfull img{max-height:70vh}
+label.btn{display:flex;align-items:center;justify-content:center;cursor:pointer}
+input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);outline-offset:2px}
+.field.grow{flex:1;min-width:120px}
+.mbars{display:flex;gap:4px;align-items:flex-end;height:120px;padding-top:16px}
+.mbars span{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:2px;min-width:0}
+.mbars i{display:block;width:100%;background:var(--water);border-radius:4px 4px 0 0;min-height:2px}
+.mbars b{font-size:.68rem;order:-1;font-weight:600;min-height:1em}.mbars em{font-style:normal;font-size:.68rem;color:var(--muted)}

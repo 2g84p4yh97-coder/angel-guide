@@ -30,7 +30,7 @@ function tzNow(){var h=now.getHours();return h<5?"n":h<9?"mo":h<17?"t":h<21?"ab"
 function tempFor(m){return [0,0,0,1,1,2,2,2,1,1,0,0][m]}
 var S={tab:"finden",view:null,bl:store.get("bl","brandenburg"),own:store.get("own",[]),
  wiz:{step:0,wt:null,fish:null,water:null,month:now.getMonth(),tz:tzNow(),wetter:"wolken",wasser:"mittel",temp:tempFor(now.getMonth()),sued:false,art:"alle",region:"alle"},
- q:{fische:"",koeder:"",gew:"",regeln:"",rigs:""},rm:"rigs",rk:"alle",fg:"alle",kt:"alle",gl:"alle",form:null,more:false};
+ q:{fische:"",koeder:"",gew:"",regeln:"",rigs:""},rm:"rigs",rk:"alle",fg:"alle",kt:"alle",gl:"alle",form:null,more:false,cf:null,fr:"alle"};
 var IMG=window.IMG||{};
 function photo(key,alt,big){var m=IMG[key];if(!m)return"";
   if(!big)return '<img class="thumb" src="img/'+key+'.jpg" alt="" loading="lazy" width="56" height="56">';
@@ -166,7 +166,7 @@ function vFinden(){
       photo("b_"+b.id,b.n,true)+'<p><b>'+lk(r.e[2],"bait:"+b.id)+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
       '<dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>"+(b.t==="K"?"Farbe":"Anbieten")+"</dt><dd>"+esc(colorTip(w,b))+"</dd><dt>Führung</dt><dd>"+lk(b.fuehrung,"bait:"+b.id)+(tt?" "+esc(tt):"")+"</dd><dt>Montage</dt><dd>"+lk(b.montage,"bait:"+b.id)+"</dd></dl>"+rigsForBait(b.id).slice(0,3).map(function(x){return'<button class="chip" data-a="rig" data-v="'+x.id+'">Rig: '+esc(x.n)+"</button>"}).join(" ")+"</div>"}
   if(rec.length>n)h+='<button class="btn" data-a="more">Weitere '+(rec.length-n)+" Köder zeigen</button>";
-  h+='<div class="row"><button class="btn grow" data-a="wizstep" data-v="2">Bedingungen ändern</button><button class="btn grow" data-a="wizreset">Neu starten</button></div>';
+  h+='<div class="row"><button class="btn grow" data-a="wizstep" data-v="2">Bedingungen ändern</button><button class="btn grow" data-a="wizreset">Neu starten</button></div><button class="btn" data-a="newcatch" data-v="'+fi.id+'">Gefangen? Fang eintragen</button>';
   return h;
 }
 
@@ -176,7 +176,7 @@ function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
 function vFische(){
   if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>"+photo("f_"+f.id,f.n,true);
     h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+lk(f.tipp,"fishview:"+f.id)+"</p></div>";
-    h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
+    h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><button class="btn" data-a="newcatch" data-v="'+f.id+'">Fang eintragen</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
     f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
     return h+"</div>"}
   var groups=["alle","Raubfisch","Friedfisch","Salmonide","Meer"],h2=head("Fische",null,FISH.length+" Arten weltweit, mit Beißzeiten und Ködern.")+search("fische","Fisch suchen")+'<div class="chips">';
@@ -220,7 +220,7 @@ function vGew(){
     if(w.own!=null)h+='<button class="btn" data-a="editown" data-v="'+w.own+'">Bearbeiten</button>';
     return h}
   var lands=[];WATERS.forEach(function(w){if(lands.indexOf(w.land)<0)lands.push(w.land)});
-  h=head("Gewässer",null,all.length+" Gewässer: Prignitz, Deutschland, Angelziele weltweit und deine eigenen.");
+  h=head("Gewässer","mehr",all.length+" Gewässer: Prignitz, Deutschland, Angelziele weltweit und deine eigenen.");
   h+='<button class="btn water" data-a="newown">+ Eigenes Gewässer eintragen</button>'+search("gew","Gewässer, Ort oder Fisch suchen");
   h+='<div class="field"><label class="label" for="glsel">Land / Bundesland</label><select id="glsel" data-c="gl"><option value="alle">Alle</option><option value="eigene"'+(S.gl==="eigene"?" selected":"")+">Nur eigene</option>"+lands.map(function(l){return'<option value="'+esc(l)+'"'+(S.gl===l?" selected":"")+">"+esc(l)+"</option>"}).join("")+"</select></div>";
   return h+'<div class="list" id="res">'+waterList()+"</div>";
@@ -233,7 +233,7 @@ function waterList(){var h="",q=S.q.gew;allWaters().forEach(function(w,i){
   return h||'<p class="card">Nichts gefunden. Du kannst das Gewässer oben selbst eintragen.</p>'}
 
 function vRegeln(){
-  var reg=REGS[S.bl],h=head("Schonzeiten",null,"Schonzeiten und Mindestmaße aller 16 Bundesländer, Küste und Binnen getrennt.")+blSelect();
+  var reg=REGS[S.bl],h=head("Schonzeiten","mehr","Schonzeiten und Mindestmaße aller 16 Bundesländer, Küste und Binnen getrennt.")+blSelect();
   h+='<p class="notice stop"><b>Ohne Gewähr.</b> Tabellenstand '+esc(reg.stand)+" (Quelle: fischlexikon.eu). Seitdem wurden Verordnungen geändert. Verbindlich sind der aktuelle Gesetzestext deines Landes und dein Erlaubnisschein, der strenger sein darf.</p>";
   if(BLNOTE[S.bl])h+='<p class="notice"><b>Bekannte Änderungen:</b> '+esc(BLNOTE[S.bl])+"</p>";
   h+=search("regeln","Fischart suchen")+'<div id="res">'+ruleTable()+"</div>";
@@ -247,7 +247,7 @@ function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead>
     h+="<tr><td>"+esc(r.art.split(" (")[0])+(r.fn?" <span class=\"muted\">("+r.fn+")</span>":"")+"</td><td>"+(gz?"ganzjährig":r.von==="-"?"siehe Fußnote":ks?"keine":esc(r.von)+"–"+esc(r.bis))+"</td><td>"+(r.mass==="-"||!r.mass?"–":esc(r.mass)+" cm")+'</td><td><span class="pill '+st.c+'">'+(st.c==="stop"?"Geschont":st.c==="warn"?"Fußnote":"Frei")+"</span></td></tr>"});
   return n?h+"</tbody></table></div>":'<p class="card">Diese Art steht nicht in der Tabelle. Das heißt nicht automatisch „frei“.</p>'}
 
-var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',knoten:'<path d="M2 14h5c6 0 4-8 8-8s4 8 0 8-3-8 3-8h4"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
+var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',knoten:'<path d="M2 14h5c6 0 4-8 8-8s4 8 0 8-3-8 3-8h4"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',faenge:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8"/>',mehr:'<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
 var RIGS=window.RIGS||[],KNOTS=window.KNOTS||[],RIGKATS=window.RIGKATS||[],R={},KN={};RIGS.forEach(function(r){R[r.id]=r});KNOTS.forEach(function(k){KN[k.id]=k});
 // ---------- Verlinkung: erwähnte Köder, Fische, Rigs und Knoten werden antippbar ----------
 var LK={},LKRE=null,HIST=[];
@@ -380,14 +380,115 @@ function vKnoten(){var v=S.view,h;
 function rigList(){var h="";RIGS.filter(function(r){return(S.rk==="alle"||r.kat===S.rk)&&match(S.q.rigs,r.n+" "+r.fuer+" "+r.kat+" "+r.b.map(function(x){return B[x]?B[x].n:""}).join(" "))}).forEach(function(r){h+=rigItem(r)});return h||'<p class="card">Nichts gefunden.</p>'}
 
 
-var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["gewaesser","Gewässer"],["regeln","Regeln"]];
+// ---------- Fangbuch (liegt nur auf diesem Gerät) ----------
+var CATCH=[],DB=null,CPH={};window.agCatches=function(){return CATCH};
+function dbOpen(cb){try{var rq=indexedDB.open("ag_fang",1);rq.onupgradeneeded=function(){var d=rq.result;if(!d.objectStoreNames.contains("c"))d.createObjectStore("c",{keyPath:"id"});if(!d.objectStoreNames.contains("p"))d.createObjectStore("p")};rq.onsuccess=function(){DB=rq.result;cb()};rq.onerror=function(){cb()};rq.onblocked=function(){cb()}}catch(e){cb()}}
+function dbLoad(cb){if(!DB){CATCH=store.get("catches",[]);return cb()}try{var rq=DB.transaction("c").objectStore("c").getAll();rq.onsuccess=function(){CATCH=rq.result||[];cb()};rq.onerror=function(){cb()}}catch(e){cb()}}
+function dbSave(rec,ph){if(ph){CPH={};CPH[rec.id]=ph}if(!DB){store.set("catches",CATCH);return}try{var tx=DB.transaction(["c","p"],"readwrite");tx.objectStore("c").put(rec);if(ph)tx.objectStore("p").put(ph,rec.id)}catch(e){}}
+function dbDel(id){delete CPH[id];if(!DB){store.set("catches",CATCH);return}try{var tx=DB.transaction(["c","p"],"readwrite");tx.objectStore("c")["delete"](id);tx.objectStore("p")["delete"](id)}catch(e){}}
+function dbPhoto(id,cb){if(CPH[id])return cb(CPH[id]);if(!DB)return cb(null);try{var rq=DB.transaction("p").objectStore("p").get(id);rq.onsuccess=function(){if(rq.result){CPH={};CPH[id]=rq.result}cb(rq.result||null)};rq.onerror=function(){cb(null)}}catch(e){cb(null)}}
+function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function cDate(s){var p=String(s).split("-");return new Date(+p[0]||2000,(+p[1]||1)-1,+p[2]||1)}
+function fmtD(s){var p=String(s).split("-");return p[2]+"."+p[1]+"."+p[0]}
+function cById(id){for(var i=0;i<CATCH.length;i++)if(CATCH[i].id===id)return CATCH[i];return null}
+function cSorted(a){return(a||CATCH).slice().sort(function(a,b){return a.d<b.d?1:a.d>b.d?-1:(a.id<b.id?1:-1)})}
+function cTitle(c){var f=F[c.fish];return(f?f.n:"Fang")+(c.len?" · "+String(c.len).replace(".",",")+" cm":"")}
+function catchWarn(c){var out=[],seen={},reg=REGS[c.bl];if(!reg||!c.fish)return out;var rows=rulesFor(c.fish,c.bl),clear=rows.some(function(r){return r.von!=="-"});
+  function add(k,l){if(!seen[l]){seen[l]=1;out.push({c:k,l:l})}}
+  rows.forEach(function(r){var st=rowStatus(r,cDate(c.d)),nm=r.art.split(" (")[0],m=parseFloat(r.mass);
+    if(st.c==="stop")add("stop",nm+": "+st.l.replace(/\.$/,"")+". Bitte zurücksetzen.");
+    else if(st.c==="warn"&&!clear)add("warn",nm+": Sonderregel"+(r.fn&&reg.notes[r.fn]?" ("+reg.notes[r.fn]+")":"")+", in den Schonzeiten nachsehen.");
+    if(m&&c.len&&+c.len<m)add("stop",nm+": untermaßig, Mindestmaß "+m+" cm. Bitte zurücksetzen.");
+    else if(m&&!c.len)add("warn",nm+": Mindestmaß "+m+" cm, Länge eintragen.")});
+  return out}
+function warnBox(c){if(!c.fish||!REGS[c.bl])return"";var reg=REGS[c.bl],rows=rulesFor(c.fish,c.bl),w=catchWarn(c),h='<div class="card"><span class="label">Schonzeit-Warner · '+esc(reg.name)+" · "+fmtD(c.d)+"</span>";
+  if(!rows.length)h+='<p class="small muted">Für diese Art steht nichts in der Tabelle dieses Landes. Das heißt nicht automatisch „frei“.</p>';
+  else if(!w.length)h+='<div class="rule"><span class="pill ok">Frei'+(c.len?" und maßig":"")+"</span></div>";
+  w.forEach(function(x){h+='<div class="rule"><span class="pill '+x.c+'">'+(x.c==="stop"?"Achtung":"Hinweis")+'</span><span class="small">'+esc(x.l)+"</span></div>"});
+  return h+'<p class="small muted">Tabellenstand '+esc(reg.stand)+", ohne Gewähr. Es gilt dein Erlaubnisschein.</p></div>"}
+function ym(c){return c.d.slice(0,7)}
+function fomFor(m){var a=CATCH.filter(function(c){return ym(c)===m});if(!a.length)return null;var p=a.filter(function(c){return c.fom})[0];if(p)return p;return a.sort(function(x,y){return(+y.len||0)-(+x.len||0)||(x.id<y.id?-1:1)})[0]}
+function firstOf(fish){var a=CATCH.filter(function(c){return c.fish===fish}).sort(function(x,y){return x.d<y.d?-1:x.d>y.d?1:(x.id<y.id?-1:1)});return a[0]||null}
+function bestOf(fish,year){var a=CATCH.filter(function(c){return c.fish===fish&&c.len&&(!year||c.d.slice(0,4)===year)}).sort(function(x,y){return y.len-x.len||(x.id<y.id?-1:1)});return a[0]||null}
+function cBadges(c){var b=[];var f=fomFor(ym(c));if(f&&f.id===c.id)b.push(["k","Fang des Monats"]);var p=bestOf(c.fish);if(p&&p.id===c.id)b.push(["ok","Persönlicher Rekord"]);var e=firstOf(c.fish);if(e&&e.id===c.id)b.push(["k","Erstfang"]);if(c.kur)b.push(["n","Kuriosität"]);if(c.rel)b.push(["k","Zurückgesetzt"]);return b}
+function pills(b){return b.map(function(x){return'<span class="pill '+x[0]+'">'+x[1]+"</span>"}).join(" ")}
+function cItem(c,sub){var bt=B[c.bait];return'<button class="item" data-a="catch" data-v="'+c.id+'">'+(c.th?'<img class="cth" src="'+c.th+'" alt="">':'<span class="cth none" aria-hidden="true"></span>')+'<span class="grow"><b>'+esc(cTitle(c))+'</b><span class="small muted">'+(sub||fmtD(c.d)+(c.water?" · "+esc(c.water):"")+(bt?" · "+esc(bt.n):""))+'</span><span class="cbad">'+pills(cBadges(c))+"</span></span></button>"}
+function topOf(key,map){var n={},best=null;CATCH.forEach(function(c){var v=c[key];if(!v)return;n[v]=(n[v]||0)+1;if(!best||n[v]>n[best])best=v});return best?(map&&map[best]?map[best].n:best)+" ("+n[best]+")":"–"}
+function scaleImg(im,max,q){var w=im.naturalWidth,h=im.naturalHeight,k=Math.min(1,max/Math.max(w,h)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c.toDataURL("image/jpeg",q)}
+function readPhoto(file){var msg=document.getElementById("cfmsg");try{var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){if(!S.cf)return;try{S.cf.ph=scaleImg(im,1280,.82);S.cf.th=scaleImg(im,240,.72);S.cf.newph=true;var p=document.getElementById("cprev");if(p)p.innerHTML='<img src="'+S.cf.ph+'" alt="Dein Fangfoto">'}catch(e){if(msg)msg.textContent="Das Foto konnte nicht verarbeitet werden."}};im.onerror=function(){if(msg)msg.textContent="Dieses Bildformat kann ich nicht lesen."};im.src=rd.result};rd.readAsDataURL(file)}catch(e){if(msg)msg.textContent="Das Foto konnte nicht gelesen werden."}}
+function dataFile(u,name){var p=u.split(","),bin=atob(p[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new File([a],name,{type:"image/jpeg"})}
+function cText(c){var f=F[c.fish],b=B[c.bait],r=R[c.rig];return(f?f.n:"Fang")+(c.len?" mit "+String(c.len).replace(".",",")+" cm":"")+(c.kg?" und "+String(c.kg).replace(".",",")+" kg":"")+", gefangen am "+fmtD(c.d)+(b?" auf "+b.n:"")+(r?" am "+r.n:"")+(c.water&&c.spot!=="geheim"?" ("+c.water+")":"")+"."}
+function shareCatch(c){var data={title:"Mein Fang",text:cText(c)};try{var ph=CPH[c.id];if(ph&&navigator.canShare){var fl=dataFile(ph,"fang.jpg");if(navigator.canShare({files:[fl]}))data.files=[fl]}var p=navigator.share(data);if(p&&p["catch"])p["catch"](function(){})}catch(e){}}
+function newCf(fish){return{id:null,d:iso(new Date()),fish:fish||"",len:"",kg:"",bait:"",rig:"",water:"",bl:S.bl,note:"",rel:false,kur:false,spot:"grob",th:"",ph:"",newph:false}}
+function opt(v,l,cur){return'<option value="'+esc(v)+'"'+(String(cur)===String(v)?" selected":"")+">"+esc(l)+"</option>"}
+function cForm(){var c=S.cf,f=F[c.fish],h=head(c.id?"Fang bearbeiten":"Fang eintragen","closecf");
+  h+='<div class="cprev" id="cprev">'+(c.ph||c.th?'<img src="'+(c.ph||c.th)+'" alt="Dein Fangfoto">':"")+'</div><label class="btn water" for="cphoto">Foto aufnehmen oder auswählen</label><input class="vh" id="cphoto" type="file" accept="image/*" data-c="cphoto">';
+  h+='<div class="field"><label class="label" for="c_fish">Fisch</label><select id="c_fish" data-g="fish"><option value="">Bitte wählen</option>'+FISH.slice().sort(function(a,b){return a.n.localeCompare(b.n,"de")}).map(function(x){return opt(x.id,x.n,c.fish)}).join("")+"</select></div>";
+  h+='<div class="row"><div class="field grow"><label class="label" for="c_len">Länge in cm</label><input id="c_len" data-g="len" type="number" inputmode="decimal" min="0" step="0.5" value="'+esc(c.len)+'"></div><div class="field grow"><label class="label" for="c_kg">Gewicht in kg</label><input id="c_kg" data-g="kg" type="number" inputmode="decimal" min="0" step="0.01" value="'+esc(c.kg)+'"></div></div>';
+  h+='<div class="field"><label class="label" for="c_d">Datum</label><input id="c_d" data-g="d" type="date" value="'+esc(c.d)+'" max="'+iso(new Date())+'"></div>';
+  h+='<div class="field"><label class="label" for="c_w">Gewässer</label><input id="c_w" data-g="water" list="c_wl" value="'+esc(c.water)+'" placeholder="z. B. Elbe bei Wittenberge"><datalist id="c_wl">'+allWaters().map(function(w){return'<option value="'+esc(w.n)+'">'}).join("")+"</datalist></div>";
+  h+='<div class="field"><label class="label" for="c_bl">Bundesland für den Schonzeit-Warner</label><select id="c_bl" data-g="bl">'+BLS.map(function(k){return opt(k,REGS[k].name,c.bl)}).join("")+'<option value="-"'+(c.bl==="-"?" selected":"")+">Ausland / nicht prüfen</option></select></div>";
+  h+='<div id="cwarn">'+warnBox(c)+"</div>";
+  var fb=f?f.b.map(function(e){return B[e[0]]}).filter(Boolean):[],all=BAITS.slice().sort(function(a,b){return a.n.localeCompare(b.n,"de")});
+  h+='<div class="field"><label class="label" for="c_bait">Köder</label><select id="c_bait" data-g="bait"><option value="">Nicht angegeben</option>'+(fb.length?'<optgroup label="Passt zu '+esc(f.n)+'">'+fb.map(function(b){return opt(b.id,b.n,c.bait)}).join("")+'</optgroup><optgroup label="Alle Köder">':"")+all.filter(function(b){return fb.indexOf(b)<0}).map(function(b){return opt(b.id,b.n,c.bait)}).join("")+(fb.length?"</optgroup>":"")+"</select></div>";
+  var rb=c.bait?rigsForBait(c.bait):[];
+  h+='<div class="field"><label class="label" for="c_rig">Rig / Montage</label><select id="c_rig" data-g="rig"><option value="">Nicht angegeben</option>'+(rb.length?'<optgroup label="Passt zum Köder">'+rb.map(function(r){return opt(r.id,r.n,c.rig)}).join("")+'</optgroup><optgroup label="Alle Rigs">':"")+RIGS.filter(function(r){return rb.indexOf(r)<0}).map(function(r){return opt(r.id,r.n,c.rig)}).join("")+(rb.length?"</optgroup>":"")+"</select></div>";
+  h+='<div class="field"><label class="label" for="c_note">Notiz (Stelle, Wetter, Geschichte dazu)</label><textarea id="c_note" data-g="note" rows="3">'+esc(c.note)+"</textarea></div>";
+  h+='<div class="chips"><button class="chip'+(c.rel?" on":"")+'" data-a="ctog" data-v="rel" aria-pressed="'+c.rel+'">Zurückgesetzt</button><button class="chip'+(c.kur?" on":"")+'" data-a="ctog" data-v="kur" aria-pressed="'+c.kur+'">Kuriosität</button></div>';
+  h+='<div class="field"><span class="label">Fangplatz später für Freunde</span><div class="chips">'+[["genau","Genau"],["grob","Nur Gewässer"],["geheim","Geheim"]].map(function(o){return'<button class="chip'+(c.spot===o[0]?" on":"")+'" data-a="cspot" data-v="'+o[0]+'">'+o[1]+"</button>"}).join("")+'</div><span class="small muted">Gilt erst, wenn der Austausch mit Freunden angeschlossen ist. Bis dahin bleibt alles auf diesem Gerät.</span></div>';
+  h+='<p class="small" id="cfmsg" role="status" style="color:var(--stop)"></p><button class="btn primary" data-a="csave">Fang speichern</button>';
+  if(c.id)h+=c.del?'<div class="row"><button class="btn grow" data-a="cdelno">Behalten</button><button class="btn grow" data-a="cdelyes" style="color:var(--stop)">Wirklich löschen</button></div>':'<button class="btn" data-a="cdelask" style="color:var(--stop)">Fang löschen</button>';
+  return h}
+function cDetail(c){var f=F[c.fish],b=B[c.bait],r=R[c.rig],h=head(f?f.n:"Fang","closeview");
+  h+='<figure class="photo fit cfull">'+(c.th?'<img id="cfull" src="'+(CPH[c.id]||c.th)+'" alt="'+esc(cTitle(c))+'">':"")+"</figure>";
+  var bd=cBadges(c);if(bd.length)h+='<div class="row wrap">'+pills(bd)+"</div>";
+  h+='<div class="card"><dl class="kv">'+(c.len?"<dt>Länge</dt><dd>"+String(c.len).replace(".",",")+" cm</dd>":"")+(c.kg?"<dt>Gewicht</dt><dd>"+String(c.kg).replace(".",",")+" kg</dd>":"")+"<dt>Datum</dt><dd>"+fmtD(c.d)+"</dd>"+(c.water?"<dt>Gewässer</dt><dd>"+esc(c.water)+"</dd>":"")+"<dt>Fangplatz</dt><dd>"+({genau:"Genau zeigen",grob:"Nur Gewässer zeigen",geheim:"Geheim"}[c.spot]||"Nur Gewässer zeigen")+"</dd></dl>"+(c.note?"<p>"+lk(c.note)+"</p>":"")+"</div>";
+  h+='<h2>So wurde er gefangen</h2><div class="list">';
+  if(f)h+='<button class="item" data-a="fishview" data-v="'+f.id+'">'+photo("f_"+f.id)+'<span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">Fisch: Beißzeiten und Köder</span></span><span class="chev" aria-hidden="true">›</span></button>';
+  if(b)h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">Köder: '+esc(b.groesse)+'</span></span><span class="chev" aria-hidden="true">›</span></button>';
+  if(r){h+='<button class="item" data-a="rig" data-v="'+r.id+'"><span class="grow"><b>'+esc(r.n)+'</b><span class="small muted">Rig mit Erklärfilm</span></span><span class="chev" aria-hidden="true">›</span></button>';
+    (r.k||[]).forEach(function(k){if(KN[k])h+='<button class="item" data-a="knot" data-v="'+k+'"><span class="grow"><b>'+esc(KN[k].n)+'</b><span class="small muted">Knoten dazu</span></span><span class="chev" aria-hidden="true">›</span></button>'})}
+  h+="</div>";if(!b&&!r)h+='<p class="small muted">Köder und Rig sind nicht eingetragen. Über „Bearbeiten“ kannst du sie ergänzen.</p>';
+  if(c.bl!=="-")h+=warnBox(c);
+  var fm=fomFor(ym(c));
+  if(navigator.share)h+='<button class="btn water" data-a="cshare" data-v="'+c.id+'">Fang verschicken</button>';
+  if(!fm||fm.id!==c.id||!c.fom)h+='<button class="btn" data-a="cfom" data-v="'+c.id+'">Als meinen Fang des Monats festlegen</button>';
+  h+='<button class="btn" data-a="cedit" data-v="'+c.id+'">Bearbeiten</button>';
+  return h}
+var FRUB=[["alle","Alle"],["monat","Fang des Monats"],["jahr","Größter des Jahres"],["erst","Erster Fisch"],["kurios","Kuriositäten"],["stat","Statistik"]];
+function vFang(){
+  if(S.cf)return cForm();
+  if(S.view&&S.view.t==="catch"){var c=cById(S.view.id);if(c)return cDetail(c);S.view=null}
+  var h=head("Fänge",null,CATCH.length?CATCH.length+(CATCH.length===1?" Fang":" Fänge")+" in deinem Fangbuch.":"Dein Fangbuch mit Foto, Köder, Rig und Schonzeit-Warner.");
+  h+='<button class="btn primary" data-a="newcatch">+ Fang eintragen</button>';
+  if(!CATCH.length)return h+'<div class="card"><p><b>Noch kein Fang eingetragen.</b></p><p class="small muted">Foto machen, Fisch und Länge eintragen, fertig. Der Guide prüft Schonzeit und Mindestmaß und merkt sich, womit du gefangen hast.</p></div><p class="small muted">Das Fangbuch liegt nur auf diesem Gerät. Der Austausch mit Freunden wird später angeschlossen.</p>';
+  h+='<div class="chips">'+FRUB.map(function(o){return'<button class="chip'+(S.fr===o[0]?" on":"")+'" data-a="fr" data-v="'+o[0]+'">'+o[1]+"</button>"}).join("")+"</div>";
+  var r=S.fr,l="";
+  if(r==="alle"){l='<div class="list">'+cSorted().map(function(c){return cItem(c)}).join("")+"</div>"}
+  else if(r==="monat"){var ms=[];CATCH.forEach(function(c){if(ms.indexOf(ym(c))<0)ms.push(ym(c))});ms.sort().reverse();
+    l='<p class="small muted">Bis deine Freunde abstimmen können, gewinnt der längste Fisch des Monats oder der, den du selbst festlegst.</p>';
+    ms.forEach(function(m){var w=fomFor(m),n=CATCH.filter(function(c){return ym(c)===m}).length;l+="<h2>"+MONL[+m.slice(5)-1]+" "+m.slice(0,4)+'</h2><div class="list">'+cItem(w,(w.fom?"Von dir festgelegt":"Längster Fisch")+" · aus "+n+(n===1?" Fang":" Fängen"))+"</div>"})}
+  else if(r==="jahr"){var ys=[];CATCH.forEach(function(c){var y=c.d.slice(0,4);if(ys.indexOf(y)<0)ys.push(y)});ys.sort().reverse();
+    ys.forEach(function(y){var sp=[],rows=[];CATCH.forEach(function(c){if(c.d.slice(0,4)===y&&sp.indexOf(c.fish)<0)sp.push(c.fish)});sp.forEach(function(s){var x=bestOf(s,y);if(x)rows.push(x)});rows.sort(function(a,b){return b.len-a.len});
+      l+="<h2>"+y+"</h2>"+(rows.length?'<div class="list">'+rows.map(function(c,i){return cItem(c,(i===0?"Größter Fisch des Jahres":"Größter "+esc(F[c.fish]?F[c.fish].n:"Fisch")+" des Jahres")+" · "+fmtD(c.d))}).join("")+"</div>":'<p class="card">Für dieses Jahr ist noch keine Länge eingetragen.</p>')})}
+  else if(r==="erst"){var sp2=[],fs=[];CATCH.forEach(function(c){if(sp2.indexOf(c.fish)<0)sp2.push(c.fish)});sp2.forEach(function(s){fs.push(firstOf(s))});fs.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:0});
+    l='<div class="card sunk"><b>'+sp2.length+" von "+FISH.length+' Arten gefangen</b><div class="bar"><i style="width:'+Math.max(2,Math.round(sp2.length/FISH.length*100))+'%"></i></div></div><div class="list">'+fs.map(function(c,i){return cItem(c,(i===0?"Dein allererster Fang":"Erster "+esc(F[c.fish]?F[c.fish].n:"Fisch"))+" · "+fmtD(c.d))}).join("")+"</div>"}
+  else if(r==="kurios"){var ku=cSorted(CATCH.filter(function(c){return c.kur}));l=ku.length?'<div class="list">'+ku.map(function(c){return cItem(c)}).join("")+"</div>":'<p class="card">Noch keine Kuriosität. Beim Eintragen „Kuriosität“ antippen: Beifang, seltsame Farbe, verrückte Geschichte.</p>'}
+  else{var sp3={},mo=[0,0,0,0,0,0,0,0,0,0,0,0],rel=0,big=null;CATCH.forEach(function(c){sp3[c.fish]=1;mo[+c.d.slice(5,7)-1]++;if(c.rel)rel++;if(c.len&&(!big||+c.len>+big.len))big=c});var mx=Math.max.apply(null,mo);
+    l='<div class="card"><dl class="kv"><dt>Fänge</dt><dd>'+CATCH.length+"</dd><dt>Arten</dt><dd>"+Object.keys(sp3).length+"</dd><dt>Zurückgesetzt</dt><dd>"+rel+"</dd><dt>Längster</dt><dd>"+(big?esc(cTitle(big)):"–")+"</dd><dt>Häufigster Fisch</dt><dd>"+esc(topOf("fish",F))+"</dd><dt>Bester Köder</dt><dd>"+esc(topOf("bait",B))+"</dd><dt>Bestes Rig</dt><dd>"+esc(topOf("rig",R))+"</dd><dt>Bestes Gewässer</dt><dd>"+esc(topOf("water"))+'</dd></dl></div><div class="card"><span class="label">Fänge je Monat</span><div class="mbars" role="img" aria-label="Fänge je Monat">'+mo.map(function(n,i){return'<span><i style="height:'+(mx?Math.round(n/mx*100):0)+'%"></i><b>'+(n||"")+"</b><em>"+MON[i].charAt(0)+"</em></span>"}).join("")+"</div></div>"}
+  return h+l+'<p class="small muted">Das Fangbuch liegt nur auf diesem Gerät.</p>'}
+function vMehr(){return head("Mehr",null,"Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
+
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln"];
+function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"))}
+
 function render(keepScroll){animStop();
-  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln}[S.tab]();
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr}[S.tab]();
   document.getElementById("app").innerHTML=v;
-  document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(S.tab===t[0]?"on":"")+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
+  document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(tabOn(t[0])?"on":"")+'"'+(tabOn(t[0])?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
 }
-function go(tab){HIST=[];S.tab=tab;S.view=null;S.form=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
+function go(tab){HIST=[];S.tab=tab;S.view=null;S.form=null;S.cf=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
 function startWiz(fid,waterIdx){var w=S.wiz,wat=waterIdx!=null?allWaters()[waterIdx]:null;w.fish=fid;w.water=waterIdx;w.wt=wat?wat.typ:(w.wt&&F[fid].w.indexOf(w.wt)>=0?w.wt:F[fid].w[0]);
   w.sued=wat?SOUTH.indexOf(wat.land)>=0:false;w.temp=tempFor(w.sued?(w.month+6)%12:w.month);if(wat&&wat.bl){}w.step=2;S.more=false;S.tab="finden";S.view=null;try{location.hash="finden"}catch(e){}render()}
 
@@ -428,6 +529,24 @@ document.addEventListener("click",function(ev){
     case"saveform":var fm=S.form;if(!fm.n.trim()){document.getElementById("formmsg").textContent="Bitte einen Namen eintragen.";break}
       var rec={n:fm.n.trim(),typ:fm.typ,ort:fm.ort.trim(),land:"Eigene",bl:null,t:fm.t.trim(),f:fm.f.slice()};
       if(fm.idx==null)S.own.unshift(rec);else S.own[fm.idx]=rec;store.set("own",S.own);S.form=null;S.gl="alle";render();break;
+    case"mehr":go("mehr");break;
+    case"newcatch":HIST=[];S.tab="faenge";S.view=null;S.cf=newCf(v);try{location.hash="faenge"}catch(e){}render();break;
+    case"catch":pushHist();S.view={t:"catch",id:v};render();dbPhoto(v,function(ph){var im=document.getElementById("cfull");if(ph&&im&&S.view&&S.view.id===v)im.src=ph});break;
+    case"fr":S.fr=v;render(true);break;
+    case"closecf":var back=S.cf&&S.cf.id;S.cf=null;if(back)S.view={t:"catch",id:back};render();break;
+    case"ctog":S.cf[v]=!S.cf[v];el.classList.toggle("on",S.cf[v]);el.setAttribute("aria-pressed",S.cf[v]);break;
+    case"cspot":S.cf.spot=v;render(true);break;
+    case"cedit":var ce=cById(v);if(!ce)break;S.cf={};for(var ck in ce)S.cf[ck]=ce[ck];S.cf.len=ce.len||"";S.cf.kg=ce.kg||"";S.cf.ph=CPH[v]||"";S.cf.newph=false;render();break;
+    case"csave":var cf=S.cf,cm=document.getElementById("cfmsg");if(!cf.fish){cm.textContent="Bitte den Fisch auswählen.";break}if(!/^\d{4}-\d\d-\d\d$/.test(cf.d)){cm.textContent="Bitte ein Datum eintragen.";break}
+      var cr={id:cf.id||(Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)),d:cf.d,fish:cf.fish,len:parseFloat(String(cf.len).replace(",","."))||null,kg:parseFloat(String(cf.kg).replace(",","."))||null,bait:cf.bait,rig:cf.rig,water:String(cf.water).trim(),bl:cf.bl,note:String(cf.note).trim(),rel:!!cf.rel,kur:!!cf.kur,spot:cf.spot,th:cf.th||"",fom:!!cf.fom};
+      var ci=-1;CATCH.forEach(function(x,i){if(x.id===cr.id)ci=i});if(ci>=0)CATCH[ci]=cr;else CATCH.push(cr);dbSave(cr,cf.newph?cf.ph:null);
+      try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+      S.cf=null;S.fr="alle";S.view={t:"catch",id:cr.id};render();break;
+    case"cdelask":S.cf.del=true;render(true);break;
+    case"cdelno":S.cf.del=false;render(true);break;
+    case"cdelyes":var di=S.cf.id;CATCH=CATCH.filter(function(x){return x.id!==di});dbDel(di);S.cf=null;S.view=null;HIST=[];render();break;
+    case"cfom":var cx=cById(v);if(!cx)break;CATCH.forEach(function(x){if(x.fom&&ym(x)===ym(cx)){x.fom=false;dbSave(x)}});cx.fom=true;dbSave(cx);render(true);break;
+    case"cshare":var cs=cById(v);if(cs)shareCatch(cs);break;
     case"delask":S.form.del=true;render(true);break;
     case"delno":S.form.del=false;render(true);break;
     case"delyes":S.own.splice(S.form.idx,1);store.set("own",S.own);S.form=null;render();break;
@@ -437,12 +556,15 @@ document.addEventListener("input",function(ev){
   var t=ev.target,k=t.getAttribute("data-i");
   if(k){S.q[k]=t.value;var r=document.getElementById("res");if(r)r.innerHTML={fische:fishList,koeder:baitList,gew:waterList,regeln:ruleTable,rigs:rigList}[k]();return}
   var f=t.getAttribute("data-f");if(f&&S.form)S.form[f]=t.value;
+  var g=t.getAttribute("data-g");if(g&&S.cf){S.cf[g]=t.value;var cw=document.getElementById("cwarn");if(cw)cw.innerHTML=warnBox(S.cf)}
 });
 document.addEventListener("change",function(ev){
   var c=ev.target.getAttribute("data-c");
   if(c==="bl"){S.bl=ev.target.value;store.set("bl",S.bl);render(true)}
   if(c==="gl"){S.gl=ev.target.value;render(true)}
+  if(c==="cphoto"&&S.cf&&ev.target.files&&ev.target.files[0])readPhoto(ev.target.files[0]);
+  var g=ev.target.getAttribute("data-g");if(g&&S.cf){S.cf[g]=ev.target.value;if(g==="fish"||g==="bait")render(true);else{var cw=document.getElementById("cwarn");if(cw)cw.innerHTML=warnBox(S.cf)}}
 });
-window.addEventListener("hashchange",function(){var t=location.hash.replace("#","");if(t&&t!==S.tab&&TABS.some(function(x){return x[0]===t})){S.tab=t;S.view=null;S.form=null;render()}});
-(function(){var t=location.hash.replace("#","");if(TABS.some(function(x){return x[0]===t}))S.tab=t;render()})();
+window.addEventListener("hashchange",function(){var t=location.hash.replace("#","");if(t&&t!==S.tab&&ROUTES.indexOf(t)>=0){S.tab=t;S.view=null;S.form=null;S.cf=null;render()}});
+(function(){var t=location.hash.replace("#","");if(ROUTES.indexOf(t)>=0)S.tab=t;render();dbOpen(function(){dbLoad(function(){if(S.tab==="faenge")render(true)})})})();
 })();
