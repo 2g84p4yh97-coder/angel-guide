@@ -169,3 +169,6 @@ nav.tabs svg{width:22px;height:22px}
 @keyframes dip{to{transform:translateY(46px)}}
 @keyframes jit{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(2px,-5px) rotate(8deg)}}
 @keyframes sway{0%,100%{transform:skewX(-4deg)}50%{transform:skewX(4deg)}}
+.lk{display:inline;border:0;background:none;padding:0;margin:0;font:inherit;color:var(--water);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;text-align:inherit;cursor:pointer}
+h3 .lk{color:inherit}
+.stepsl li>span{flex:1;min-width:0}

@@ -156,15 +156,15 @@ function vFinden(){
   // Ergebnis
   var fi=F[w.fish],a=fishAct(fi,w.month,w.sued),rec=recommend(w),tzm=fi.tz.indexOf(tzCode(w.tz))>=0;
   h+=head(fi.n,"wizback")+photo("f_"+fi.id,fi.n,true);
-  h+='<div class="card sunk"><div class="row"><span class="pill '+(a>=2?"ok":a===1?"warn":"stop")+'">'+ACTL[a]+" im "+MONL[w.month]+'</span><span class="pill '+(tzm?"ok":"warn")+'">'+(tzm?TZL[w.tz]+" passt":"Besser: "+tzText(fi))+"</span></div>"+months(fi,w.sued,w.month)+'<p class="small">'+esc(fi.tipp)+"</p></div>";
+  h+='<div class="card sunk"><div class="row"><span class="pill '+(a>=2?"ok":a===1?"warn":"stop")+'">'+ACTL[a]+" im "+MONL[w.month]+'</span><span class="pill '+(tzm?"ok":"warn")+'">'+(tzm?TZL[w.tz]+" passt":"Besser: "+tzText(fi))+"</span></div>"+months(fi,w.sued,w.month)+'<p class="small">'+lk(fi.tipp,"fishview:"+fi.id)+"</p></div>";
   if(!w.sued)h+=ruleBox(fi.id,S.bl);
   h+='<h2>Deine Köder</h2>';
   if(!rec.length)h+='<p class="card">Mit diesem Filter ist kein Köder hinterlegt. Stelle die Köderart auf „Alle“.</p>';
   var n=S.more?rec.length:Math.min(5,rec.length);
   for(var i=0;i<n;i++){var r=rec[i],b=r.b,tt=tempoTip(w,b);
-    h+='<div class="card"><div class="row"><h3 class="grow">'+(i+1)+". "+esc(b.n)+'</h3><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+"</span>"+dots(r.e[1])+"</div>"+
-      photo("b_"+b.id,b.n,true)+'<p><b>'+esc(r.e[2])+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
-      '<dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>"+(b.t==="K"?"Farbe":"Anbieten")+"</dt><dd>"+esc(colorTip(w,b))+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+(tt?" "+esc(tt):"")+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd></dl></div>"}
+    h+='<div class="card"><div class="row"><h3 class="grow">'+(i+1)+'. <button class="lk" data-a="bait" data-v="'+b.id+'">'+esc(b.n)+'</button></h3><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+"</span>"+dots(r.e[1])+"</div>"+
+      photo("b_"+b.id,b.n,true)+'<p><b>'+lk(r.e[2],"bait:"+b.id)+"</b></p>"+(r.why.length?'<p class="small muted">Heute passend: '+esc(r.why.join("; "))+".</p>":"")+
+      '<dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>"+(b.t==="K"?"Farbe":"Anbieten")+"</dt><dd>"+esc(colorTip(w,b))+"</dd><dt>Führung</dt><dd>"+lk(b.fuehrung,"bait:"+b.id)+(tt?" "+esc(tt):"")+"</dd><dt>Montage</dt><dd>"+lk(b.montage,"bait:"+b.id)+"</dd></dl>"+rigsForBait(b.id).slice(0,3).map(function(x){return'<button class="chip" data-a="rig" data-v="'+x.id+'">Rig: '+esc(x.n)+"</button>"}).join(" ")+"</div>"}
   if(rec.length>n)h+='<button class="btn" data-a="more">Weitere '+(rec.length-n)+" Köder zeigen</button>";
   h+='<div class="row"><button class="btn grow" data-a="wizstep" data-v="2">Bedingungen ändern</button><button class="btn grow" data-a="wizreset">Neu starten</button></div>';
   return h;
@@ -175,7 +175,7 @@ function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
 
 function vFische(){
   if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>"+photo("f_"+f.id,f.n,true);
-    h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+esc(f.tipp)+"</p></div>";
+    h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+lk(f.tipp,"fishview:"+f.id)+"</p></div>";
     h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
     f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
     return h+"</div>"}
@@ -188,7 +188,7 @@ function fishList(){var m=now.getMonth(),h="";FISH.filter(function(f){return(S.f
 
 function vKoeder(){
   if(S.view&&S.view.t==="bait"){var b=B[S.view.id],h=head(b.n,"closeview")+'<div class="row"><span class="pill '+(b.t==="K"?"k":"n")+'">'+(b.t==="K"?"Kunstköder":"Naturköder")+'</span><span class="muted small">'+esc(b.kat)+"</span></div>"+photo("b_"+b.id,b.n,true);
-    h+='<div class="card"><p>'+esc(b.info)+'</p><dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>Führung</dt><dd>"+esc(b.fuehrung)+"</dd><dt>Montage</dt><dd>"+esc(b.montage)+"</dd><dt>Tiefe</dt><dd>"+({o:"Oberfläche / flach",m:"Mittelwasser",g:"Grund"}[b.tiefe])+"</dd></dl></div>";var rb=rigsForBait(b.id);if(rb.length){h+='<h2>Passende Montagen</h2><div class="list">';rb.forEach(function(r){h+=rigItem(r)});h+="</div>"}h+='<h2>Fängt diese Fische</h2><div class="list">';
+    h+='<div class="card"><p>'+lk(b.info,"bait:"+b.id)+'</p><dl class="kv"><dt>Größe</dt><dd>'+esc(b.groesse)+"</dd><dt>Führung</dt><dd>"+lk(b.fuehrung,"bait:"+b.id)+"</dd><dt>Montage</dt><dd>"+lk(b.montage,"bait:"+b.id)+"</dd><dt>Tiefe</dt><dd>"+({o:"Oberfläche / flach",m:"Mittelwasser",g:"Grund"}[b.tiefe])+"</dd></dl></div>";var rb=rigsForBait(b.id);if(rb.length){h+='<h2>Passende Montagen</h2><div class="list">';rb.forEach(function(r){h+=rigItem(r)});h+="</div>"}h+='<h2>Fängt diese Fische</h2><div class="list">';
     FISH.forEach(function(f){f.b.forEach(function(e){if(e[0]===b.id)h+='<button class="item" data-a="fishview" data-v="'+f.id+'"><span class="grow"><b>'+esc(f.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"})});
     return h+"</div>"}
   var h2=head("Köder",null,BAITS.length+" Kunst- und Naturköder mit Führung und Montage.")+search("koeder","Köder suchen")+'<div class="chips">';
@@ -210,7 +210,7 @@ function vGew(){
     return h}
   if(S.view&&S.view.t==="water"){var w=all[S.view.id];if(!w){S.view=null;return vGew()}
     h=head(w.n,"closeview")+'<p class="muted">'+esc(WT[w.typ]?WT[w.typ].n:"")+(w.ort?" · "+esc(w.ort):"")+(w.land?" · "+esc(w.land):"")+(w.own!=null?' · <span class="pill k">Eigenes</span>':"")+"</p>";
-    if(w.t)h+='<div class="card"><span class="label">Tipp</span><p>'+esc(w.t)+"</p></div>";
+    if(w.t)h+='<div class="card"><span class="label">Tipp</span><p>'+lk(w.t)+"</p></div>";
     h+='<h2>Fische hier</h2><p class="muted small">Fisch antippen, dann bekommst du die Köder für heute.</p><div class="list">';
     var m=now.getMonth(),sd=SOUTH.indexOf(w.land)>=0;
     w.f.map(function(id){return F[id]}).filter(Boolean).sort(function(a,b){return fishAct(b,m,sd)-fishAct(a,m,sd)}).forEach(function(f){var a=fishAct(f,m,sd);
@@ -249,6 +249,28 @@ function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead>
 
 var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',knoten:'<path d="M2 14h5c6 0 4-8 8-8s4 8 0 8-3-8 3-8h4"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
 var RIGS=window.RIGS||[],KNOTS=window.KNOTS||[],RIGKATS=window.RIGKATS||[],R={},KN={};RIGS.forEach(function(r){R[r.id]=r});KNOTS.forEach(function(k){KN[k.id]=k});
+// ---------- Verlinkung: erwähnte Köder, Fische, Rigs und Knoten werden antippbar ----------
+var LK={},LKRE=null,HIST=[];
+(function(){
+  var SKIP={"wo erlaubt":1,Amazonas:1,tot:1,Wels:1,Blei:1,Meer:1,ganz:1,King:1,Silver:1,Area:1,Holz:1,Wels:0,Finesse:1,realistisch:1,Hartplastik:1,Amur:1,Vibration:1,Schritt:1,Stahlvorfach:1,Pose:1,Grund:1,Fliege:1,Jighead:1,Partikel:1,Hanf:1,Krebs:1};
+  function add(term,act,id,force){term=term.trim();if(term.length<3||(!force&&SKIP[term])||LK[term])return;LK[term]=[act,id]}
+  function parts(n){return n.split(/\s*\/\s*|\s*[(),]\s*/).filter(Boolean)}
+  var KA={clinch:["Clinchknoten","Clinch"],palomar:["Palomar"],uni:["Uni-Knoten","Grinner"],doppeluni:["Doppelter Uni","Doppelten Uni","Doppeltem Uni"],fg:["FG-Knoten"],albright:["Albright"],chirurg:["Chirurgenschlaufe"],arbor:["Arbor-Knoten"],stopper:["Stopperknoten"],rapala:["Rapala-Knoten","Schlaufenknoten"],noknot:["No-Knot"],blut:["Blutknoten"],dropper:["Seitenarm-Schlaufe","Dropper Loop"],schlaufe2:["Schlaufe in Schlaufe"],crimp:["Quetschhülse","Quetschhülsen"],plaettchen:["Plättchenhaken"]};
+  var RA={texas:["Texas-Rig","Texas"],carolina:["Carolina-Rig","Carolina"],dropshot:["Dropshot-Rig","Dropshot"],wacky:["Wacky-Rig","Wacky"],neko:["Neko-Rig","Neko"],free:["Free-Rig"],cheburashka:["Cheburashka"],jigkopf:["Jigkopf","Jigköpfe"],jika:["Jika-Rig"],tokyo:["Tokyo-Rig"],ned:["Ned-Rig"],haar:["Haar-Rig","Safety-Clip"],method:["Method-Feeder"],feeder:["Feeder-Montage","Futterkorb"],laufblei:["Laufblei-Montage","Grundmontage"],sbirolino:["Sbirolino"],tremarella:["Tremarella"],brandung:["Brandungsvorfach"],laufpose:["Laufpose","Posenmontage"],helikopter:["Helikopter-Rig"],chod:["Chod-Rig"],ronnie:["Ronnie-Rig"],zig:["Zig-Rig"],angsthaken:["Angsthaken","Stinger"],pulley:["Pulley-Rig"],upose:["Unterwasserpose","U-Pose"],fishfinder:["Kreishaken"],assist:["Assist-Haken","Assist-Hooks"],tiroler:["Tiroler Hölzl"],bodentaster:["Bodentaster"],nachlaeufer:["Nachläufer"],buttloeffel:["Buttlöffel"],hering:["Heringspaternoster"],seitenarm:["Seitenarm-Montage"],auftrieb:["Auftriebsmontage"],punch:["Punch-Rig"],mojo:[],weightless:["Weightless"],alabama:["Alabama-Rig"]};
+  var BA={gummifisch:["Gummifisch","Gummifische","Gummifischs","Shad"],twister:["Twister"],creature:["Creature","Creature-Bait"],pintail:["Pintail"],wurm_gummi:["Gummiwurm","Stickbait oder Gummiwurm"],wobbler_flach:["Wobbler","Crankbait"],jerkbait:["Jerkbait"],topwater_popper:["Popper"],topwater_stick:["Stickbait"],spinner:["Spinner"],spinnerbait:["Spinnerbait","Chatterbait"],blinker:["Blinker"],pilker:["Pilker"],tauwurm:["Tauwurm","Tauwürmer","Tauwurmbündel","Wurm"],made:["Made","Maden","Bienenmade","Bienenmaden"],mais:["Mais"],boilie:["Boilie","Boilies","Pop-up"],pellet:["Pellet","Pellets"],koederfisch:["Köderfisch","Köderfische"],fetzen:["Fetzen","Fischstück"],garnele:["Garnele"],krabbe:["Krabbe"],tintenfisch:["Tintenfisch"],wattwurm:["Wattwurm"],seeringler:["Seeringler"],leber_kaese:["Käse"],teig_forelle:["Forellenteig","Schwimmteig","Teig"],streamer:["Streamer"],nymphe:["Nymphe","Nymphen"],trockenfliege:["Trockenfliege"],jerkbait_gummi:["Softjerk","Softjerks"],swimbait:["Swimbait"],krautkoeder:["Gummifrosch"],jig_metall:["Metalljig","Metalljigs"],zocker:["Zocker"],brot:["Brot"]};
+  var FA={barsch:["Barsch","Barsche"],regenbogen:["Forelle","Forellen"],wels:["Wels","Welse","Waller"],bluefin:["Thun"],schwarzbarsch:["Schwarzbarsch"],plattfisch:["Plattfische","Butt"],lachs:["Lachs"],hai_klein:["Haie"]};
+  function al(map,act){for(var k in map)map[k].forEach(function(t){add(t,act,k,true)})}
+  al(KA,"knot");KNOTS.forEach(function(k){add(k.n,"knot",k.id)});
+  al(RA,"rig");RIGS.forEach(function(r){add(r.n,"rig",r.id)});
+  al(FA,"fishview");FISH.forEach(function(f){add(f.n,"fishview",f.id);parts(f.n).forEach(function(p){add(p,"fishview",f.id)})});
+  al(BA,"bait");BAITS.forEach(function(b){add(b.n,"bait",b.id);parts(b.n).forEach(function(p){add(p,"bait",b.id)})});
+  var terms=Object.keys(LK).filter(function(t){return (R[LK[t][1]]||KN[LK[t][1]]||F[LK[t][1]]||B[LK[t][1]])}).sort(function(a,b){return b.length-a.length}).map(function(t){return esc(t).replace(/[.*+?^${}()|[\]\\\/-]/g,"\\$&")});
+  LKRE=new RegExp("(^|[^A-Za-zÄÖÜäöüß0-9])("+terms.join("|")+")(?![A-Za-zÄÖÜäöüß0-9])","g");
+})();
+function lk(text,self){if(text==null||text==="")return"";return esc(text).replace(LKRE,function(m,pre,t){var raw=t.replace(/&amp;/g,"&").replace(/&#39;/g,"'"),e=LK[raw];if(!e||e[0]+":"+e[1]===self)return m;return pre+'<button class="lk" data-a="'+e[0]+'" data-v="'+e[1]+'" data-h="1">'+t+"</button>"})}
+function pushHist(){if(S.view||(S.tab==="finden"&&S.wiz.step===3))HIST.push({tab:S.tab,view:S.view,y:window.scrollY});if(HIST.length>30)HIST.shift()}
+function popHist(){var p=HIST.pop();if(!p)return false;S.tab=p.tab;S.view=p.view;try{location.hash=p.tab}catch(e){}render(true);window.scrollTo(0,p.y||0);return true}
+
 var LN='<path class="ln" d="M24 0v48"/>';
 var PART={
  schnur:'<path class="ln b" d="M24 0v48"/>',
@@ -279,8 +301,8 @@ var PART={
  arm:LN+'<path class="ln" d="M24 18l16 8"/><circle class="fm" cx="24" cy="18" r="3"/>'
 };
 function partSvg(t){return '<svg class="part" viewBox="0 0 48 48" aria-hidden="true">'+(PART[t]||LN)+"</svg>"}
-function chain(r){var h='<ol class="chain" aria-label="Aufbau von der Rute zum Köder"><li class="end">Zur Rute</li>';r.teile.forEach(function(t){h+="<li>"+partSvg(t[0])+'<span><b>'+esc(t[1])+"</b>"+(t[2]?'<span class="small muted">'+esc(t[2])+"</span>":"")+"</span></li>"});return h+"</ol>"}
-function stepList(a){return '<ol class="stepsl">'+a.map(function(s){return"<li>"+esc(s)+"</li>"}).join("")+"</ol>"}
+function chain(r){var h='<ol class="chain" aria-label="Aufbau von der Rute zum Köder"><li class="end">Zur Rute</li>';r.teile.forEach(function(t){h+="<li>"+partSvg(t[0])+'<span><b>'+lk(t[1],"rig:"+r.id)+"</b>"+(t[2]?'<span class="small muted">'+lk(t[2],"rig:"+r.id)+"</span>":"")+"</span></li>"});return h+"</ol>"}
+function stepList(a,self){return '<ol class="stepsl">'+a.map(function(s){return"<li><span>"+lk(s,self)+"</span></li>"}).join("")+"</ol>"}
 function knotItem(k){return '<button class="item" data-a="knot" data-v="'+k.id+'">'+photo("k_"+k.id)+'<span class="grow"><b>'+esc(k.n)+'</b><span class="small muted">'+esc(k.fuer)+'</span></span><span class="pill k">'+esc(k.lvl)+"</span></button>"}
 function rigItem(r){return '<button class="item" data-a="rig" data-v="'+r.id+'"><span class="grow"><b>'+esc(r.n)+'</b><span class="small muted">'+esc(r.fuer)+'</span></span><span class="chev" aria-hidden="true">›</span></button>'}
 function rigsForBait(id){return RIGS.filter(function(r){return r.b.indexOf(id)>=0})}
@@ -333,9 +355,9 @@ function animGo(d){animStop();AN.i=Math.max(0,Math.min(AN.st.length-1,AN.i+d));a
 function videoBtn(o,q){return '<a class="btn" href="'+esc(o.yt||("https://www.youtube.com/results?search_query="+encodeURIComponent(q)))+'" target="_blank" rel="noopener">Videos auf YouTube suchen</a><p class="small muted">Öffnet YouTube, braucht Internet.</p>'}
 function vRigs(){
   var v=S.view,h;
-  if(v&&v.t==="rig"){var r=R[v.id];h=head(r.n,"closeview")+'<div class="row"><span class="pill k">'+esc(r.kat)+'</span><span class="muted small">'+esc(r.fuer)+"</span></div>"+photo("r_"+r.id,r.n,true).replace('class="photo"','class="photo fit"');
-    h+='<h2>Erklärfilm</h2>'+animBox(r)+"<h2>Aufbau</h2>"+'<div class="card">'+chain(r)+"</div><h2>So bindest du es</h2>"+'<div class="card">'+stepList(r.bau)+"</div>";
-    h+='<div class="card"><span class="label">Führung</span><p>'+esc(r.fuehrung)+"</p>"+(r.tipp?'<span class="label">Tipp</span><p>'+esc(r.tipp)+"</p>":"")+"</div>";
+  if(v&&v.t==="rig"){var r=R[v.id];h=head(r.n,"closeview")+'<div class="row"><span class="pill k">'+esc(r.kat)+'</span><span class="muted small">'+lk(r.fuer)+"</span></div>"+photo("r_"+r.id,r.n,true).replace('class="photo"','class="photo fit"');
+    h+='<h2>Erklärfilm</h2>'+animBox(r)+"<h2>Aufbau</h2>"+'<div class="card">'+chain(r)+"</div><h2>So bindest du es</h2>"+'<div class="card">'+stepList(r.bau,"rig:"+r.id)+"</div>";
+    h+='<div class="card"><span class="label">Führung</span><p>'+lk(r.fuehrung,"rig:"+r.id)+"</p>"+(r.tipp?'<span class="label">Tipp</span><p>'+lk(r.tipp,"rig:"+r.id)+"</p>":"")+"</div>";
     h+=videoBtn(r,r.n+" binden Anleitung");
     if(r.k.length){h+='<h2>Knoten dafür</h2><div class="list">';r.k.forEach(function(id){h+=knotItem(KN[id])});h+="</div>"}
     if(r.b.length){h+='<h2>Passende Köder</h2><div class="list">';r.b.forEach(function(id){var b=B[id];if(b)h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+"</span></span></button>"});h+="</div>"}
@@ -346,8 +368,8 @@ function vRigs(){
   return h+'</div><div class="list" id="res">'+rigList()+"</div>";
 }
 function vKnoten(){var v=S.view,h;
-  if(v&&v.t==="knot"){var k=KN[v.id];h=head(k.n,"closeview")+'<div class="card"><dl class="kv"><dt>Wofür</dt><dd>'+esc(k.fuer)+"</dd><dt>Schnur</dt><dd>"+esc(k.schnur)+"</dd><dt>Schwierigkeit</dt><dd>"+esc(k.lvl)+"</dd><dt>Tragkraft</dt><dd>"+esc(k.kraft)+"</dd></dl></div>"+knotPics(k);
-    h+='<h2>Schritt für Schritt</h2><div class="card">'+stepList(k.s)+"</div>"+(k.tipp?'<div class="card"><span class="label">Tipp</span><p>'+esc(k.tipp)+"</p></div>":"");
+  if(v&&v.t==="knot"){var k=KN[v.id];h=head(k.n,"closeview")+'<div class="card"><dl class="kv"><dt>Wofür</dt><dd>'+lk(k.fuer,"knot:"+k.id)+"</dd><dt>Schnur</dt><dd>"+esc(k.schnur)+"</dd><dt>Schwierigkeit</dt><dd>"+esc(k.lvl)+"</dd><dt>Tragkraft</dt><dd>"+esc(k.kraft)+"</dd></dl></div>"+knotPics(k);
+    h+='<h2>Schritt für Schritt</h2><div class="card">'+stepList(k.s,"knot:"+k.id)+"</div>"+(k.tipp?'<div class="card"><span class="label">Tipp</span><p>'+lk(k.tipp,"knot:"+k.id)+"</p></div>":"");
     h+='<p class="notice">Jeden Knoten vor dem Festziehen anfeuchten, langsam zuziehen und danach einmal kräftig auf Zug prüfen.</p>';
     h+=videoBtn(k,k.n+" Angelknoten binden Anleitung");
     if(k.url)h+='<a class="btn" href="'+esc(k.url)+'" target="_blank" rel="noopener">Fotoserie ansehen (englisch, braucht Internet)</a>';
@@ -365,7 +387,7 @@ function render(keepScroll){animStop();
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(S.tab===t[0]?"on":"")+'"'+(S.tab===t[0]?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
 }
-function go(tab){S.tab=tab;S.view=null;S.form=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
+function go(tab){HIST=[];S.tab=tab;S.view=null;S.form=null;try{if(location.hash!=="#"+tab)location.hash=tab}catch(e){}render()}
 function startWiz(fid,waterIdx){var w=S.wiz,wat=waterIdx!=null?allWaters()[waterIdx]:null;w.fish=fid;w.water=waterIdx;w.wt=wat?wat.typ:(w.wt&&F[fid].w.indexOf(w.wt)>=0?w.wt:F[fid].w[0]);
   w.sued=wat?SOUTH.indexOf(wat.land)>=0:false;w.temp=tempFor(w.sued?(w.month+6)%12:w.month);if(wat&&wat.bl){}w.step=2;S.more=false;S.tab="finden";S.view=null;try{location.hash="finden"}catch(e){}render()}
 
@@ -384,17 +406,17 @@ document.addEventListener("click",function(ev){
     case"wizreset":w.step=0;w.water=null;w.fish=null;S.wizFrom=null;render();break;
     case"fg":S.fg=v;render(true);break;
     case"kt":S.kt=v;render(true);break;
-    case"fishview":S.tab="fische";S.view={t:"fish",id:v};render();break;
-    case"bait":S.tab="koeder";S.view={t:"bait",id:v};render();break;
-    case"rig":S.tab="rigs";S.view={t:"rig",id:v};try{location.hash="rigs"}catch(e){}render();break;
-    case"knot":S.tab="knoten";try{location.hash="knoten"}catch(e){}S.view={t:"knot",id:v};render();break;
+    case"fishview":pushHist();S.tab="fische";try{location.hash="fische"}catch(e){}S.view={t:"fish",id:v};render();break;
+    case"bait":pushHist();S.tab="koeder";try{location.hash="koeder"}catch(e){}S.view={t:"bait",id:v};render();break;
+    case"rig":pushHist();S.tab="rigs";S.view={t:"rig",id:v};try{location.hash="rigs"}catch(e){}render();break;
+    case"knot":pushHist();S.tab="knoten";try{location.hash="knoten"}catch(e){}S.view={t:"knot",id:v};render();break;
     case"aplay":animPlay();break;
     case"avoice":AN.voice=!AN.voice;store.set("voice",AN.voice);if(!AN.voice&&SY)SY.cancel();el.classList.toggle("on",AN.voice);el.textContent="🔊 Stimme "+(AN.voice?"an":"aus");el.setAttribute("aria-pressed",AN.voice);if(AN.voice)say(AN.st[AN.i].c);break;
     case"aprev":animGo(-1);break;
     case"anext":animGo(1);break;
     case"rm":S.rm=v;render();break;
     case"rk":S.rk=v;render(true);break;
-    case"closeview":S.view=null;render();break;
+    case"closeview":if(!popHist()){S.view=null;render()}break;
     case"startfish":S.wizFrom=null;startWiz(v,null);break;
     case"water":S.view={t:"water",id:+v};render();break;
     case"waterfish":S.wizFrom="water";startWiz(v,S.view.id);break;
