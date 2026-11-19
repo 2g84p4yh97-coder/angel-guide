@@ -1,4 +1,7 @@
 {
+"b_blinker": {
+"ki": 1
+},
 "b_creature": {
 "ki": 1
 },
@@ -11,22 +14,43 @@
 "b_gummifisch": {
 "ki": 1
 },
+"b_inline_spoon": {
+"ki": 1
+},
 "b_jerkbait": {
 "ki": 1
 },
 "b_jerkbait_gummi": {
 "ki": 1
 },
+"b_jig_metall": {
+"ki": 1
+},
+"b_jigspinner": {
+"ki": 1
+},
 "b_krautkoeder": {
 "ki": 1
 },
+"b_kuestenblinker": {
+"ki": 1
+},
 "b_lipless": {
+"ki": 1
+},
+"b_pilker": {
 "ki": 1
 },
 "b_pintail": {
 "ki": 1
 },
 "b_propbait": {
+"ki": 1
+},
+"b_spinner": {
+"ki": 1
+},
+"b_spinnerbait": {
 "ki": 1
 },
 "b_suspender": {
@@ -51,6 +75,9 @@
 "ki": 1
 },
 "b_wurm_gummi": {
+"ki": 1
+},
+"b_zocker": {
 "ki": 1
 },
 "f_aal": {

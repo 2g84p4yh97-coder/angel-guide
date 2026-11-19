@@ -120,7 +120,7 @@ function vFinden(){
     h+=head("Köder-Guide",null,"Sag mir, wo und worauf du angelst. Ich nenne dir die passenden Köder mit Farbe, Führung und Montage.");
     h+=steps(0)+'<h2>1. Wo angelst du?</h2><div class="grid g3">';
     WTYPES.forEach(function(t){h+='<button class="tile" data-a="wt" data-v="'+t.id+'"><b>'+esc(t.n)+"</b><span>"+esc(t.d)+"</span></button>"});
-    h+="</div>"+'<button class="btn water" data-a="tab" data-v="gewaesser">Oder ein Gewässer aus dem Verzeichnis wählen</button>'+blSelect();
+    h+="</div>"+'<button class="btn water" data-a="tab" data-v="gewaesser">Oder ein Gewässer aus dem Verzeichnis wählen</button><button class="btn" data-a="tab" data-v="stellen">Angelstellen lesen lernen (mit Erklärfilm)</button>'+blSelect();
     return h;
   }
   if(w.step===1){
@@ -157,6 +157,7 @@ function vFinden(){
   var fi=F[w.fish],a=fishAct(fi,w.month,w.sued),rec=recommend(w),tzm=fi.tz.indexOf(tzCode(w.tz))>=0;
   h+=head(fi.n,"wizback")+photo("f_"+fi.id,fi.n,true);
   h+='<div class="card sunk"><div class="row"><span class="pill '+(a>=2?"ok":a===1?"warn":"stop")+'">'+ACTL[a]+" im "+MONL[w.month]+'</span><span class="pill '+(tzm?"ok":"warn")+'">'+(tzm?TZL[w.tz]+" passt":"Besser: "+tzText(fi))+"</span></div>"+months(fi,w.sued,w.month)+'<p class="small">'+lk(fi.tipp,"fishview:"+fi.id)+"</p></div>";
+  h+=spotChips(fi.id,w.wt);
   if(!w.sued)h+=ruleBox(fi.id,S.bl);
   h+='<h2>Deine Köder</h2>';
   if(!rec.length)h+='<p class="card">Mit diesem Filter ist kein Köder hinterlegt. Stelle die Köderart auf „Alle“.</p>';
@@ -176,7 +177,7 @@ function match(q,str){return !q||str.toLowerCase().indexOf(q.toLowerCase())>=0}
 function vFische(){
   if(S.view&&S.view.t==="fish"){var f=F[S.view.id],m=now.getMonth(),h=head(f.n,"closeview")+'<p class="lat">'+esc(f.lat)+" · "+esc(f.g)+"</p>"+photo("f_"+f.id,f.n,true);
     h+='<div class="card"><span class="label">Beißzeiten (Nordhalbkugel)</span>'+months(f,false,m)+'<dl class="kv"><dt>Tageszeit</dt><dd>'+esc(tzText(f))+"</dd><dt>Wasser</dt><dd>"+esc(f.temp)+" °C</dd><dt>Übliche Größe</dt><dd>"+esc(f.size)+"</dd><dt>Gewässer</dt><dd>"+esc(f.w.map(function(x){return WT[x]?WT[x].n:x}).join(", "))+"</dd></dl><p>"+lk(f.tipp,"fishview:"+f.id)+"</p></div>";
-    h+=ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><button class="btn" data-a="newcatch" data-v="'+f.id+'">Fang eintragen</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
+    h+=spotChips(f.id)+ruleBox(f.id,S.bl)+'<button class="btn primary" data-a="startfish" data-v="'+f.id+'">Köder für heute finden</button><button class="btn" data-a="newcatch" data-v="'+f.id+'">Fang eintragen</button><h2>Alle Köder für '+esc(f.n)+'</h2><div class="list">';
     f.b.slice().sort(function(a,b){return b[1]-a[1]}).forEach(function(e){var b=B[e[0]];if(!b)return;h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(e[2])+"</span></span>"+dots(e[1])+"</button>"});
     return h+"</div>"}
   var groups=["alle","Raubfisch","Friedfisch","Salmonide","Meer"],h2=head("Fische",null,FISH.length+" Arten weltweit, mit Beißzeiten und Ködern.")+search("fische","Fisch suchen")+'<div class="chips">';
@@ -250,6 +251,7 @@ function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead>
 var ICON={finden:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',fische:'<path d="M3 12c3-5 9-6 13-2l5-3v10l-5-3c-4 4-10 3-13-2z"/><circle cx="8" cy="11" r=".6"/>',koeder:'<path d="M12 2v9a4 4 0 1 1-4 4"/><path d="M10 4h4"/>',gewaesser:'<path d="M3 8c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',knoten:'<path d="M2 14h5c6 0 4-8 8-8s4 8 0 8-3-8 3-8h4"/>',rigs:'<path d="M12 2v5"/><circle cx="12" cy="9.5" r="2.5"/><path d="M12 12v4a4 4 0 0 0 8 0v-3"/><path d="M5 5c3 0 3 4 0 4s-3 4 0 4"/>',faenge:'<path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8"/>',mehr:'<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',regeln:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h3"/>'};// ---------- Rigs und Knoten ----------
 var RIGS=window.RIGS||[],KNOTS=window.KNOTS||[],RIGKATS=window.RIGKATS||[],R={},KN={};RIGS.forEach(function(r){R[r.id]=r});KNOTS.forEach(function(k){KN[k.id]=k});
 // ---------- Verlinkung: erwähnte Köder, Fische, Rigs und Knoten werden antippbar ----------
+var SPOTS=window.SPOTS||[],SP={};SPOTS.forEach(function(x){SP[x.id]=x});
 var LK={},LKRE=null,HIST=[];
 (function(){
   var SKIP={"wo erlaubt":1,Amazonas:1,tot:1,Wels:1,Blei:1,Meer:1,ganz:1,King:1,Silver:1,Area:1,Holz:1,Wels:0,Finesse:1,realistisch:1,Hartplastik:1,Amur:1,Vibration:1,Schritt:1,Stahlvorfach:1,Pose:1,Grund:1,Fliege:1,Jighead:1,Partikel:1,Hanf:1,Krebs:1};
@@ -264,7 +266,8 @@ var LK={},LKRE=null,HIST=[];
   al(RA,"rig");RIGS.forEach(function(r){add(r.n,"rig",r.id)});
   al(FA,"fishview");FISH.forEach(function(f){add(f.n,"fishview",f.id);parts(f.n).forEach(function(p){add(p,"fishview",f.id)})});
   al(BA,"bait");BAITS.forEach(function(b){add(b.n,"bait",b.id);parts(b.n).forEach(function(p){add(p,"bait",b.id)})});
-  var terms=Object.keys(LK).filter(function(t){return (R[LK[t][1]]||KN[LK[t][1]]||F[LK[t][1]]||B[LK[t][1]])}).sort(function(a,b){return b.length-a.length}).map(function(t){return esc(t).replace(/[.*+?^${}()|[\]\\\/-]/g,"\\$&")});
+  SPOTS.forEach(function(x){(x.a||[]).forEach(function(t){add(t,"spot",x.id)})});
+  var terms=Object.keys(LK).filter(function(t){return (SP[LK[t][1]]||R[LK[t][1]]||KN[LK[t][1]]||F[LK[t][1]]||B[LK[t][1]])}).sort(function(a,b){return b.length-a.length}).map(function(t){return esc(t).replace(/[.*+?^${}()|[\]\\\/-]/g,"\\$&")});
   LKRE=new RegExp("(^|[^A-Za-zÄÖÜäöüß0-9])("+terms.join("|")+")(?![A-Za-zÄÖÜäöüß0-9])","g");
 })();
 function lk(text,self){if(text==null||text==="")return"";return esc(text).replace(LKRE,function(m,pre,t){var raw=t.replace(/&amp;/g,"&").replace(/&#39;/g,"'"),e=LK[raw];if(!e||e[0]+":"+e[1]===self)return m;return pre+'<button class="lk" data-a="'+e[0]+'" data-v="'+e[1]+'" data-h="1">'+t+"</button>"})}
@@ -341,8 +344,10 @@ function buildSvg(r){var n=r.teile.length,sp=Math.min(46,400/n),y0=(450-sp*n)/2+
 var AN={r:null,i:0,st:[],t:null,voice:store.get("voice",false)};var SY=window.speechSynthesis||null;
 function sayText(c){return c.replace(/(\d),(\d)/g,"$1 Komma $2").replace(/–/g," bis ").replace(/\bmm\b/g,"Millimeter").replace(/\bcm\b/g,"Zentimeter").replace(/(\d) ?g\b/g,"$1 Gramm").replace(/(\d) ?m\b/g,"$1 Meter").replace(/(\d) ?lb\b/g,"$1 Pfund").replace(/(\d)\/0/g,"$1 Null").replace(/·/g,",")}
 function say(c,done){if(!SY||!AN.voice)return false;try{SY.cancel();var u=new SpeechSynthesisUtterance(sayText(c));u.lang="de-DE";u.rate=1;if(done){u.onend=done;u.onerror=done}SY.speak(u);return true}catch(e){return false}}
-function animBox(r){AN.r=r;AN.i=0;AN.st=animSteps(r);return '<div class="anim" id="anim" data-k="intro"><div class="stage">'+buildSvg(r)+waterSvg(r)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(r.info)+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div>'+(SY?'<button class="chip'+(AN.voice?" on":"")+'" data-a="avoice" id="avoice" aria-pressed="'+AN.voice+'">🔊 Stimme '+(AN.voice?"an":"aus")+"</button>":"")+"</div>"}
-function animShow(){var el=document.getElementById("anim");if(!el)return animStop();var s=AN.st[AN.i];el.setAttribute("data-k",s.k==="bite"?"water":s.k==="part"?"intro":s.k);el.classList.toggle("bite",s.k==="bite");el.classList.toggle("started",AN.i>0||!!AN.t);
+function animBox(r){AN.r=r;AN.spot=false;AN.i=0;AN.st=animSteps(r);return '<div class="anim" id="anim" data-k="intro"><div class="stage">'+buildSvg(r)+waterSvg(r)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(r.info)+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div>'+(SY?'<button class="chip'+(AN.voice?" on":"")+'" data-a="avoice" id="avoice" aria-pressed="'+AN.voice+'">🔊 Stimme '+(AN.voice?"an":"aus")+"</button>":"")+"</div>"}
+function animShow(){var el=document.getElementById("anim");if(!el)return animStop();var s=AN.st[AN.i];
+  if(el.classList.contains("spot")){el.classList.toggle("started",AN.i>0||!!AN.t);[].forEach.call(el.querySelectorAll("[data-s]"),function(g){g.classList.toggle("on",(","+g.getAttribute("data-s")+",").indexOf(","+AN.i+",")>=0)});document.getElementById("acap").textContent=s.c;document.getElementById("abar").style.width=(100*(AN.i+1)/AN.st.length)+"%";document.getElementById("aplay").textContent=AN.t?"❚❚ Pause":AN.i>=AN.st.length-1?"↺ Nochmal":"▶ Weiter abspielen";return}
+  el.setAttribute("data-k",s.k==="bite"?"water":s.k==="part"?"intro":s.k);el.classList.toggle("bite",s.k==="bite");el.classList.toggle("started",AN.i>0||!!AN.t);
   var shown=s.k==="intro"?-1:s.k==="part"?s.p:99;[].forEach.call(el.querySelectorAll(".bp"),function(g){var p=+g.getAttribute("data-p");g.classList.toggle("on",p<=shown);g.classList.toggle("cur",p===shown)});
   document.getElementById("acap").textContent=s.c;var mt=el.querySelector(".mtag text");if(mt){if(!mt.getAttribute("data-t"))mt.setAttribute("data-t",mt.textContent);mt.textContent=s.k==="bite"?"Biss!":mt.getAttribute("data-t")}document.getElementById("abar").style.width=(100*(AN.i+1)/AN.st.length)+"%";
   document.getElementById("aplay").textContent=AN.t?"❚❚ Pause":AN.i>=AN.st.length-1?"↺ Nochmal":"▶ Weiter abspielen"}
@@ -379,6 +384,58 @@ function vKnoten(){var v=S.view,h;
 }
 function rigList(){var h="";RIGS.filter(function(r){return(S.rk==="alle"||r.kat===S.rk)&&match(S.q.rigs,r.n+" "+r.fuer+" "+r.kat+" "+r.b.map(function(x){return B[x]?B[x].n:""}).join(" "))}).forEach(function(r){h+=rigItem(r)});return h||'<p class="card">Nichts gefunden.</p>'}
 
+
+// ---------- Angelstellen mit Erklärfilm ----------
+var STT=["Die Stelle","Hier stehen die Fische","Hier hinwerfen","So führen","Tipp","Häufiger Fehler"];
+function gY(bot,x){for(var i=1;i<bot.length;i++)if(x<=bot[i][0]){var a=bot[i-1],b=bot[i];return a[1]+(b[1]-a[1])*(x-a[0])/((b[0]-a[0])||1)}return bot[bot.length-1][1]}
+function spotDeco(sp,d){var b=sp.bot,h="",x,y,i,g;
+  if(d[0]==="reed"){for(x=d[1],i=0;x<=d[2];x+=6,i++){g=gY(b,x);var top=22+(i*37%26),bend=(i%3-1)*5;h+='<path class="reed" d="M'+x+" "+g+"Q"+(x+bend)+" "+((g+top)/2)+" "+(x+bend*1.6)+" "+top+'"/>';if(i%3===0)h+='<ellipse class="cat" cx="'+(x+bend*1.6)+'" cy="'+(top+8)+'" rx="2.6" ry="8"/>'}}
+  else if(d[0]==="lily"){for(x=d[1],i=0;x<=d[2];x+=23,i++){g=gY(b,x);h+='<path class="stem" d="M'+x+" 90Q"+(x+(i%2?9:-9))+" "+((90+g)/2)+" "+(x+(i%2?-4:5))+" "+g+'"/><ellipse class="pad" cx="'+x+'" cy="89" rx="11.5" ry="3.6"/>';if(i%3===1)h+='<path class="bloom" d="M'+(x-5)+" 87q5-11 10 0q-5 3-10 0z\"/>"}}
+  else if(d[0]==="stones"){for(x=d[1],i=0;x<=d[2];x+=13,i++){g=gY(b,x);var t=83+(x-d[1])*.07;for(y=t+(i%2?4:0);y<g+4;y+=11)h+='<ellipse class="stone" cx="'+(x+(Math.round(y)%2?2:-2))+'" cy="'+y+'" rx="8.2" ry="6.3"/>'}g=gY(b,d[2]+16);for(y=110;y<g+4;y+=11)h+='<ellipse class="stone" cx="'+(d[2]+14-(y-110)*.02)+'" cy="'+y+'" rx="8.2" ry="6.3"/>'}
+  else if(d[0]==="riprap"){for(x=d[1],i=0;x<=d[2];x+=12,i++){g=gY(b,x);h+='<ellipse class="stone" cx="'+x+'" cy="'+(g-4)+'" rx="8" ry="6.2"/>'+(i%2?'<ellipse class="stone" cx="'+(x+5)+'" cy="'+(g-13)+'" rx="6.5" ry="5"/>':"")}}
+  else if(d[0]==="posts"){for(x=d[1];x<=d[2];x+=39){g=gY(b,x);h+='<rect class="wood" x="'+(x-3.5)+'" y="76" width="7" height="'+(g-70)+'"/>'}h+='<rect class="wood" x="'+(d[1]-34)+'" y="71" width="'+(d[2]-d[1]+44)+'" height="7" rx="2"/>'}
+  else if(d[0]==="tree"){var x0=d[1],y0=gY(b,x0)-6,x1=d[2],y1=d[3];h+='<path class="trunk" d="M'+x0+" "+y0+"L"+x1+" "+y1+'"/>';[.35,.5,.65,.8,.92].forEach(function(f,k){var px=x0+(x1-x0)*f,py=y0+(y1-y0)*f,up=k%2?-1:1,len=46-k*5;h+='<path class="branch" d="M'+px+" "+py+"l"+(len*.8)+" "+(up*len*.75)+"M"+(px+len*.45)+" "+(py+up*len*.42)+"l"+(len*.5)+" "+(-up*len*.12)+'"/>'})}
+  else if(d[0]==="weedbed"){h+='<g class="weed">';for(x=d[1],i=0;x<=d[2];x+=8,i++){g=gY(b,x);var hh=d[3]*(.55+(i*29%45)/100),s=i%2?7:-7;h+='<path d="M'+x+" "+g+"q"+s+" "+(-hh/2)+" 0 "+(-hh)+'"/>'}h+="</g>"}
+  else if(d[0]==="inflow"){x=d[1];g=gY(b,x);h+='<rect class="pipe" x="'+(x-30)+'" y="'+(g-2)+'" width="38" height="15" rx="7"/><path class="gush" d="M'+(x+6)+" "+(g+6)+"q22 0 26 "+(90-g-2)+'"/><ellipse class="foamy" cx="'+(x+34)+'" cy="91" rx="15" ry="4"/>'}
+  else if(d[0]==="pillar"){g=gY(b,(d[1]+d[2])/2);h+='<rect class="conc" x="'+d[1]+'" y="24" width="'+(d[2]-d[1])+'" height="'+(g-14)+'"/><rect class="deck" x="0" y="0" width="360" height="26"/><path class="rail" d="M0 5H360"/>'}
+  else if(d[0]==="flow"){h+='<path class="flow" d="M'+d[1]+" "+d[2]+"h"+(34*d[3])+"m"+(-8*d[3])+" -6l"+(8*d[3])+" 6l"+(-8*d[3])+' 6"/>'}
+  else if(d[0]==="rock"){h+='<ellipse class="stone" cx="'+d[1]+'" cy="'+(d[2]-6)+'" rx="17" ry="12"/>'}
+  else if(d[0]==="bush"){x=d[1];h+='<path class="branch" d="M'+x+" 84q-10 30-4 70M"+(x-2)+' 96q-14 16-12 44"/><circle class="leaf" cx="'+(x-8)+'" cy="62" r="17"/><circle class="leaf" cx="'+(x+6)+'" cy="50" r="15"/><circle class="leaf" cx="'+(x-20)+'" cy="76" r="11"/>'}
+  else if(d[0]==="foam"){for(x=d[1],i=0;x<=d[2];x+=14,i++)h+='<ellipse class="foamy" cx="'+x+'" cy="'+(88-(i%2)*4)+'" rx="10" ry="4"/>'}
+  return h}
+function spotSvg(sp){var b=sp.bot,i,d=sp.to,gp="M0 450L"+b.map(function(p){return p[0]+" "+p[1]}).join("L")+"L360 450Z",land="";
+  for(i=1;i<b.length;i++)if(b[i-1][1]<=90&&b[i][1]<=92)land+="M"+b[i-1][0]+" "+b[i-1][1]+"L"+b[i][0]+" "+Math.min(b[i][1],90);
+  var h='<svg class="scene spotsc" viewBox="0 0 360 450" role="img" aria-label="Angelstelle im Querschnitt: '+esc(sp.n)+'"><defs><linearGradient id="wg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="w0"/><stop offset="1" class="w1"/></linearGradient></defs><rect class="sky" width="360" height="92"/><rect y="90" width="360" height="360" fill="url(#wg2)"/><path class="ray" d="M60 90h50l-70 360h-60zM200 90h40l-60 360h-50zM300 90h46l-50 360h-56z"/>';
+  var back="",front="";sp.deco.forEach(function(x){if(x[0]==="pillar"||x[0]==="stones"||x[0]==="posts"||x[0]==="lily")back+=spotDeco(sp,x);else front+=spotDeco(sp,x)});
+  h+='<path class="surfl" d="M0 90c15-3 30 3 45 0s30-3 45 0 30 3 45 0 30-3 45 0 30 3 45 0 30-3 45 0 30 3 45 0 30-3 45 0"/>'+back+'<path class="sand" d="'+gp+'"/>'+(land?'<path class="grass" d="'+land+'"/>':"")+front;
+  // Angler
+  var a=sp.ang,ax=a[1],dir=d>ax?1:-1,tip;
+  if(a[0]==="boat"){tip=[ax+dir*30,44];h+='<path class="boat" d="M'+(ax-36)+" 84h72l-11 13h-50z\"/><circle class=\"man\" cx=\""+ax+'" cy="62" r="5.5"/><path class="manl" d="M'+ax+" 68v16M"+ax+" 73l"+(dir*9)+" 3\"/><path class=\"rod\" d=\"M"+(ax+dir*8)+" 77L"+tip[0]+" "+tip[1]+'"/>'}
+  else{var ay=a[2]||gY(b,ax);tip=[ax+dir*32,ay-60];h+='<circle class="man" cx="'+ax+'" cy="'+(ay-38)+'" r="5.5"/><path class="manl" d="M'+ax+" "+(ay-32)+"v18l-5 14M"+ax+" "+(ay-14)+"l5 14M"+ax+" "+(ay-27)+"l"+(dir*9)+' 5"/><path class="rod" d="M'+(ax+dir*8)+" "+(ay-21)+"L"+tip[0]+" "+tip[1]+'"/>'}
+  // Fische
+  sp.fish.forEach(function(f){h+='<g data-s="1,3,4,5" transform="translate('+f[0]+" "+f[1]+") scale("+(f[2]*-1)+' 1)"><path class="sfish" d="M-17 0c9-8 22-8 30 0c-8 8-21 8-30 0zM13 0l9-7v14z"/><circle class="sfe" cx="-10" cy="-1.5" r="1.4"/></g><circle class="ring" data-s="1" cx="'+f[0]+'" cy="'+f[1]+'" r="24"/>'});
+  // Wurf
+  var cy=Math.max(6,Math.min(tip[1],90)-74);
+  h+='<path class="arc" data-s="2" pathLength="100" d="M'+tip[0]+" "+tip[1]+"Q"+((tip[0]+d)/2)+" "+cy+" "+d+' 90"/><g data-s="2"><circle class="tgt" cx="'+d+'" cy="90" r="6"/><circle class="ring" cx="'+d+'" cy="90" r="14"/></g>';
+  var p=sp.path;
+  h+='<g class="lure" data-s="3,4" style="--x1:'+p[0][0]+"px;--y1:"+p[0][1]+"px;--x2:"+p[1][0]+"px;--y2:"+p[1][1]+"px;--x3:"+p[2][0]+"px;--y3:"+p[2][1]+'px"><path class="lpath" d="M-9 0c5-6 13-6 18 0c-5 6-13 6-18 0zM9 0l6-5v10z"/><circle cx="-4" cy="-1" r="1.3"/></g>';
+  h+='<path class="trail" data-s="3,4" d="M'+p[0][0]+" "+p[0][1]+"L"+p[1][0]+" "+p[1][1]+"L"+p[2][0]+" "+p[2][1]+'"/>';
+  var ty=sp.deco.some(function(x){return x[0]==="pillar"})?34:8;
+  [[1,"Hier stehen die Fische"],[2,"Hier hinwerfen"],[3,sp.mt],[4,"Tipp"],[5,"Fehler vermeiden"]].forEach(function(t){h+='<g class="mtag stag'+(t[0]===5?" bad":"")+'" data-s="'+t[0]+'"><rect x="10" y="'+ty+'" width="'+Math.min(340,t[1].length*7.5+26)+'" height="28" rx="14"/><text x="23" y="'+(ty+19)+'">'+esc(t[1])+"</text></g>"});
+  return h+"</svg>"}
+function spotBox(sp){AN.r=sp;AN.spot=true;AN.i=0;AN.st=sp.st.map(function(c,i){return{k:"s",c:(i===5?"Häufiger Fehler: ":"")+c}});
+  return '<div class="anim spot" id="anim" data-k="water"><div class="stage">'+spotSvg(sp)+'<button class="bigplay" data-a="aplay" aria-label="Erklärfilm abspielen">▶</button></div><div class="bar"><i id="abar"></i></div><p class="cap" id="acap" aria-live="polite">'+esc(sp.st[0])+'</p><div class="row"><button class="btn" data-a="aprev" aria-label="Schritt zurück">‹</button><button class="btn grow water" data-a="aplay" id="aplay">▶ Erklärfilm abspielen</button><button class="btn" data-a="anext" aria-label="Schritt vor">›</button></div>'+(SY?'<button class="chip'+(AN.voice?" on":"")+'" data-a="avoice" id="avoice" aria-pressed="'+AN.voice+'">🔊 Stimme '+(AN.voice?"an":"aus")+"</button>":"")+"</div>"}
+function spotItem(sp){return'<button class="item" data-a="spot" data-v="'+sp.id+'"><span class="grow"><b>'+esc(sp.n)+'</b><span class="small muted">'+esc(sp.f.slice(0,4).map(function(x){return F[x]?F[x].n:""}).filter(Boolean).join(", "))+'</span></span><span class="chev" aria-hidden="true">›</span></button>'}
+function spotsFor(fid,wt){var a=SPOTS.filter(function(s){return s.f.indexOf(fid)>=0&&(!wt||s.w.indexOf(wt)>=0)});return a}
+function spotChips(fid,wt){var a=spotsFor(fid,wt);if(!a.length)a=spotsFor(fid);if(!a.length)return"";return'<div class="card"><span class="label">Wo steht der Fisch?</span><div class="chips">'+a.slice(0,6).map(function(s){return'<button class="chip" data-a="spot" data-v="'+s.id+'">'+esc(s.n)+"</button>"}).join("")+"</div></div>"}
+function vStellen(){var v=S.view,h;
+  if(v&&v.t==="spot"&&SP[v.id]){var sp=SP[v.id],self="spot:"+sp.id;h=head(sp.n,"closeview")+'<p class="muted small">'+esc(sp.w.map(function(x){return WT[x]?WT[x].n:""}).filter(Boolean).join(" · "))+"</p><h2>Erklärfilm</h2>"+spotBox(sp);
+    h+='<div class="card">';sp.st.forEach(function(c,i){if(i)h+='<span class="label">'+STT[i]+"</span><p>"+lk(c,self)+"</p>"});h+="</div>";
+    h+='<h2>Fische an dieser Stelle</h2><div class="chips">'+sp.f.map(function(x){return F[x]?'<button class="chip" data-a="fishview" data-v="'+x+'">'+esc(F[x].n)+"</button>":""}).join("")+"</div>";
+    h+='<h2>Passende Köder</h2><div class="list">';sp.b.forEach(function(id){var b=B[id];if(b)h+='<button class="item" data-a="bait" data-v="'+b.id+'">'+photo("b_"+b.id)+'<span class="grow"><b>'+esc(b.n)+'</b><span class="small muted">'+esc(b.kat)+"</span></span></button>"});
+    h+='</div><h2>Passende Rigs</h2><div class="list">';sp.r.forEach(function(id){if(R[id])h+=rigItem(R[id])});return h+"</div>"}
+  h=head("Angelstellen","mehr",SPOTS.length+" Stellen mit Erklärfilm: wo die Fische stehen, wohin du wirfst und wie du führst.")+'<div class="list">';
+  SPOTS.forEach(function(sp){h+=spotItem(sp)});return h+"</div>"}
 
 // ---------- Fangbuch (liegt nur auf diesem Gerät) ----------
 var CATCH=[],DB=null,CPH={};window.agCatches=function(){return CATCH};
@@ -499,13 +556,13 @@ function vProfil(){var h;
   var ph=cSorted(CATCH.filter(function(c){return c.th})).slice(0,9);
   if(ph.length)h+='<h2>Meine Fänge</h2><div class="pgrid">'+ph.map(function(c){return'<button data-a="catch" data-v="'+c.id+'" aria-label="'+esc(cTitle(c))+'"><img src="'+c.th+'" alt=""></button>'}).join("")+"</div>";
   return h+'<p class="small muted">Dein Profil liegt nur auf diesem Gerät, bis der Austausch mit Freunden angeschlossen ist.</p>'}
-function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="profil">'+avatar()+'<span class="grow"><b>Mein Profil</b><span class="small muted">'+esc(PROF.name||"Name, Bild, Abzeichen")+'</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
+function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was noch kommt.")+'<div class="list"><button class="item" data-a="tab" data-v="profil">'+avatar()+'<span class="grow"><b>Mein Profil</b><span class="small muted">'+esc(PROF.name||"Name, Bild, Abzeichen")+'</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="stellen"><span class="grow"><b>Angelstellen</b><span class="small muted">Schilf, Kante, Buhne und mehr, mit Erklärfilm</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="gewaesser"><span class="grow"><b>Gewässer</b><span class="small muted">Verzeichnis und deine eigenen Gewässer</span></span><span class="chev" aria-hidden="true">›</span></button><button class="item" data-a="tab" data-v="regeln"><span class="grow"><b>Schonzeiten</b><span class="small muted">Schonzeiten und Mindestmaße aller Bundesländer</span></span><span class="chev" aria-hidden="true">›</span></button></div><div class="card sunk"><b>In Arbeit: Austausch mit Freunden</b><p class="small muted">Fänge zeigen, Chat, Fang des Monats mit Abstimmung. Dein Fangbuch wird dann angeschlossen.</p></div>'}
 
-var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil"];
-function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"))}
+var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil","stellen"];
+function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"||S.tab==="stellen"))}
 
 function render(keepScroll){animStop();
-  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil}[S.tab]();
+  var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil,stellen:vStellen}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(tabOn(t[0])?"on":"")+'"'+(tabOn(t[0])?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
   if(!keepScroll)window.scrollTo(0,0);
@@ -552,6 +609,7 @@ document.addEventListener("click",function(ev){
       var rec={n:fm.n.trim(),typ:fm.typ,ort:fm.ort.trim(),land:"Eigene",bl:null,t:fm.t.trim(),f:fm.f.slice()};
       if(fm.idx==null)S.own.unshift(rec);else S.own[fm.idx]=rec;store.set("own",S.own);S.form=null;S.gl="alle";render();break;
     case"mehr":go("mehr");break;
+    case"spot":pushHist();S.tab="stellen";try{location.hash="stellen"}catch(e){}S.view={t:"spot",id:v};render();break;
     case"pedit":S.pf={name:PROF.name,ort:PROF.ort,bio:PROF.bio,lieb:PROF.lieb,av:PROF.av};render();break;
     case"closepf":S.pf=null;render();break;
     case"psave":PROF={name:S.pf.name.trim(),ort:S.pf.ort.trim(),bio:S.pf.bio.trim(),lieb:S.pf.lieb,av:S.pf.av};store.set("profil",PROF);S.pf=null;render();break;

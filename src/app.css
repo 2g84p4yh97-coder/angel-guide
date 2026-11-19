@@ -197,3 +197,36 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 .badge{border:1px dashed var(--line);border-radius:var(--r);padding:10px 8px;text-align:center;display:flex;flex-direction:column;gap:2px;opacity:.55;overflow-wrap:anywhere}
 .badge.on{opacity:1;border-style:solid;border-color:var(--pose);background:var(--surface)}.badge.on b{color:var(--pose)}
 .pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.pgrid button{border:0;padding:0;background:none;aspect-ratio:1}.pgrid img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block}
+/* Angelstellen-Film */
+.anim.spot .scene{opacity:1}
+.spotsc .sky{fill:#cfe6ef}.spotsc .surfl{fill:none;stroke:#fff;stroke-width:2.5;opacity:.85}
+.spotsc .sand{stroke:#b08f52;stroke-width:1.5}.spotsc .grass{fill:none;stroke:#4f8a3a;stroke-width:6;stroke-linecap:round}
+.spotsc .reed{fill:none;stroke:#7a9440;stroke-width:2.6;stroke-linecap:round}.spotsc .cat{fill:#6b4424}
+.spotsc .stem{fill:none;stroke:#3f7d3c;stroke-width:1.6;opacity:.8}.spotsc .pad{fill:#3f9a48;stroke:#1f5a2a;stroke-width:1}.spotsc .bloom{fill:#fff;stroke:#d79ab0;stroke-width:1}
+.spotsc .stone{fill:#9aa3a3;stroke:#4d5656;stroke-width:1.1}
+.spotsc .wood{fill:#8a5a32;stroke:#4a2e17;stroke-width:1}.spotsc .trunk{fill:none;stroke:#6b4424;stroke-width:11;stroke-linecap:round}.spotsc .branch{fill:none;stroke:#6b4424;stroke-width:4;stroke-linecap:round}
+.spotsc .weed path{fill:none;stroke:#2c7a39;stroke-width:4;stroke-linecap:round}
+.spotsc .pipe{fill:#59626a;stroke:#2a3035;stroke-width:1.2}.spotsc .gush{fill:none;stroke:#e9f7fb;stroke-width:8;stroke-linecap:round;opacity:.9}.spotsc .foamy{fill:#fff;opacity:.85}
+.spotsc .conc{fill:#b9bdb9;stroke:#5c615f;stroke-width:1.2}.spotsc .deck{fill:#4a5055}.spotsc .rail{stroke:#22272a;stroke-width:3}
+.spotsc .flow{fill:none;stroke:#fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.spotsc .leaf{fill:#4f8a3a;stroke:#2b5a22;stroke-width:1}
+.spotsc .boat{fill:#a5532a;stroke:#0c1b19;stroke-width:1.3;stroke-linejoin:round}.spotsc .man{fill:#f2c230;stroke:#0c1b19;stroke-width:1.3}.spotsc .manl{fill:none;stroke:#0c1b19;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}.spotsc .rod{fill:none;stroke:#0c1b19;stroke-width:1.8;stroke-linecap:round}
+.spotsc .sfish{fill:#5d7f3a;stroke:#0c1b19;stroke-width:1.3;stroke-linejoin:round}.spotsc .sfe{fill:#fff}
+.spotsc .ring{fill:none;stroke:#e2501e;stroke-width:2.6}
+.spotsc .arc{fill:none;stroke:#0c1b19;stroke-width:2;stroke-dasharray:100;stroke-dashoffset:0}
+.spotsc .tgt{fill:#e2501e;stroke:#fff;stroke-width:2}
+.spotsc .lpath{fill:#f2c230;stroke:#0c1b19;stroke-width:1.3;stroke-linejoin:round}
+.spotsc .lure{transform:translate(var(--x1),var(--y1))}
+.spotsc .trail{fill:none;stroke:#fff;stroke-width:1.6;stroke-dasharray:4 5;opacity:.75}
+.spotsc [data-s]{opacity:0;transition:opacity .45s}.spotsc [data-s].on{opacity:1}.spotsc .trail.on{opacity:.75}
+.spotsc .stag.bad rect{fill:#e2501e}.spotsc .stag.bad text{fill:#fff}
+@media (prefers-reduced-motion:no-preference){
+.spotsc .ring.on,.spotsc .on .ring{animation:ringp 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.spotsc .arc.on{animation:castd 2.2s ease-out infinite}
+.spotsc .lure.on{animation:lurem 5s ease-in-out infinite}
+.spotsc .flow{animation:flowm 1.6s linear infinite}
+.spotsc .weed path,.spotsc .reed{animation:sway 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}}
+@keyframes ringp{0%,100%{transform:scale(.8);opacity:1}50%{transform:scale(1.12);opacity:.45}}
+@keyframes castd{0%{stroke-dashoffset:100}55%,100%{stroke-dashoffset:0}}
+@keyframes lurem{0%,8%{transform:translate(var(--x1),var(--y1))}50%,56%{transform:translate(var(--x2),var(--y2))}92%,100%{transform:translate(var(--x3),var(--y3))}}
+@keyframes flowm{0%{opacity:.25}50%{opacity:.9}100%{opacity:.25}}
