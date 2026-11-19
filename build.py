@@ -9,7 +9,7 @@ for f in sorted(os.listdir(os.path.join(here,'img'))):
     if f.startswith('k_') and f.endswith('.webp'):
         from PIL import Image
         w,h=Image.open(os.path.join(here,'img',f)).size; spr[f[2:-5]]=round(h/w,3)
-js='window.REGS='+regs+';\nwindow.SPR='+json.dumps(spr)+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('methods.js')+s('app.js')
+js='window.REGS='+regs+';\nwindow.SPR='+json.dumps(spr)+';\nwindow.IMG='+json.dumps(imgs,ensure_ascii=False,separators=(',',':'))+';\n'+s('baits.js')+s('fish.js')+s('waters.js')+s('rigs.js')+s('spots.js')+s('methods.js')+s('gear.js')+s('app.js')
 css=s('app.css')
 body='<div id="app"></div>\n<nav class="tabs" id="tabs" aria-label="Bereiche"></nav>\n'
 open(os.path.join(here,'artifact.html'),'w',encoding='utf-8').write(
