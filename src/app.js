@@ -409,6 +409,7 @@ function spotSvg(sp){var b=sp.bot,i,d=sp.to,gp="M0 450L"+b.map(function(p){retur
   var h='<svg class="scene spotsc" viewBox="0 0 360 450" role="img" aria-label="Angelstelle im Querschnitt: '+esc(sp.n)+'"><defs><linearGradient id="wg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="w0"/><stop offset="1" class="w1"/></linearGradient></defs><rect class="sky" width="360" height="92"/><rect y="90" width="360" height="360" fill="url(#wg2)"/><path class="ray" d="M60 90h50l-70 360h-60zM200 90h40l-60 360h-50zM300 90h46l-50 360h-56z"/>',bg=IMG["s_"+sp.id];
   if(bg)h=h.slice(0,h.indexOf('<rect class="sky"'))+'<image href="img/s_'+sp.id+'.jpg" width="360" height="450" preserveAspectRatio="none"/>';
   var back="",front="";sp.deco.forEach(function(x){if(x[0]==="pillar"||x[0]==="stones"||x[0]==="posts"||x[0]==="lily")back+=spotDeco(sp,x);else front+=spotDeco(sp,x)});
+  if(bg)sp.deco.forEach(function(x){if(x[0]==="flow")h+=spotDeco(sp,x)});
   if(!bg)h+='<path class="surfl" d="M0 90c15-3 30 3 45 0s30-3 45 0 30 3 45 0 30-3 45 0 30 3 45 0 30-3 45 0 30 3 45 0 30-3 45 0"/>'+back+'<path class="sand" d="'+gp+'"/>'+(land?'<path class="grass" d="'+land+'"/>':"")+front;
   // Angler
   var a=sp.ang,ax=a[1],dir=d>ax?1:-1,tip;

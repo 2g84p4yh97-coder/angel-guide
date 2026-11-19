@@ -19,7 +19,7 @@ window.SPOTS=[
  "Zu schwerer Jigkopf. Wähle ihn so leicht, dass der Köder zwei bis drei Sekunden fällt, dann haben die Fische Zeit zuzupacken."],
  b:["gummifisch","dropshot","wobbler_tief","koederfisch","tauwurm"],r:["jigkopf","dropshot","carolina","laufblei"]},
 {id:"buhne",n:"Buhne und Buhnenfeld",a:["Buhne","Buhnen","Buhnenkopf","Buhnenfeld","Buhnenfelder"],w:["strom","fluss"],f:["zander","rapfen","barsch","hecht","aal","wels","brasse","barbe","aland","doebel"],
- bot:[[0,62],[40,90],[200,180],[230,262],[290,290],[360,280]],deco:[["stones",44,204],["flow",262,130,1],["flow",292,200,1]],ang:["bank",176,84],to:300,path:[[300,272],[262,270],[228,236]],fish:[[244,250,-1],[276,276,-1],[222,205,-1]],mt:"an der Strömungskante treiben lassen",
+ bot:[[0,86],[36,88],[181,88],[183,100],[196,175],[212,253],[232,314],[248,338],[294,315],[327,302],[360,297]],deco:[["stones",44,204],["flow",270,130,1],["flow",300,200,1]],ang:["bank",158,89],to:300,path:[[300,298],[262,324],[238,286]],fish:[[264,316,-1],[304,292,-1],[242,236,-1]],mt:"an der Strömungskante treiben lassen",
  st:["Buhne: Der Steindamm lenkt die Strömung in die Flussmitte. Am Buhnenkopf entsteht eine scharfe Strömungskante und davor oft ein tiefes Loch, der Buhnenkolk.",
  "Zander, Rapfen und Barsch stehen an der Strömungskante am Kopf und im Kolk. Im ruhigen Buhnenfeld dahinter findest du Hecht, Brassen und nachts den Aal.",
  "Stell dich auf den Buhnenkopf und wirf schräg stromauf in die Strömung. Der Köder treibt dann von selbst an die Kante, an der die Räuber warten.",
