@@ -188,6 +188,9 @@
 "u": "https://creativecommons.org/licenses/by-sa/3.0",
 "p": "https://commons.wikimedia.org/wiki/File:Thymallus_thymallus_P%C3%A9nzes_p%C3%A9r.jpg"
 },
+"f_aland": {
+"ki": 1
+},
 "f_amberjack": {
 "a": "NNPS photo - Bryan Harry",
 "l": "Public domain",
@@ -248,6 +251,9 @@
 "u": "https://creativecommons.org/licenses/by/2.0",
 "p": "https://commons.wikimedia.org/wiki/File:Bonefish_Albula_vulpes.jpg"
 },
+"f_bonito": {
+"ki": 1
+},
 "f_brasse": {
 "a": "Микова Наталия",
 "l": "Public domain",
@@ -301,6 +307,9 @@
 "l": "Public domain",
 "u": "",
 "p": "https://commons.wikimedia.org/wiki/File:Caranx_ignobilis.jpg"
+},
+"f_hai_klein": {
+"ki": 1
 },
 "f_hecht": {
 "a": "HalbsHännile",
@@ -386,6 +395,9 @@
 "u": "https://creativecommons.org/licenses/by-sa/4.0",
 "p": "https://commons.wikimedia.org/wiki/File:Scomber_scombrus.jpg"
 },
+"f_mangrove_jack": {
+"ki": 1
+},
 "f_marlin": {
 "a": "dominic sherony",
 "l": "CC BY-SA 2.0",
@@ -439,6 +451,9 @@
 "l": "Public domain",
 "u": "",
 "p": "https://commons.wikimedia.org/wiki/File:Cichla_ocellaris_Dvur_zoo_1.jpg"
+},
+"f_piranha": {
+"ki": 1
 },
 "f_plattfisch": {
 "a": "Hans Hillewaert",
@@ -518,6 +533,9 @@
 "u": "https://creativecommons.org/licenses/by/2.0",
 "p": "https://commons.wikimedia.org/wiki/File:1351_largemouth_bass_%28Micropterus_salmoides%29_300_dpi.jpg"
 },
+"f_seeforelle": {
+"ki": 1
+},
 "f_smallmouth": {
 "a": "Eric Engbretson, U.S. Fish and Wildlife Service",
 "l": "Public domain",
@@ -560,6 +578,9 @@
 "u": "http://www.gnu.org/copyleft/fdl.html",
 "p": "https://commons.wikimedia.org/wiki/File:Tarpon3.JPG"
 },
+"f_tigerfisch": {
+"ki": 1
+},
 "f_tilapia": {
 "a": "S. Olkowicz - User Hippocampus on pl.wikipedia",
 "l": "CC BY 2.5",
@@ -601,5 +622,8 @@
 "l": "CC BY 2.0",
 "u": "https://creativecommons.org/licenses/by/2.0",
 "p": "https://commons.wikimedia.org/wiki/File:Chocolate_grouper_%28Cephalopholis_boenak%29_%2840701425812%29.jpg"
+},
+"f_zander": {
+"ki": 1
 }
 }
