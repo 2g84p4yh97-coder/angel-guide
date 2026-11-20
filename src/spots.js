@@ -28,7 +28,7 @@ window.SPOTS=[
  "Nur weit hinaus werfen. Viele Fische stehen direkt vor deinen Füßen an den Steinen. Und Vorsicht: Nasse Buhnensteine sind sehr glatt."],
  b:["gummifisch","wobbler_flach","topwater_stick","tauwurm","koederfisch"],r:["jigkopf","dropshot","laufblei","feeder"]},
 {id:"seerosen",n:"Seerosenfeld",a:["Seerosenfeld","Seerosen","Seerosenfelder"],w:["see","teich","kanal","fluss"],f:["hecht","schleie","karpfen","rotfeder","barsch","schwarzbarsch"],
- bot:[[0,62],[40,84],[60,98],[140,170],[240,220],[360,235]],deco:[["lily",88,226]],ang:["boat",312],to:236,path:[[232,97],[258,97],[282,97]],fish:[[170,140,1],[214,152,1],[128,128,1]],mt:"über die Lücken ziehen · Pause",
+ bot:[[0,84],[10,93],[20,110],[46,162],[82,191],[131,218],[183,240],[245,263],[320,280],[360,286]],deco:[["lily",88,226]],ang:["boat",312],to:124,path:[[124,95],[170,95],[240,95]],fish:[[166,150,1],[222,176,1],[116,138,1]],mt:"über die Lücken ziehen · Pause",
  st:["Seerosenfeld: Unter den Blättern ist es schattig, kühl und voller Nahrung. Für Hecht, Schleie und Karpfen ist das im Sommer das Wohnzimmer.",
  "Der Hecht lauert unter den Blättern an Lücken und am Rand des Feldes. Schleien und Karpfen wühlen zwischen den Stängeln, das verraten aufsteigende Blasen und wackelnde Blätter.",
  "Wirf in die Lücken und an den äußeren Rand des Feldes. Mit krautfesten Ködern darfst du auch mitten über die Blätter werfen.",
