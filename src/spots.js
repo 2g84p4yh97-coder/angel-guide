@@ -46,7 +46,7 @@ window.SPOTS=[
  "Am Steg vorbei weit hinaus werfen. Der beste Platz ist der Steg selbst. Achte auf Boote und Leinen und darauf, ob das Angeln dort erlaubt ist."],
  b:["dropshot","gummifisch","twister","tauwurm","made","koederfisch"],r:["dropshot","jigkopf","feststellpose","wacky"]},
 {id:"totholz",n:"Versunkener Baum",a:["Totholz","versunkener Baum","versunkene Bäume","Versunkener Baum"],w:["see","teich","fluss","strom","kanal","talsperre","bach"],f:["hecht","barsch","wels","aal","doebel","karpfen","zander","schwarzbarsch"],
- bot:[[0,60],[40,86],[70,110],[180,210],[360,250]],deco:[["tree",46,206,196]],ang:["boat",312],to:234,path:[[234,116],[226,204],[266,212]],fish:[[150,150,1],[196,186,1],[112,120,1]],mt:"am Holz absinken lassen",
+ bot:[[0,100],[13,133],[33,169],[65,195],[121,221],[163,235],[229,249],[294,260],[360,273]],deco:[["tree",46,206,196]],ang:["boat",316],to:250,path:[[250,124],[247,238],[272,243]],fish:[[196,172,1],[224,212,1],[128,132,1]],mt:"am Holz absinken lassen",
  st:["Totholz: Ein ins Wasser gestürzter Baum ist der beste Unterstand im ganzen Gewässer. Zwischen den Ästen findet jeder Fisch Schutz und Futter.",
  "Die größten Fische stehen am dichtesten am Holz: Hecht und Barsch an den Astspitzen, Wels und Aal tief im Geäst, Döbel und Karpfen im Schatten darüber.",
  "Wirf so dicht wie möglich an die äußeren Äste und an den Stamm. Fang außen an und arbeite dich mit jedem Wurf näher ans Holz.",
