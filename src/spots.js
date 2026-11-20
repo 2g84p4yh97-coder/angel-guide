@@ -37,7 +37,7 @@ window.SPOTS=[
  "Offene Drillinge. Die hängen sofort fest. Nimm Offset-Haken, Krautschutz oder einen Frosch-Köder."],
  b:["krautkoeder","topwater_popper","topwater_stick","jerkbait_gummi","mais","tauwurm"],r:["weightless","texas","punch","feststellpose"]},
 {id:"steg",n:"Steg und Bootsanleger",a:["Steg","Stege","Bootssteg","Bootsanleger"],w:["see","teich","kanal","hafen","strom","lagune"],f:["barsch","hecht","zander","aal","rotauge"],
- bot:[[0,60],[40,86],[70,110],[200,190],[360,230]],deco:[["posts",50,206]],ang:["bank",184,72],to:218,path:[[218,112],[218,184],[218,150]],fish:[[178,160,1],[140,140,1],[236,186,-1]],mt:"neben den Pfählen heben · senken",
+ bot:[[0,105],[50,170],[100,208],[154,234],[208,252],[232,258],[300,273],[360,286]],deco:[["posts",50,206]],ang:["bank",194,78],to:232,path:[[232,124],[232,238],[232,190]],fish:[[180,202,1],[128,172,1],[264,232,-1]],mt:"neben den Pfählen heben · senken",
  st:["Steg: Pfähle und Bretter geben Schatten und Deckung. Kleinfisch sammelt sich darunter, und Barsche und Hechte wohnen gleich daneben.",
  "Barsche stehen in Trupps dicht an den Pfählen, meist auf der Schattenseite. Der Hecht steht unter dem Steg oder am Stegkopf, wo es tiefer wird.",
  "Du musst nicht weit werfen. Lass den Köder direkt neben den Pfählen ab oder pendle ihn mit einem kurzen Unterhandwurf unter den Steg.",
