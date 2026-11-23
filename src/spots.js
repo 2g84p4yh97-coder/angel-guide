@@ -55,7 +55,7 @@ window.SPOTS=[
  "Angst vor Hängern. Wer nie hängen bleibt, fischt zu weit weg. Krautfeste Montagen wie das Texas-Rig kommen fast überall durch."],
  b:["creature","wurm_gummi","gummifisch","spinnerbait","tauwurm","koederfisch"],r:["texas","wacky","weightless","jika","laufblei"]},
 {id:"kraut",n:"Krautfeld und Krautkante",a:["Krautfeld","Krautkante","Krautfelder","Krautbank"],w:["see","teich","kanal","fluss","talsperre","lagune"],f:["hecht","barsch","schleie","karpfen","rotfeder","zander"],
- bot:[[0,60],[40,86],[70,110],[160,170],[250,240],[360,260]],deco:[["weedbed",84,232,64]],ang:["boat",318],to:246,path:[[246,150],[262,214],[292,186]],fish:[[226,196,1],[250,232,1],[176,140,1]],mt:"an der Krautkante entlang",
+ bot:[[0,93],[20,123],[33,165],[65,191],[111,214],[163,232],[229,249],[294,262],[360,275]],deco:[["weedbed",84,232,64]],ang:["boat",320],to:246,path:[[246,140],[248,226],[266,190]],fish:[[212,186,1],[204,226,1],[150,140,1]],mt:"an der Krautkante entlang",
  st:["Krautfeld: Wasserpflanzen liefern Sauerstoff, Deckung und Futter. Wo das Kraut endet, entsteht eine Kante, an der Räuber auf vorbeiziehende Beute warten.",
  "Hechte stehen in Lücken und an der Außenkante des Krauts. Barsche jagen davor, Schleien und Karpfen fressen in den Schneisen dazwischen.",
  "Wirf an die Außenkante und in freie Löcher im Kraut. Mit Polbrille siehst du Lücken und Schneisen schon vom Ufer aus.",
