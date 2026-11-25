@@ -64,7 +64,7 @@ window.SPOTS=[
  "Zu tief laufende Köder, die bei jedem Wurf Kraut sammeln. Flach laufende oder krautfeste Köder nehmen und den Haken nach jedem Wurf prüfen."],
  b:["wobbler_flach","spinnerbait","jerkbait","krautkoeder","jerkbait_gummi","mais"],r:["texas","weightless","shallow","hechtpose","feststellpose"]},
 {id:"einlauf",n:"Einlauf und Zufluss",a:["Einlauf","Zufluss","Einläufe","Bacheinlauf"],w:["see","teich","talsperre","fluss","strom","kanal","hafen","lagune"],f:["bachforelle","regenbogen","doebel","barsch","zander","rapfen","rotauge","brasse","karpfen","aal"],
- bot:[[0,50],[50,72],[70,100],[120,190],[180,210],[260,180],[360,215]],deco:[["inflow",58],["flow",96,112,1],["flow",150,150,1]],ang:["boat",318],to:108,path:[[110,120],[170,196],[236,172]],fish:[[150,186,-1],[196,200,-1],[250,168,-1]],mt:"mit der Strömung treiben lassen",
+ bot:[[0,92],[30,112],[45,150],[62,200],[80,236],[105,255],[135,262],[175,254],[215,238],[260,230],[300,236],[360,250]],deco:[["inflow",58],["flow",82,114,1],["flow",150,160,1]],ang:["boat",318],to:84,path:[[88,124],[140,238],[214,216]],fish:[[136,234,-1],[196,222,-1],[256,196,-1]],mt:"mit der Strömung treiben lassen",
  st:["Einlauf: Wo ein Bach, Graben oder Rohr ins Gewässer mündet, kommt frisches, sauerstoffreiches Wasser und mit ihm Futter. Das zieht Fische an wie ein Magnet.",
  "Die Fische stehen mit dem Kopf gegen die Strömung: Forellen und Döbel direkt im Einlauf, Barsch, Zander und Rapfen an der Kante zum ruhigen Wasser, Friedfische in der ausgespülten Rinne.",
  "Wirf in die Strömung oberhalb der Fische, also dicht an den Einlauf. So kommt der Köder natürlich auf sie zugetrieben.",
