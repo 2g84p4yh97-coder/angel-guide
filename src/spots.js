@@ -82,7 +82,7 @@ window.SPOTS=[
  "Nur die Flussmitte befischen. Jeder Pfeiler hat sein eigenes Loch, auch der am Ufer. Vorher prüfen, ob das Angeln an der Brücke erlaubt ist."],
  b:["gummifisch","dropshot","wobbler_tief","koederfisch","tauwurm"],r:["jigkopf","dropshot","cheburashka","laufblei"]},
 {id:"berg",n:"Barschberg",a:["Barschberg","Barschberge","Unterwasserberg","Plateau"],w:["see","talsperre","teich","fjord"],f:["barsch","hecht","zander","seeforelle","renke"],
- bot:[[0,330],[90,320],[150,200],[190,160],[230,170],[280,290],[360,330]],deco:[],ang:["boat",316],to:188,path:[[190,148],[244,186],[284,282]],fish:[[204,138,1],[250,176,1],[276,248,1]],mt:"den Hang hinunter jiggen",
+ bot:[[0,309],[45,309],[59,306],[85,270],[111,221],[140,185],[183,168],[229,185],[258,221],[281,263],[307,306],[330,309],[360,309]],deco:[],ang:["boat",318],to:190,path:[[190,150],[252,196],[292,270]],fish:[[206,140,1],[268,190,1],[306,268,1]],mt:"den Hang hinunter jiggen",
  st:["Barschberg: Eine Erhebung mitten im See, deren Kuppe oft nur wenige Meter unter der Oberfläche liegt. Rundherum ist es tief. Solche Berge sind Sammelplätze für Futterfisch.",
  "Barsche jagen in Schwärmen auf der Kuppe und an den Flanken. Hecht und Zander stehen am Hang und am Fuß des Berges, tagsüber tiefer, in der Dämmerung weiter oben.",
  "Stell das Boot ins Tiefe neben den Berg und wirf auf die Kuppe. So fischst du den Köder den Hang hinunter, wie eine flüchtende Beute.",
