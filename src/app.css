@@ -231,3 +231,11 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 @keyframes lurem{0%,8%{transform:translate(var(--x1),var(--y1))}50%,56%{transform:translate(var(--x2),var(--y2))}92%,100%{transform:translate(var(--x3),var(--y3))}}
 @keyframes flowm{0%{opacity:.25}50%{opacity:.9}100%{opacity:.25}}
 .plain{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:8px}
+
+.gfig{margin:0;display:flex;flex-direction:column;gap:8px}
+.gfig svg{display:block;width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--line)}
+.gfig .gl{stroke:#c2410c}.gfig .gd{fill:#c2410c}.gfig .gm{fill:#c2410c;stroke:#fff;stroke-width:1.5}
+.gfig .gt{fill:#fff;font-weight:700;text-anchor:middle;font-family:var(--font)}
+.gfig .gleg{margin:0;padding-left:1.5em;columns:2;column-gap:18px;font-size:14px}
+.gfig .gleg li{break-inside:avoid;margin-bottom:2px}
+.gfig figcaption{font-size:12px;color:var(--muted)}
