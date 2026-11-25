@@ -241,3 +241,4 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 .gfig figcaption{font-size:12px;color:var(--muted)}
 .grow2{display:flex;align-items:center;gap:12px}
 .gthumb{width:84px;height:84px;flex:none;border-radius:10px;background:#fff;border:1px solid var(--line);object-fit:contain}
+.gstrip{display:block;width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--line)}
