@@ -118,7 +118,7 @@ window.SPOTS=[
  "Zu schweres Blei, das zwischen den Steinen verklemmt. Leicht fischen, die Rute hoch halten und Montagen mit schlankem Blei wählen."],
  b:["wobbler_flach","gummifisch","creature","dropshot","tauwurm","koederfisch"],r:["cheburashka","texas","dropshot","jigkopf","tiroler"]},
 {id:"rinne",n:"Brandungsrinne und Sandbank",a:["Brandungsrinne","Sandbank","Sandbänke","Rinne"],w:["brandung","lagune","flats"],f:["plattfisch","dorsch","meerforelle","wolfsbarsch","steinbutt","aal","hornhecht"],
- bot:[[0,60],[40,84],[60,100],[110,172],[160,180],[210,126],[250,122],[300,190],[360,220]],deco:[["foam",206,256]],ang:["bank",18],to:150,path:[[152,170],[140,172],[126,168]],fish:[[128,158,-1],[166,166,-1],[304,178,-1]],mt:"liegen lassen · ein Stück ziehen",
+ bot:[[0,92],[28,96],[52,129],[82,159],[114,170],[147,167],[176,149],[203,128],[229,123],[258,124],[288,146],[320,172],[360,188]],deco:[["foam",206,256]],ang:["bank",18],to:132,path:[[132,164],[120,165],[106,162]],fish:[[90,150,-1],[160,152,-1],[314,156,-1]],mt:"liegen lassen · ein Stück ziehen",
  st:["Brandungsrinne: Vor dem Strand wechseln sich Sandbänke und tiefere Rinnen ab. Die Wellen spülen in den Rinnen Würmer, Krebse und Muscheln frei, dort fressen die Fische.",
  "Plattfische und Dorsche ziehen in den Rinnen entlang, bei Dunkelheit und auflaufendem Wasser bis dicht vor den Strand. Meerforelle und Wolfsbarsch jagen an den Kanten der Sandbank.",
  "Lies zuerst das Wasser: Wo die Wellen brechen, liegt eine Sandbank. Das ruhigere, dunklere Wasser davor und dahinter ist die Rinne. Dort hinein muss der Köder.",
