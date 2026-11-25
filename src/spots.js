@@ -109,7 +109,7 @@ window.SPOTS=[
  "Direkt am Prallhang stehen. Das Ufer ist oft unterspült und kann abbrechen, und die Fische stehen genau unter dir."],
  b:["gummifisch","wobbler_tief","spinner","tauwurm","koederfisch","pellet"],r:["jigkopf","laufblei","feeder","cheburashka","upose"]},
 {id:"steinpackung",n:"Steinpackung",a:["Steinpackung","Steinpackungen","Steinschüttung"],w:["kanal","strom","fluss","hafen","talsperre","fels"],f:["barsch","zander","aal","wels","rapfen","quappe","wolfsbarsch"],
- bot:[[0,60],[40,84],[60,100],[130,200],[180,230],[360,250]],deco:[["riprap",36,150]],ang:["bank",18],to:256,path:[[254,236],[184,222],[118,172]],fish:[[176,206,-1],[128,158,-1],[226,226,-1]],mt:"langsam über die Steine",
+ bot:[[0,93],[29,93],[46,97],[91,146],[131,191],[163,234],[189,258],[229,260],[360,267]],deco:[["riprap",36,150]],ang:["bank",18],to:258,path:[[256,252],[196,250],[128,174]],fish:[[204,238,-1],[152,176,-1],[262,244,-1]],mt:"langsam über die Steine",
  st:["Steinpackung: Aufgeschüttete Steine sichern Ufer an Kanälen, Flüssen und Häfen. In den Lücken leben Krebse, Grundeln und Kleinfisch, ein gedeckter Tisch für Räuber.",
  "Barsch, Zander und Aal stehen direkt an den Steinen, besonders am Fuß der Packung, wo sie in den weichen Grund übergeht. Nachts kommen die Zander bis ins knietiefe Wasser.",
  "Wirf nicht gerade hinaus, sondern schräg oder parallel zum Ufer. So bleibt der Köder die ganze Zeit in der fängigen Zone an den Steinen.",
