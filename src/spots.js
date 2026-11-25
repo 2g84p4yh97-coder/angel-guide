@@ -73,7 +73,7 @@ window.SPOTS=[
  "Mitten in den Einlauf stellen. Bleib seitlich und auf Abstand, die Fische stehen oft im Flachen direkt an der Mündung."],
  b:["spinner","wobbler_flach","gummifisch","tauwurm","made","brot"],r:["spinn","jigkopf","laufpose","feeder","sbirolino"]},
 {id:"bruecke",n:"Brückenpfeiler",a:["Brückenpfeiler","Brücke","Brücken","Pfeiler"],w:["strom","fluss","kanal","hafen","lagune","fjord"],f:["zander","barsch","wels","rapfen","doebel","aal","barbe","wolfsbarsch"],
- bot:[[0,236],[120,250],[170,290],[215,302],[255,266],[360,252]],deco:[["pillar",140,184],["flow",40,140,1],["flow",70,200,1]],ang:["boat",322],to:200,path:[[200,128],[214,288],[262,262]],fish:[[206,252,-1],[236,284,-1],[272,250,-1]],mt:"im Strömungsschatten absinken lassen",
+ bot:[[0,270],[160,271],[168,278],[183,293],[199,301],[222,293],[248,273],[270,271],[360,271]],deco:[["pillar",140,184],["flow",40,140,1],["flow",60,210,1]],ang:["boat",322],to:188,path:[[188,130],[198,290],[246,262]],fish:[[198,238,-1],[214,284,-1],[264,248,-1]],mt:"im Strömungsschatten absinken lassen",
  st:["Brückenpfeiler: Der Pfeiler bricht die Strömung. Dahinter entsteht ruhiges Wasser, daneben spült der Fluss tiefe Löcher aus. Dazu kommt der Schatten der Brücke.",
  "Zander, Barsch und Wels stehen im Strömungsschatten hinter dem Pfeiler und im ausgespülten Loch. Rapfen und Döbel jagen an der Kante zwischen schnellem und ruhigem Wasser.",
  "Wirf dicht neben den Pfeiler in die Strömung, etwas stromauf. Der Köder wird dann von selbst hinter den Pfeiler ins ruhige Wasser gedrückt.",
