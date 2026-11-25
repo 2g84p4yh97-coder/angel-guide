@@ -240,7 +240,7 @@ function vRegeln(){
   h+=search("regeln","Fischart suchen")+'<div id="res">'+ruleTable()+"</div>";
   var keys=Object.keys(reg.notes);if(keys.length){h+='<div class="card"><span class="label">Fußnoten</span>';keys.forEach(function(k){h+='<p class="small">('+k+") "+esc(reg.notes[k])+"</p>"});h+="</div>"}
   var ks=Object.keys(IMG);if(ks.length){h+='<details class="card"><summary><b>Bildnachweise ('+ks.length+' Fotos)</b></summary><p class="small muted">Fotos von Wikimedia Commons unter der jeweils genannten freien Lizenz, verkleinert. KI-Illustrationen sind als solche gekennzeichnet.</p>';
-    ks.forEach(function(k){var m=IMG[k],o=k.charAt(0)==="f"?F[k.slice(2)]:B[k.slice(2)];if(k.charAt(0)==="s"&&window.SPOTS)SPOTS.forEach(function(x){if(x.id===k.slice(2))o={n:"Angelstelle "+x.n}});if(k.charAt(0)==="g"){var gi=+k.slice(4);o={n:GFIG[k.slice(2)]?GFIG[k.slice(2)].n:(k.slice(0,4)==="g_rl"&&GEAR.rollen[gi]?"Rolle: "+GEAR.rollen[gi].n:k.slice(0,4)==="g_ru"&&GEAR.ruten[gi]?"Rute: "+GEAR.ruten[gi].n:k)}}h+='<p class="small">'+esc(o?o.n:k)+": "+(m.ki?"KI-Illustration (ChatGPT)":esc(m.a||"unbekannt"))+(m.l?", "+esc(m.l):"")+(m.p?' · <a href="'+esc(m.p)+'" target="_blank" rel="noopener">Quelle</a>':"")+"</p>"});h+="</details>"}
+    ks.forEach(function(k){var m=IMG[k],o=k.charAt(0)==="f"?F[k.slice(2)]:B[k.slice(2)];if(k.charAt(0)==="s"&&window.SPOTS)SPOTS.forEach(function(x){if(x.id===k.slice(2))o={n:"Angelstelle "+x.n}});if(k.charAt(0)==="m"&&ME[k.slice(2)])o={n:"Angelart "+ME[k.slice(2)].n};if(k.charAt(0)==="g"){var gi=+k.slice(4);o={n:GFIG[k.slice(2)]?GFIG[k.slice(2)].n:(k.slice(0,4)==="g_rl"&&GEAR.rollen[gi]?"Rolle: "+GEAR.rollen[gi].n:k.slice(0,4)==="g_ru"&&GEAR.ruten[gi]?"Rute: "+GEAR.ruten[gi].n:k)}}h+='<p class="small">'+esc(o?o.n:k)+": "+(m.ki?"KI-Illustration (ChatGPT)":esc(m.a||"unbekannt"))+(m.l?", "+esc(m.l):"")+(m.p?' · <a href="'+esc(m.p)+'" target="_blank" rel="noopener">Quelle</a>':"")+"</p>"});h+="</details>"}
   return h;
 }
 function ruleTable(){var reg=REGS[S.bl],h='<div class="tablewrap"><table><thead><tr><th>Fischart</th><th>Schonzeit</th><th>Maß</th><th>Heute</th></tr></thead><tbody>',n=0;
@@ -465,8 +465,34 @@ function vGeraet(){var v=S.view,h,G=GEAR;
 var METHODS=window.METHODS||[],ME={};METHODS.forEach(function(x){ME[x.id]=x});
 function methItem(m){return'<button class="item" data-a="meth" data-v="'+m.id+'"><span class="grow"><b>'+esc(m.n)+'</b><span class="small muted">'+esc(m.kurz)+'</span></span><span class="chev" aria-hidden="true">›</span></button>'}
 function methChips(fid){var a=METHODS.filter(function(m){return m.f.indexOf(fid)>=0});if(!a.length)return"";return'<div class="card"><span class="label">So wird er gefangen</span><div class="chips">'+a.map(function(m){return'<button class="chip" data-a="meth" data-v="'+m.id+'">'+esc(m.n)+"</button>"}).join("")+"</div></div>"}
+var MF={raf:0,on:false,t:0,last:0,H:[325,291],R:135,YW:326,T:13.4};
+function mfFilm(m){if(m.id!=="fliegenfischen"||!IMG["m_"+m.id])return"";var H=MF.H,c=function(a,l){var r=a*Math.PI/180;return[H[0]+l*Math.sin(r),H[1]-l*Math.cos(r)]},b=c(-30,168),f=c(55,168);
+  return'<h2>Erklärfilm: der Überkopfwurf</h2><div class="anim mfilm" id="mfilm"><div class="stage wide"><svg viewBox="0 0 720 440" role="img" aria-label="Erklärfilm Überkopfwurf mit der Fliegenrute"><image href="img/m_fliegenfischen.jpg" width="720" height="440" preserveAspectRatio="none"/>'+
+  '<g class="mfclock"><line x1="'+H[0]+'" y1="'+H[1]+'" x2="'+b[0].toFixed(1)+'" y2="'+b[1].toFixed(1)+'"/><line x1="'+H[0]+'" y1="'+H[1]+'" x2="'+f[0].toFixed(1)+'" y2="'+f[1].toFixed(1)+'"/><text x="'+(b[0]-4).toFixed(1)+'" y="'+(b[1]-6).toFixed(1)+'" text-anchor="middle">1 Uhr</text><text x="'+(f[0]+6).toFixed(1)+'" y="'+(f[1]-5).toFixed(1)+'">10 Uhr</text></g>'+
+  '<g class="mfman" transform="translate(300 356) scale(1.9) translate(-168 -331)"><path d="M163 331L166 308L172 331"/><path d="M166 310L167 290"/><circle cx="168" cy="283" r="5.5"/><path class="hat" d="M160 281L178 281M163 280Q168 272 173 280"/><path id="mfarm" d="M167 292L174 300L181 297"/></g><rect class="mfwet" x="282" y="'+MF.YW+'" width="40" height="31"/>'+
+  '<line id="mfrod" class="mfrod" x1="325" y1="291" x2="450" y2="250"/><path id="mfline" class="mfline" d=""/><circle id="mffly" class="mffly" r="3.6"/><ellipse id="mfring" class="mfring" cx="0" cy="'+MF.YW+'" rx="0" ry="0"/></svg>'+
+  '<button class="bigplay" data-a="mfplay" aria-label="Erklärfilm abspielen">▶</button></div><p class="cap" id="mfcap" aria-live="polite">Der Überkopfwurf in fünf Schritten. Die Rute arbeitet nur zwischen 10 und 1 Uhr.</p><button class="btn" data-a="mfplay" id="mfbtn">▶ Abspielen</button><p class="small muted">Kulisse: KI-Illustration (ChatGPT). Werfer, Rute und Schnur: eigene Animation, vereinfacht und nicht maßstäblich.</p></div>'}
+function mfEase(x){x=x<0?0:x>1?1:x;return x*x*(3-2*x)}
+function mfDraw(t){var el=document.getElementById("mfline");if(!el)return;var H=MF.H,YW=MF.YW,k=function(a,b,x,y){return x+(y-x)*mfEase((t-a)/(b-a))},
+  ang=t<1.5?80:t<2.1?k(1.5,2.1,80,-30):t<3.5?-30:t<3.9?k(3.5,3.9,-30,55):t<5.2?55:t<5.6?k(5.2,5.6,55,-30):t<7?-30:t<7.4?k(7,7.4,-30,55):t<8.6?55:t<10.2?k(8.6,10.2,55,80):80,
+  r=ang*Math.PI/180,T=[H[0]+MF.R*Math.sin(r),H[1]-MF.R*Math.cos(r)],d,fx,fy,cap,op=1,
+  loop=function(dir,L,p,lift){var a=L*(p<0?0:p>1?1:p),b=L-a,h=15*Math.min(1,Math.min(a,b)/30),lx=T[0]+dir*a;fx=lx-dir*b;fy=T[1]-h+(lift?(YW-T[1]+h)*(b/L):0);return"M"+T[0].toFixed(1)+" "+T[1].toFixed(1)+"L"+lx.toFixed(1)+" "+T[1].toFixed(1)+(h>.3?"A"+(h/2).toFixed(1)+" "+(h/2).toFixed(1)+" 0 0 "+(dir>0?0:1)+" "+lx.toFixed(1)+" "+(T[1]-h).toFixed(1):"")+"L"+fx.toFixed(1)+" "+fy.toFixed(1)};
+  if(t<1.5){fx=T[0]+225;fy=YW;d="M"+T[0].toFixed(1)+" "+T[1].toFixed(1)+"L"+fx+" "+fy;cap="1. Ausgangsstellung: Rutenspitze tief, die Schnur liegt gestreckt vor dir."}
+  else if(t<3.5){d=loop(-1,225,(t-1.75)/1.6,1);cap=t<2.1?"2. Rückschwung: zügig beschleunigen und bei 1 Uhr hart stoppen.":"3. Warten, bis sich die Schnur hinter dir streckt."}
+  else if(t<5.2){d=loop(1,225,(t-3.75)/1.3);cap="4. Vorschwung: beschleunigen und bei 10 Uhr stoppen. Die Schnur rollt als enge Schlaufe nach vorn ab."}
+  else if(t<7){d=loop(-1,225+10*mfEase((t-5.2)/1.8),(t-5.45)/1.4);cap="Leerwurf: noch einmal zurück und wieder warten. So verlängerst du die Schnur."}
+  else if(t<8.6){d=loop(1,235+15*mfEase((t-7.2)/1.2),(t-7.25)/1.25);cap="Letzter Vorschwung: beim Stopp Schnur durch die Ringe schießen lassen."}
+  else{var p=mfEase((t-8.6)/1.6),T0y=H[1]-MF.R*Math.cos(55*Math.PI/180),T0x=H[0]+MF.R*Math.sin(55*Math.PI/180);fx=T0x+250;fy=T0y+(YW-T0y)*p;d="M"+T[0].toFixed(1)+" "+T[1].toFixed(1)+"Q"+(T[0]+120).toFixed(1)+" "+(fy+(T[1]-fy)*.25).toFixed(1)+" "+fx.toFixed(1)+" "+fy.toFixed(1);
+    cap=t<10.2?"5. Erst wenn die Schnur gestreckt ist, die Rutenspitze senken und ablegen.":"Die Fliege liegt. Lose Schnur einholen und die Fliege frei treiben lassen.";if(t>MF.T-.5)op=(MF.T-t)/.5}
+  el.setAttribute("d",d);el.style.opacity=op;var fl=document.getElementById("mffly");fl.setAttribute("cx",fx.toFixed(1));fl.setAttribute("cy",fy.toFixed(1));fl.style.opacity=op;
+  var rod=document.getElementById("mfrod");rod.setAttribute("x2",T[0].toFixed(1));rod.setAttribute("y2",T[1].toFixed(1));
+  var rg=document.getElementById("mfring"),q=(t-10.2)/1.6;if(q>0&&q<1){rg.setAttribute("cx",fx.toFixed(1));rg.setAttribute("rx",(6+30*q).toFixed(1));rg.setAttribute("ry",(1.5+5*q).toFixed(1));rg.style.opacity=1-q}else rg.style.opacity=0;
+  var c=document.getElementById("mfcap");if(c.textContent!==cap)c.textContent=cap}
+function mfTick(now){if(!MF.on)return;if(!document.getElementById("mfline")){MF.on=false;return}var dt=Math.min(.05,(now-MF.last)/1000);MF.last=now;MF.t=(MF.t+dt)%MF.T;mfDraw(MF.t);MF.raf=requestAnimationFrame(mfTick)}
+window._mfDraw=mfDraw;function mfStop(){MF.on=false;if(MF.raf)cancelAnimationFrame(MF.raf);MF.raf=0}
+function mfPlay(){var el=document.getElementById("mfilm");if(!el)return;if(MF.on){mfStop()}else{MF.on=true;MF.last=performance.now();el.classList.add("started");MF.raf=requestAnimationFrame(mfTick)}document.getElementById("mfbtn").textContent=MF.on?"❚❚ Pause":"▶ Weiter abspielen"}
 function vArten(){var v=S.view,h;
-  if(v&&v.t==="meth"&&ME[v.id]){var m=ME[v.id],self="meth:"+m.id;h=head(m.n,"closeview")+'<p class="muted">'+esc(m.kurz)+'</p><div class="card"><p>'+lk(m.info,self)+"</p></div>";
+  if(v&&v.t==="meth"&&ME[v.id]){var m=ME[v.id],self="meth:"+m.id;h=head(m.n,"closeview")+'<p class="muted">'+esc(m.kurz)+'</p><div class="card"><p>'+lk(m.info,self)+"</p></div>";h+=mfFilm(m);
     h+='<h2>Ausrüstung</h2><div class="card"><dl class="kv">'+m.geraet.map(function(g){return"<dt>"+esc(g[0])+"</dt><dd>"+lk(g[1],self)+"</dd>"}).join("")+"</dl></div>";
     m.sek.forEach(function(x){h+="<h2>"+esc(x[0])+'</h2><div class="card">'+stepList(x[1],self)+"</div>"});
     h+='<h2>Häufige Fehler</h2><div class="card"><ul class="plain">'+m.fehler.map(function(x){return"<li>"+lk(x,self)+"</li>"}).join("")+"</ul></div>";
@@ -602,7 +628,7 @@ function vMehr(){return head("Mehr",null,"Profil, Gewässer, Schonzeiten und was
 var TABS=[["finden","Finden"],["fische","Fische"],["koeder","Köder"],["rigs","Rigs"],["knoten","Knoten"],["faenge","Fänge"],["mehr","Mehr"]],ROUTES=["finden","fische","koeder","rigs","knoten","faenge","mehr","gewaesser","regeln","profil","stellen","arten","geraet"];
 function tabOn(t){return S.tab===t||(t==="mehr"&&(S.tab==="gewaesser"||S.tab==="regeln"||S.tab==="profil"||S.tab==="stellen"||S.tab==="arten"||S.tab==="geraet"))}
 
-function render(keepScroll){animStop();
+function render(keepScroll){animStop();mfStop();MF.t=0;
   var v={finden:vFinden,fische:vFische,koeder:vKoeder,rigs:vRigs,knoten:vKnoten,gewaesser:vGew,regeln:vRegeln,faenge:vFang,mehr:vMehr,profil:vProfil,stellen:vStellen,arten:vArten,geraet:vGeraet}[S.tab]();
   document.getElementById("app").innerHTML=v;
   document.getElementById("tabs").innerHTML="<div>"+TABS.map(function(t){return'<button data-a="tab" data-v="'+t[0]+'" class="'+(tabOn(t[0])?"on":"")+'"'+(tabOn(t[0])?' aria-current="page"':"")+'><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[t[0]]+"</svg>"+t[1]+"</button>"}).join("")+"</div>";
@@ -631,7 +657,7 @@ document.addEventListener("click",function(ev){
     case"bait":pushHist();S.tab="koeder";try{location.hash="koeder"}catch(e){}S.view={t:"bait",id:v};render();break;
     case"rig":pushHist();S.tab="rigs";S.view={t:"rig",id:v};try{location.hash="rigs"}catch(e){}render();break;
     case"knot":pushHist();S.tab="knoten";try{location.hash="knoten"}catch(e){}S.view={t:"knot",id:v};render();break;
-    case"aplay":animPlay();break;
+    case"aplay":animPlay();break;case"mfplay":mfPlay();break;
     case"avoice":AN.voice=!AN.voice;store.set("voice",AN.voice);if(!AN.voice&&SY)SY.cancel();el.classList.toggle("on",AN.voice);el.textContent="🔊 Stimme "+(AN.voice?"an":"aus");el.setAttribute("aria-pressed",AN.voice);if(AN.voice)say(AN.st[AN.i].c);break;
     case"aprev":animGo(-1);break;
     case"anext":animGo(1);break;
