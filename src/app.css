@@ -239,3 +239,5 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 .gfig .gleg{margin:0;padding-left:1.5em;columns:2;column-gap:18px;font-size:14px}
 .gfig .gleg li{break-inside:avoid;margin-bottom:2px}
 .gfig figcaption{font-size:12px;color:var(--muted)}
+.grow2{display:flex;align-items:center;gap:12px}
+.gthumb{width:84px;height:84px;flex:none;border-radius:10px;background:#fff;border:1px solid var(--line);object-fit:contain}
