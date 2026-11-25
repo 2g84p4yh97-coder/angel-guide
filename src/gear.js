@@ -55,4 +55,24 @@ sets:[
 {id:"wolfsbarsch",n:"Wolfsbarsch und leichte Küste",f:["wolfsbarsch","meerbrasse","snook","redfish","striper","bonefish","barramundi","mangrove_jack","leerfisch","barrakuda","bonito","permit","roosterfish"],rute:"Spinnrute 2,40 bis 2,90 m, WG 15 bis 50 g",rolle:"Salzwasserfeste Stationärrolle 4000 bis 5000",schnur:"Geflecht 0,13 bis 0,17 mm",vorfach:"Fluorocarbon 0,35 bis 0,50 mm",tip:"In den Tropen eine Nummer stärker wählen: WG bis 80 g, Rolle 5000 bis 6000."},
 {id:"dorsch",n:"Dorsch, Köhler, Pollack",f:["dorsch","koehler","pollack","leng","plattfisch","steinbutt","hai_klein"],rute:"Pilkrute 2,40 bis 2,70 m, WG 80 bis 200 g. Brandung: 3,90 bis 4,20 m, WG 100 bis 250 g.",rolle:"Stationärrolle 5000 bis 6000 oder kleine Multirolle. Brandungsrolle 8000 und größer.",schnur:"Geflecht 0,15 bis 0,20 mm. Brandung: Mono 0,30 mm mit Schlagschnur.",vorfach:"Mono oder Fluorocarbon 0,50 bis 0,70 mm",tip:"Je dünner die Schnur, desto leichter kommt der Pilker bei Drift nach unten."},
 {id:"biggame",n:"Heilbutt, Thun und Big Game",f:["heilbutt","bluefin","yellowfin","marlin","wahoo","mahi","gt","amberjack","zackenbarsch","tarpon","blauhai"],rute:"Bootsrute 30 bis 80 lb oder Popperrute für GT und Thun",rolle:"Multirolle 30 bis 80 lb oder Stationärrolle 10000 bis 20000",schnur:"Geflecht 0,30 bis 0,60 mm oder Mono 50 bis 130 lb",vorfach:"Mono oder Fluorocarbon 0,90 bis 2,0 mm, bei Haien Stahl",tip:"Auf Charterbooten ist das Gerät meist gestellt. Vorher fragen, bevor du schweres Gerät kaufst."}
+],
+marken:[
+{n:"Rollen",g:[
+["Stationärrollen und Freilaufrollen",[["Daiwa","Japan, Stationärrollen in allen Preisklassen"],["Okuma","günstige bis mittlere Rollen, viele Freilauf- und Karpfenrollen"],["Penn","robuste Rollen, vor allem fürs Meer und für Wels"],["Shimano","Japan, sehr breites Programm vom Einsteiger bis zur Spitzenrolle"]]],
+["Baitcaster und Multirollen",[["Abu Garcia","die Ambassadeur ist die klassische runde Multirolle"],["Daiwa","Baitcaster von leicht bis schwer"],["Penn","Multirollen fürs Meer"],["Shimano","Baitcaster und Meeresmultis"]]],
+["Fliegenrollen",[["Guideline","Skandinavien"],["Hardy","England, Traditionsmarke"],["Orvis","USA"],["Vision","Finnland"]]]]},
+{n:"Ruten",g:[
+["Raubfisch und Spinnfischen",[["Abu Garcia",""],["Daiwa",""],["Fox Rage","Raubfischlinie von Fox"],["Savage Gear","Dänemark"],["Shimano",""],["Sportex","deutsche Marke"],["Westin","Dänemark"]]],
+["Friedfisch, Feeder und Match",[["Browning",""],["Daiwa",""],["Drennan","England"],["Preston Innovations","England"],["Shimano",""]]],
+["Karpfen",[["Daiwa",""],["Fox","England"],["Nash","England"],["Prologic",""],["Shimano",""],["Sonik",""]]],
+["Wels",[["Black Cat",""],["Zeck Fishing","deutsche Marke"]]],
+["Fliege",[["Greys","England"],["Guideline",""],["Hardy",""],["Orvis",""],["Sage","USA"],["Vision",""]]],
+["Meer, Brandung und Norwegen",[["Balzer","deutsche Marke mit Norwegen-Programm"],["Daiwa",""],["Penn",""],["Shimano",""],["WFT",""]]]]},
+{n:"Köder",g:[
+["Gummiköder",[["Bass Assassin",""],["Berkley","PowerBait-Gummis"],["Fox Rage",""],["Keitech","Japan, zum Beispiel Easy Shiner"],["Lieblingsköder","deutsche Marke"],["Lunker City","USA, zum Beispiel Fin-S und Shaker"],["Relax","der Kopyto ist ein Klassiker"],["Savage Gear",""],["Westin",""]]],
+["Wobbler und Jerkbaits",[["Illex","zum Beispiel Squirrel und Arnaud"],["Lucky Craft","Japan"],["Megabass","Japan"],["Rapala","Finnland, der Original Floater ist der Urvater der Wobbler"],["Salmo","Polen"],["Strike Pro","zum Beispiel Buster Jerk"]]],
+["Spinner und Blinker",[["Abu Garcia","Toby und Droppen"],["Blue Fox","Vibrax-Spinner"],["DAM","Effzett-Blinker"],["Hansen","Meerforellenblinker"],["Mepps","Frankreich, der Aglia ist der Spinner-Klassiker"],["Spro",""]]],
+["Boilies und Karpfenköder",[["CC Moore",""],["Dynamite Baits",""],["Mainline",""],["Nash",""],["Sticky Baits",""],["Successful Baits","deutsche Marke"]]],
+["Futter für Friedfische",[["Browning",""],["Dynamite Baits",""],["Mosella","deutsche Marke"],["Sensas","Frankreich"]]],
+["Forellenteig",[["Berkley","PowerBait"],["Trout Master","Forellenlinie von Spro"]]]]}
 ]};

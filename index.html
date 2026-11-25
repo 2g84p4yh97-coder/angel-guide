@@ -1417,6 +1417,26 @@ sets:[
 {id:"wolfsbarsch",n:"Wolfsbarsch und leichte Küste",f:["wolfsbarsch","meerbrasse","snook","redfish","striper","bonefish","barramundi","mangrove_jack","leerfisch","barrakuda","bonito","permit","roosterfish"],rute:"Spinnrute 2,40 bis 2,90 m, WG 15 bis 50 g",rolle:"Salzwasserfeste Stationärrolle 4000 bis 5000",schnur:"Geflecht 0,13 bis 0,17 mm",vorfach:"Fluorocarbon 0,35 bis 0,50 mm",tip:"In den Tropen eine Nummer stärker wählen: WG bis 80 g, Rolle 5000 bis 6000."},
 {id:"dorsch",n:"Dorsch, Köhler, Pollack",f:["dorsch","koehler","pollack","leng","plattfisch","steinbutt","hai_klein"],rute:"Pilkrute 2,40 bis 2,70 m, WG 80 bis 200 g. Brandung: 3,90 bis 4,20 m, WG 100 bis 250 g.",rolle:"Stationärrolle 5000 bis 6000 oder kleine Multirolle. Brandungsrolle 8000 und größer.",schnur:"Geflecht 0,15 bis 0,20 mm. Brandung: Mono 0,30 mm mit Schlagschnur.",vorfach:"Mono oder Fluorocarbon 0,50 bis 0,70 mm",tip:"Je dünner die Schnur, desto leichter kommt der Pilker bei Drift nach unten."},
 {id:"biggame",n:"Heilbutt, Thun und Big Game",f:["heilbutt","bluefin","yellowfin","marlin","wahoo","mahi","gt","amberjack","zackenbarsch","tarpon","blauhai"],rute:"Bootsrute 30 bis 80 lb oder Popperrute für GT und Thun",rolle:"Multirolle 30 bis 80 lb oder Stationärrolle 10000 bis 20000",schnur:"Geflecht 0,30 bis 0,60 mm oder Mono 50 bis 130 lb",vorfach:"Mono oder Fluorocarbon 0,90 bis 2,0 mm, bei Haien Stahl",tip:"Auf Charterbooten ist das Gerät meist gestellt. Vorher fragen, bevor du schweres Gerät kaufst."}
+],
+marken:[
+{n:"Rollen",g:[
+["Stationärrollen und Freilaufrollen",[["Daiwa","Japan, Stationärrollen in allen Preisklassen"],["Okuma","günstige bis mittlere Rollen, viele Freilauf- und Karpfenrollen"],["Penn","robuste Rollen, vor allem fürs Meer und für Wels"],["Shimano","Japan, sehr breites Programm vom Einsteiger bis zur Spitzenrolle"]]],
+["Baitcaster und Multirollen",[["Abu Garcia","die Ambassadeur ist die klassische runde Multirolle"],["Daiwa","Baitcaster von leicht bis schwer"],["Penn","Multirollen fürs Meer"],["Shimano","Baitcaster und Meeresmultis"]]],
+["Fliegenrollen",[["Guideline","Skandinavien"],["Hardy","England, Traditionsmarke"],["Orvis","USA"],["Vision","Finnland"]]]]},
+{n:"Ruten",g:[
+["Raubfisch und Spinnfischen",[["Abu Garcia",""],["Daiwa",""],["Fox Rage","Raubfischlinie von Fox"],["Savage Gear","Dänemark"],["Shimano",""],["Sportex","deutsche Marke"],["Westin","Dänemark"]]],
+["Friedfisch, Feeder und Match",[["Browning",""],["Daiwa",""],["Drennan","England"],["Preston Innovations","England"],["Shimano",""]]],
+["Karpfen",[["Daiwa",""],["Fox","England"],["Nash","England"],["Prologic",""],["Shimano",""],["Sonik",""]]],
+["Wels",[["Black Cat",""],["Zeck Fishing","deutsche Marke"]]],
+["Fliege",[["Greys","England"],["Guideline",""],["Hardy",""],["Orvis",""],["Sage","USA"],["Vision",""]]],
+["Meer, Brandung und Norwegen",[["Balzer","deutsche Marke mit Norwegen-Programm"],["Daiwa",""],["Penn",""],["Shimano",""],["WFT",""]]]]},
+{n:"Köder",g:[
+["Gummiköder",[["Bass Assassin",""],["Berkley","PowerBait-Gummis"],["Fox Rage",""],["Keitech","Japan, zum Beispiel Easy Shiner"],["Lieblingsköder","deutsche Marke"],["Lunker City","USA, zum Beispiel Fin-S und Shaker"],["Relax","der Kopyto ist ein Klassiker"],["Savage Gear",""],["Westin",""]]],
+["Wobbler und Jerkbaits",[["Illex","zum Beispiel Squirrel und Arnaud"],["Lucky Craft","Japan"],["Megabass","Japan"],["Rapala","Finnland, der Original Floater ist der Urvater der Wobbler"],["Salmo","Polen"],["Strike Pro","zum Beispiel Buster Jerk"]]],
+["Spinner und Blinker",[["Abu Garcia","Toby und Droppen"],["Blue Fox","Vibrax-Spinner"],["DAM","Effzett-Blinker"],["Hansen","Meerforellenblinker"],["Mepps","Frankreich, der Aglia ist der Spinner-Klassiker"],["Spro",""]]],
+["Boilies und Karpfenköder",[["CC Moore",""],["Dynamite Baits",""],["Mainline",""],["Nash",""],["Sticky Baits",""],["Successful Baits","deutsche Marke"]]],
+["Futter für Friedfische",[["Browning",""],["Dynamite Baits",""],["Mosella","deutsche Marke"],["Sensas","Frankreich"]]],
+["Forellenteig",[["Berkley","PowerBait"],["Trout Master","Forellenlinie von Spro"]]]]}
 ]};
 (function(){
 "use strict";
@@ -1873,11 +1893,12 @@ function gearFig(k){var g=GFIG[k],h='<figure class="gfig"><svg viewBox="0 0 '+g.
 function vGeraet(){var v=S.view,h,G=GEAR;
   if(v&&v.t==="gear"){
     if(v.id==="sets"){h=head("Was passt zu meinem Fisch?","closeview","Richtwerte für eine stimmige Kombination. Hausgewässer und Ködergröße entscheiden mit.");G.sets.forEach(function(s){h+='<div class="card"><b>'+esc(s.n)+"</b>"+gearKv(s)+'<div class="chips">'+s.f.slice(0,5).map(function(x){return F[x]?'<button class="chip" data-a="fishview" data-v="'+x+'">'+esc(F[x].n)+"</button>":""}).join("")+"</div></div>"});return h}
+    if(v.id==="marken"){h=head("Bewährte Marken","closeview","Etablierte Hersteller für Ruten, Rollen und Köder.")+'<div class="card sunk"><p class="small">Auswahl bekannter, lange am Markt etablierter Marken, je Gruppe alphabetisch. Das ist <b>keine Rangfolge</b> und keine Bewertung, und niemand hat für eine Nennung bezahlt. Kundenbewertungen mit Quelle folgen.</p></div>';G.marken.forEach(function(m){h+="<h2>"+esc(m.n)+"</h2>";m.g.forEach(function(g){h+='<div class="card"><b>'+esc(g[0])+'</b><ul class="plain">'+g[1].map(function(x){return"<li><b>"+esc(x[0])+"</b>"+(x[1]?' <span class="muted">· '+esc(x[1])+"</span>":"")+"</li>"}).join("")+"</ul></div>"})});return h}
     if(v.id==="ruten"){h=head("Rutenarten","closeview",G.ruten.length+" Rutentypen und wofür sie gebaut sind.");h+=gearFig("rute");G.ruten.forEach(function(r){h+='<div class="card"><b>'+esc(r.n)+"</b><p>"+esc(r.t)+'</p><dl class="kv"><dt>Länge</dt><dd>'+esc(r.l)+"</dd><dt>Wurfgewicht</dt><dd>"+esc(r.wg)+"</dd><dt>Aktion</dt><dd>"+esc(r.akt)+"</dd><dt>Für</dt><dd>"+esc(r.f)+"</dd></dl></div>"});return h}
     if(v.id==="rollen"){h=head("Rollenarten","closeview",G.rollen.length+" Rollentypen im Überblick.");h+=gearFig("rolle");G.rollen.forEach(function(r,i){h+='<div class="card"><div class="grow2">'+(IMG["g_rl"+i]?'<img class="gthumb" src="img/g_rl'+i+'.jpg" alt="'+esc(r.n)+', KI-Illustration" loading="lazy">':"")+"<b>"+esc(r.n)+"</b></div><p>"+esc(r.t)+'</p><dl class="kv"><dt>Größen</dt><dd>'+esc(r.gr)+"</dd></dl></div>"});return h}
     h=head("Rute und Rolle verstehen","closeview","Länge, Wurfgewicht, Aktion, Rollengröße, Bremse und Schnur.");h+=gearFig("rute")+gearFig("rolle");G.wissen.forEach(function(w){h+='<div class="card"><b>'+esc(w[0])+"</b><p>"+esc(w[1])+"</p></div>"});return h}
   var it=function(id,t,s){return'<button class="item" data-a="gear" data-v="'+id+'"><span class="grow"><b>'+t+'</b><span class="small muted">'+s+'</span></span><span class="chev" aria-hidden="true">›</span></button>'};
-  return head("Rute und Rolle","mehr","Welche Rute, welche Rolle, welche Schnur. Alle Angaben sind Richtwerte.")+'<div class="list">'+it("sets","Was passt zu meinem Fisch?",G.sets.length+" fertige Kombinationen mit Schnur und Vorfach")+it("ruten","Rutenarten","Von Ultralight bis Brandung")+it("rollen","Rollenarten","Stationärrolle, Freilauf, Baitcaster und mehr")+it("wissen","Rute und Rolle verstehen","Wurfgewicht, Aktion, Übersetzung, Bremse, Schnur")+"</div>"}
+  return head("Rute und Rolle","mehr","Welche Rute, welche Rolle, welche Schnur. Alle Angaben sind Richtwerte.")+'<div class="list">'+it("sets","Was passt zu meinem Fisch?",G.sets.length+" fertige Kombinationen mit Schnur und Vorfach")+it("ruten","Rutenarten","Von Ultralight bis Brandung")+it("rollen","Rollenarten","Stationärrolle, Freilauf, Baitcaster und mehr")+it("wissen","Rute und Rolle verstehen","Wurfgewicht, Aktion, Übersetzung, Bremse, Schnur")+it("marken","Bewährte Marken","Hersteller für Ruten, Rollen und Köder")+"</div>"}
 
 // ---------- Angelarten ----------
 var METHODS=window.METHODS||[],ME={};METHODS.forEach(function(x){ME[x.id]=x});
