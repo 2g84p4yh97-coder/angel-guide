@@ -242,3 +242,6 @@ input.vh:focus-visible+*,label.btn:focus-within{outline:2px solid var(--pose);ou
 .grow2{display:flex;align-items:center;gap:12px}
 .gthumb{width:84px;height:84px;flex:none;border-radius:10px;background:#fff;border:1px solid var(--line);object-fit:contain}
 .gstrip{display:block;width:100%;height:auto;border-radius:10px;background:#fff;border:1px solid var(--line)}
+.afig{margin:8px 0 0}.afig svg{display:block;width:100%;height:auto}.afig .at{font:700 14px var(--font);fill:var(--ink)}.afig .as{font:12px var(--font);fill:var(--muted)}
+.afig .a0{stroke:var(--line);stroke-width:2;stroke-dasharray:5 5}.afig .ab{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round}.afig .ag{fill:var(--muted)}
+.afig .al{stroke:var(--muted);stroke-width:1.5}.afig .aw{fill:var(--pose)}.afig .am{stroke:var(--pose);stroke-width:3;stroke-linecap:round}.afig figcaption{font-size:12px;color:var(--muted);margin-top:4px}
