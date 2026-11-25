@@ -100,7 +100,7 @@ window.SPOTS=[
  "Aufrecht ans Ufer treten. Forellen sehen und spüren dich sofort. Geduckt und leise anpirschen und den eigenen Schatten vom Wasser fernhalten."],
  b:["spinner","wobbler_flach","inline_spoon","nymphe","trockenfliege","streamer","tauwurm"],r:["spinn","fliege","springer","duo","laufpose","tiroler"]},
 {id:"aussenkurve",n:"Außenkurve",a:["Außenkurve","Außenkurven","Prallhang","Flussbiegung"],w:["fluss","strom","bach"],f:["zander","wels","barbe","doebel","rapfen","barsch","aal","huchen","bachforelle"],
- bot:[[0,62],[30,84],[50,100],[160,150],[250,232],[312,250],[334,170],[344,84],[360,58]],deco:[["bush",346]],ang:["bank",14],to:316,path:[[314,126],[300,238],[238,214]],fish:[[296,222,-1],[262,232,-1],[318,172,-1]],mt:"durch die Rinne treiben lassen",
+ bot:[[0,92],[26,100],[65,118],[131,131],[183,141],[209,159],[235,188],[261,208],[294,218],[320,211],[340,175],[351,133],[360,100]],deco:[["bush",346]],ang:["bank",14],to:300,path:[[300,128],[290,210],[238,184]],fish:[[298,202,-1],[272,174,-1],[322,152,-1]],mt:"durch die Rinne treiben lassen",
  st:["Außenkurve: In der Flussbiegung drückt die Strömung nach außen. Dort gräbt sie eine tiefe Rinne und unterspült das Ufer. Innen lagert sich Sand ab, dort ist es flach.",
  "Die Fische stehen außen in der tiefen Rinne und unter dem unterspülten Ufer: Zander, Wels, Barbe und Döbel. Am Übergang von flach zu tief jagen Rapfen und Barsch.",
  "Stell dich an die flache Innenseite und wirf quer hinüber, dicht vor das gegenüberliegende Ufer. Dort nimmt die Strömung den Köder gleich mit.",
